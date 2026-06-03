@@ -1,2 +1,0 @@
-class MonomerSequence:
-    raise NotImplementedError

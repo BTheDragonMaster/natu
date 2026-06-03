@@ -6,6 +6,9 @@ from importlib.abc import Traversable
 from typing import IO
 
 
+GAP_REPR = "GAP"
+
+
 class AlignmentConfiguration(Enum):
     """
     Packaged alignment configuration files.

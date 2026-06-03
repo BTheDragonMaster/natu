@@ -12,8 +12,9 @@ import yaml
 from natu.aligner import setup_aligner, substitution_matrices
 from natu.pairwise import Converter
 from natu.msa import calculate_msa
-from natu.constants import AlignmentConfiguration, SubstitutionMatrix
+from natu.constants import GAP_REPR, AlignmentConfiguration, SubstitutionMatrix
 from natu.scoring import create_substitution_matrix
+from natu.svg import msa_to_svg
 
 
 try:
@@ -66,7 +67,11 @@ def cli() -> argparse.Namespace:
         version=f"%(prog)s {__version__}", help="Show program's version number and exit."
     )
 
-    parser.add_argument(
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # NATU align
+    align_parser = subparsers.add_parser("align", help="Align monomer sequences from FASTA.")
+    align_parser.add_argument(
         "-s",
         "--substitution-matrix",
         type=parse_substitution_matrix,
@@ -74,23 +79,38 @@ def cli() -> argparse.Namespace:
         required=True,
         help="Substitution matrix to use for sequence alignment.",
     )
-    parser.add_argument(
+    align_parser.add_argument(
         "-f", "--fasta",
         type=Path,
         required=True,
         help="Path to sequences to align in FASTA format; monomer names separated by '|' symbols (required)."
     )
-    parser.add_argument(
+    align_parser.add_argument(
         "-o", "--output",
         type=Path,
         required=True,
         help="Path to the output file with aligned sequences (required)."
     )
-    parser.add_argument(
+    align_parser.add_argument(
         "-c", "--config",
         type=Path,
         required=False,
         help="Path to the configuration file (default: None)."
+    )
+
+    # NATU draw
+    draw_parser = subparsers.add_parser("draw", help="Draw an aligned FASTA file as SVG.")
+    draw_parser.add_argument(
+        "-m", "--msa",
+        type=Path,
+        required=True,
+        help="Path to MSA FASTA file.",
+    )
+    draw_parser.add_argument(
+        "-o", "--output",
+        type=Path,
+        required=True,
+        help="Path to output SVG file.",
     )
 
     return parser.parse_args()
@@ -210,65 +230,83 @@ def main() -> None:
     """
     args = cli()
 
-    if not args.fasta.is_file():
-        raise FileNotFoundError(f"{args.fasta} does not exist")
+    if args.command == "align":
+        # NATU align
 
-    if args.config is not None and not args.config.is_file():
-        raise FileNotFoundError(f"{args.config} does not exist")
+        if not args.fasta.is_file():
+            raise FileNotFoundError(f"{args.fasta} does not exist")
 
-    config = load_config(args.config)
-    substitution_matrix = load_substitution_matrix(args.substitution_matrix)
+        if args.config is not None and not args.config.is_file():
+            raise FileNotFoundError(f"{args.config} does not exist")
 
-    alphabet = tuple(substitution_matrix.alphabet)
-    alphabet_to_index = {symbol: np.int32(i) for i, symbol in enumerate(alphabet)}
+        config = load_config(args.config)
+        substitution_matrix = load_substitution_matrix(args.substitution_matrix)
 
-    def to_identifier(symbol: str) -> np.int32:
-        """
-        Convert a sequence symbol to its substitution-matrix index.
+        alphabet = tuple(substitution_matrix.alphabet)
+        alphabet_to_index = {symbol: np.int32(i) for i, symbol in enumerate(alphabet)}
 
-        :param symbol: Sequence symbol.
-        :return: Integer index in the substitution matrix alphabet.
-        :raises ValueError: If the symbol is not present in the substitution matrix alphabet.
-        """
-        try:
-            return alphabet_to_index[symbol]
-        except KeyError as error:
-            raise ValueError(f"symbol {symbol!r} was not found in the substitution matrix alphabet") from error
+        def to_identifier(symbol: str) -> np.int32:
+            """
+            Convert a sequence symbol to its substitution-matrix index.
 
-    def from_identifier(index: np.int32) -> str:
-        """
-        Convert a substitution-matrix index back to a sequence symbol.
+            :param symbol: Sequence symbol.
+            :return: Integer index in the substitution matrix alphabet.
+            :raises ValueError: If the symbol is not present in the substitution matrix alphabet.
+            """
+            try:
+                return alphabet_to_index[symbol]
+            except KeyError as error:
+                raise ValueError(f"symbol {symbol!r} was not found in the substitution matrix alphabet") from error
 
-        :param index: Substitution-matrix index.
-        :return: Sequence symbol.
-        :raises ValueError: If the index is outside the alphabet range.
-        """
-        try:
-            return alphabet[index]
-        except IndexError as error:
-            raise ValueError(f"index {index!r} is outside the substitution matrix alphabet range") from error
+        def from_identifier(index: np.int32) -> str:
+            """
+            Convert a substitution-matrix index back to a sequence symbol.
 
-    converter = Converter(to_identifier=to_identifier, from_identifier=from_identifier)
+            :param index: Substitution-matrix index.
+            :return: Sequence symbol.
+            :raises ValueError: If the index is outside the alphabet range.
+            """
+            try:
+                return alphabet[index]
+            except IndexError as error:
+                raise ValueError(f"index {index!r} is outside the substitution matrix alphabet range") from error
 
-    aligner_config = config.get("aligner", {})
-    aligner = setup_aligner(substitution_matrix=substitution_matrix, **aligner_config)
+        converter = Converter(to_identifier=to_identifier, from_identifier=from_identifier)
 
-    headers, sequences = zip(*read_monomer_fasta(args.fasta))
+        aligner_config = config.get("aligner", {})
+        aligner = setup_aligner(substitution_matrix=substitution_matrix, **aligner_config)
 
-    aligned, new_order = calculate_msa(
-        aligner=aligner,
-        to_align=sequences,
-        converter=converter,
-        center_star=None,
-    )
-    reorderd_headers = [headers[i] for i in new_order]
+        headers, sequences = zip(*read_monomer_fasta(args.fasta))
 
-    with open(args.output, "w", encoding="utf-8") as handle:
-        for header, (score, aligned_sequence)  in zip(reorderd_headers, aligned):
-            aligned_sequence_str = "|".join(["GAP" if item is None else item for item in aligned_sequence])
-            handle.write(f">{header}|alignment_score={score:.3f}\n")
-            handle.write(f"{aligned_sequence_str}\n")
+        aligned, new_order = calculate_msa(
+            aligner=aligner,
+            to_align=sequences,
+            converter=converter,
+            center_star=None,
+        )
+        reorderd_headers = [headers[i] for i in new_order]
 
+        with open(args.output, "w", encoding="utf-8") as handle:
+            for header, (score, aligned_sequence)  in zip(reorderd_headers, aligned):
+                aligned_sequence_str = "|".join([GAP_REPR if item is None else item for item in aligned_sequence])
+                handle.write(f">{header}|alignment_score={score:.3f}\n")
+                handle.write(f"{aligned_sequence_str}\n")
+
+    elif args.command == "draw":
+        # NATU draw
+
+        if not args.msa.is_file():
+            raise FileNotFoundError(f"{args.msa} does not exist")
+
+        records = read_monomer_fasta(args.msa)
+
+        svg_str = msa_to_svg(records)
+
+        with open(args.output, "w", encoding="utf-8") as handle:
+            handle.write(svg_str)
+
+    else:
+        raise ValueError(f"unknown command {args.command}")
 
 
 if __name__ == "__main__":

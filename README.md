@@ -12,6 +12,15 @@ pip install .
 
 ## Usage
 
+Create MSA:
+
 ```bash
-natu -s match_mismatch -f data/test.fa -o out.msa
+natu align -s match_mismatch -f data/test.fa -o data/test.msa
 ```
+
+Draw MSA as SVG:
+```bash
+natu draw -m data/test.msa -o data/test.msa.svg   
+```
+
+![Example NATU alignment](data/test.msa.svg)

@@ -1,0 +1,6 @@
+>seq1|alignment_score=0.000
+(S,E)-2-amino-4-decenoic acid|threonine|GAP|threonine
+>seq2|alignment_score=1.300
+GAP|threonine|succinic semialdehyde|threonine
+>seq3|alignment_score=-0.250
+GAP|GAP|GAP|argininol

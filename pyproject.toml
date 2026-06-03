@@ -1,0 +1,59 @@
+[project]
+name = "natu"
+version = "1.0.0-alpha"
+description = "NATU: NRPS Alignment of Thiotemplated Units"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = [
+    "LICENSE",
+]
+authors = [
+    { name = "Barbara Terlouw", email = "barbara.terlouw@wur.nl" },
+    { name = "David Meijer", email = "david.meijer@wur.nl" }
+]
+keywords = ["monomers", "alignment"]
+
+dependencies = [
+    "biopython"
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics"
+]
+
+[project.urls]
+Homepage = "https://github.com/BTheDragonMaster/natu"
+Repository = "https://github.com/BTheDragonMaster/natu"
+Issues = "https://github.com/BTheDragonMaster/natu/issues"
+Documentation = "https://github.com/BTheDragonMaster/natu#readme"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/natu"]
+sources = ["src"]
+include = [
+    "src/natu/data/alignment_configurations/*.yaml",
+    "src/natu/data/substitution_matrices/*.txt",
+]
+
+[project.scripts]
+natu = "natu.cli:main"

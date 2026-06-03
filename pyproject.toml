@@ -1,6 +1,6 @@
 [project]
 name = "natu"
-version = "1.0.0-alpha"
+version = "1.0.0"
 description = "NATU: NRPS Alignment of Thiotemplated Units"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -15,7 +15,11 @@ authors = [
 keywords = ["monomers", "alignment"]
 
 dependencies = [
-    "biopython"
+    "numpy",
+    "pandas",
+    "biopython",
+    "pyyaml",
+    "paras"
 ]
 
 classifiers = [

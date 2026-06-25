@@ -156,7 +156,7 @@ def calculate_msa(
 
         if i == 0:
             # Center star sequence, score is self-alignment score
-            score = float(sims[center_ind, center_ind])
+            score = float(aligner.score(center_seq, center_seq))
         else:
             # Score is the pairwise alignment score to the center star sequence
             score = scores[i - 1]

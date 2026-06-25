@@ -2,7 +2,7 @@
 
 from enum import Enum
 from importlib.resources import files
-from importlib.abc import Traversable
+from importlib.resources.abc import Traversable
 from typing import IO
 
 

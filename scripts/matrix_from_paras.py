@@ -122,40 +122,86 @@ def log_odds_matrix(
     return scale * np.log(ratio)
 
 
+# def reliability_scores(matrix: NDArray) -> NDArray:
+#     """
+#     Per-substrate reliability: how confidently and consistently this
+#     substrate is predicted, independent of how common it is.
+#
+#     This is deliberately NOT frequency-corrected (unlike the log-odds
+#     diagonal you'd get from p_ii / q_i^2) -- it directly answers "when
+#     this substrate shows up, how confident is the model?" rather than
+#     "is this substrate's self-overlap surprising given how rare it is?"
+#     Rare substrates should NOT get an inflated score just for being rare.
+#
+#     Defined as the mean confidence among domains where the substrate
+#     is the (or a) top-scoring call -- i.e. mean confidence conditional
+#     on the substrate actually being predicted, not averaged over all
+#     800k domains (which would just reflect how often it's predicted,
+#     not how confidently).
+#
+#     Returns
+#     -------
+#     NDArray, shape (n_substrates,)
+#         Values in roughly [0, 1], same scale as your input confidences.
+#     """
+#     reliabilities = np.zeros(matrix.shape[0])
+#     for i in range(matrix.shape[0]):
+#         nonzero = matrix[i, matrix[i] > 0]
+#         reliabilities[i] = nonzero.mean() if nonzero.size else 0.0
+#     return reliabilities
+
 def reliability_scores(matrix: NDArray) -> NDArray:
-    """
-    Per-substrate reliability: how confidently and consistently this
-    substrate is predicted, independent of how common it is.
+    col_max = matrix.max(axis=0)
+    top_mask = (matrix >= col_max) & (matrix > 0)
 
-    This is deliberately NOT frequency-corrected (unlike the log-odds
-    diagonal you'd get from p_ii / q_i^2) -- it directly answers "when
-    this substrate shows up, how confident is the model?" rather than
-    "is this substrate's self-overlap surprising given how rare it is?"
-    Rare substrates should NOT get an inflated score just for being rare.
+    restricted = matrix * top_mask            # zero out everything except top-scoring domains
+    weighted_sums = (restricted ** 2).sum(axis=1)
+    row_sums = restricted.sum(axis=1)
 
-    Defined as the mean confidence among domains where the substrate
-    is the (or a) top-scoring call -- i.e. mean confidence conditional
-    on the substrate actually being predicted, not averaged over all
-    800k domains (which would just reflect how often it's predicted,
-    not how confidently).
-
-    Returns
-    -------
-    NDArray, shape (n_substrates,)
-        Values in roughly [0, 1], same scale as your input confidences.
-    """
-    reliabilities = np.zeros(matrix.shape[0])
-    for i in range(matrix.shape[0]):
-        nonzero = matrix[i, matrix[i] > 0]
-        reliabilities[i] = nonzero.mean() if nonzero.size else 0.0
+    reliabilities = np.divide(
+        weighted_sums, row_sums,
+        out=np.zeros_like(row_sums, dtype=float),
+        where=row_sums > 0,
+    )
     return reliabilities
+
+
+# def reliability_scores(matrix: NDArray) -> NDArray:
+#     """
+#     Per-substrate reliability: confidence-weighted mean support,
+#     independent of how often the substrate is predicted.
+#
+#     Instead of averaging only over nonzero entries (which treats
+#     "0.002" and "0.0" as categorically different despite being
+#     nearly identical RF vote fractions), this weights each domain's
+#     contribution by its own confidence. Domains where the substrate
+#     got strong support dominate the average; domains where it barely
+#     registered contribute almost nothing -- no hard threshold needed.
+#
+#     r_i = sum_j(M_ij^2) / sum_j(M_ij)
+#
+#     Returns
+#     -------
+#     NDArray, shape (n_substrates,)
+#         Values in roughly [0, 1], same scale as input confidences.
+#     """
+#     row_sums = matrix.sum(axis=1)
+#     weighted_sums = (matrix ** 2).sum(axis=1)
+#
+#     reliabilities = np.divide(
+#         weighted_sums,
+#         row_sums,
+#         out=np.zeros_like(row_sums),
+#         where=row_sums > 0,
+#     )
+#     return reliabilities
 
 
 def build_substitution_matrix(
     substrates: list[str],
     matrix: NDArray,
     pseudocount: float | None = None,
-    scale: float = 2.0,
+    scale: float = 1.0,
     diagonal_mode: str = "reliability",
     enforce_diagonal_dominance: bool = True,
 ) -> SubstitutionMatrixResult:

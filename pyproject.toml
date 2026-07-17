@@ -19,7 +19,8 @@ dependencies = [
     "pandas",
     "biopython",
     "pyyaml",
-    "paras"
+    "paras",
+    "biotite"
 ]
 
 classifiers = [

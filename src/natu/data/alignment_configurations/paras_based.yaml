@@ -1,5 +1,5 @@
 aligner:
-  open_internal_gap_score: -0.5
-  extend_internal_gap_score: -0.1
-  open_end_gap_score: -0.2
-  extend_end_gap_score: -0.05
+  open_internal_gap_score: -12.0
+  extend_internal_gap_score: -10.0
+  open_end_gap_score: -12.0
+  extend_end_gap_score: -10.0

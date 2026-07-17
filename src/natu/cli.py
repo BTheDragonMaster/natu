@@ -97,6 +97,11 @@ def cli() -> argparse.Namespace:
         required=False,
         help="Path to the configuration file (default: None)."
     )
+    align_parser.add_argument(
+        "-p", "--progressive",
+        action="store_true",
+        help="If given, do progressive MSA using UPGMA guide tree"
+    )
 
     # NATU draw
     draw_parser = subparsers.add_parser("draw", help="Draw an aligned FASTA file as SVG.")
@@ -133,14 +138,19 @@ def deep_update(base: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
     return base
 
 
-def load_config(config_file: Path | None = None) -> dict[str, Any]:
+def load_config(config_file: Path | None = None, matrix_type: SubstitutionMatrix | None = None) -> dict[str, Any]:
     """
     Load the default NATU config and optionally override it with a user config.
 
     :param config_file: Optional path to a user-provided YAML config file.
+    :param matrix_type: Optional substitution matrix type.
     :return: Configuration dictionary.
     """
+
     default_config = yaml.safe_load(AlignmentConfiguration.DEFAULT.read_text())
+
+    if matrix_type:
+        default_config = yaml.safe_load(matrix_type.get_config().read_text())
 
     if default_config is None:
         default_config = {}
@@ -239,7 +249,8 @@ def main() -> None:
         if args.config is not None and not args.config.is_file():
             raise FileNotFoundError(f"{args.config} does not exist")
 
-        config = load_config(args.config)
+        config = load_config(args.config, args.substitution_matrix)
+        print(config)
         substitution_matrix = load_substitution_matrix(args.substitution_matrix)
 
         alphabet = tuple(substitution_matrix.alphabet)
@@ -283,6 +294,7 @@ def main() -> None:
             to_align=sequences,
             converter=converter,
             center_star=None,
+            progressive=args.progressive
         )
         reorderd_headers = [headers[i] for i in new_order]
 

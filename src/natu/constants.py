@@ -17,6 +17,7 @@ class AlignmentConfiguration(Enum):
     """
 
     DEFAULT = "default.yaml"
+    PARAS_BASED = "paras_based.yaml"
 
     @property
     def resource(self) -> Traversable:
@@ -83,3 +84,8 @@ class SubstitutionMatrix(Enum):
         :return: File contents as string.
         """
         return self.resource.read_text(encoding=encoding)
+
+    def get_config(self):
+        matrix_to_config: dict[SubstitutionMatrix, AlignmentConfiguration] = {SubstitutionMatrix.MATCH_MISMATCH: AlignmentConfiguration.DEFAULT,
+                                                                              SubstitutionMatrix.PARAS_BASED: AlignmentConfiguration.PARAS_BASED}
+        return matrix_to_config[self]

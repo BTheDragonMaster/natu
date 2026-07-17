@@ -4,9 +4,11 @@ import logging
 
 import numpy as np
 from numpy.typing import NDArray
+from math import sqrt
 
 from natu.aligner import PairwiseAligner
 from natu.pairwise import T, Converter, _pairwise_alignment
+from natu.progressive_msa import _align_along_tree, _build_guide_tree
 
 log = logging.getLogger(__name__)
 
@@ -69,11 +71,85 @@ def _merge_center_alignment(
     return np.vstack([updated_msa, updated_query])
 
 
+def _progressive_msa(
+        similarity_matrix: NDArray[np.float32],
+        converter: Converter,
+        aligner: PairwiseAligner,
+        int_seqs: list[NDArray[np.int32]],
+
+) -> tuple[NDArray[np.int32], list[float], list[int]]:
+    tree = _build_guide_tree(similarity_matrix)
+
+    gap_repr = converter.gap_repr
+
+    msa, row_order = _align_along_tree(tree.root, int_seqs, gap_repr, aligner)
+
+    # No single "center" exists in a progressive alignment, unlike _star_msa.
+    # Scoring each row against the first-visited leaf keeps the return shape
+    # consistent, but reconsider whether this is actually the semantic you want.
+    ref_idx = row_order[0]
+    scores = [
+        float(aligner.score(int_seqs[ref_idx], int_seqs[idx])) if idx != ref_idx
+        else float(aligner.score(int_seqs[ref_idx], int_seqs[ref_idx]))
+        for idx in row_order
+    ]
+
+    gap_columns = np.all(msa == gap_repr, axis=0)
+    msa = msa[:, ~gap_columns]
+
+    return msa, scores, row_order
+
+def _star_msa(sims: NDArray[np.float32], center_star: int | None,
+              converter: Converter,
+              aligner: PairwiseAligner,
+              int_seqs: list[NDArray[np.int32]]) -> tuple[NDArray[np.int32], list[float], list[int]]:
+    masked_sims = sims.copy()
+    np.fill_diagonal(masked_sims, -np.inf)
+
+    # Find center star sequence if not given, ignore the diagonal (self-similarity)
+    if center_star is None:
+        center_ind = int(np.argmax(masked_sims.sum(axis=0)))
+    else:
+        center_ind = int(center_star)
+
+    # Sort all by descending similarity to center star
+    sorted_indices = np.argsort(masked_sims[center_ind])[::-1]
+    other_inds = [int(i) for i in sorted_indices if i != center_ind]
+    indices = [center_ind]
+    indices.extend(other_inds)
+
+    # Align every sequence to the center star sequence
+    scores: list[float] = []
+
+    center_seq = int_seqs[center_ind]
+    msa: NDArray[np.int32] = np.array([center_seq], dtype=np.int32)
+
+    for i, ind in enumerate(indices):
+        # Align other sequence to the original ungapped center star sequence
+        q = int_seqs[ind]
+
+        # Always align the new sequence to the original ungapped center. Do not align against msa[0],
+        # because msa[0] may already contain gap markers, which Biopython cannot accept as sequence items.
+        s, t_a, q_a = _pairwise_alignment(aligner, center_seq, q, converter.gap_repr)
+
+        # Merge the new pairwise center-query alignment into the growing MSA.
+        if i != 0:
+            msa = _merge_center_alignment(msa=msa, t_a=t_a, q_a=q_a, gap_repr=converter.gap_repr)
+
+        scores.append(float(s))
+
+    # Double check if there are any gap-only columns, delete those
+    gap_columns = np.all(msa == converter.gap_repr, axis=0)
+    msa = msa[:, ~gap_columns]
+
+    return msa, scores, indices
+
 def calculate_msa(
     aligner: PairwiseAligner,
     to_align: list[list[T]],
     converter: Converter,
     center_star: int | None = None,
+    progressive = False
 ) -> tuple[list[tuple[float, list[T | None]]], list[int]]:
     """
     Calculate a multiple sequence alignment (MSA) for the given sequences.
@@ -83,6 +159,7 @@ def calculate_msa(
     :param converter: Converter object to convert items in sequences to integers for alignment and back.
     :param center_star: Index of the sequence to use as the center for the star alignment (default: None, which means to
         use the first sequence).
+    :param progressive: If true, use progressive alignment using UPGMA guide tree
     :return: Tuple containing a list of tuples, where each tuple contains the alignment score and the aligned sequence
         with None for gaps, and a list of indices representing the order of sequences in the MSA.
     """
@@ -100,69 +177,43 @@ def calculate_msa(
 
     # Create pairwise similarity matrix; use reverse orientation if it scores better
     sims = np.zeros((len(int_seqs), len(int_seqs)), dtype=np.float32)
+    norm_sims = np.zeros((len(int_seqs), len(int_seqs)), dtype=np.float32)
+
+    # Calculate diagonal first, as we need self-similarities to compute normalized scores
+    for i, seq in enumerate(int_seqs):
+        score = aligner.score(seq, seq)
+        sims[i, i] = score
+        norm_sims[i, i] = 1.0
 
     for i, int_seq1 in enumerate(int_seqs):
-        for j, int_seq2 in enumerate(int_seqs[i + 1:], start=i + 1):
-            score = aligner.score(int_seq1, int_seq2)
-
+        for j, int_seq2 in enumerate(int_seqs):
             # We only calculate the lower triangle of the similarity matrix
             if i >= j:
                 continue
 
+            score = aligner.score(int_seq1, int_seq2)
             sims[i, j] = score
             sims[j, i] = score
 
+            # Calculate normalised scores
+            norm_score = score / sqrt(sims[i, i] * sims[j, j])
+            norm_sims[i, j] = norm_score
+            norm_sims[j, i] = norm_score
+
     # Mask similarity matrix to ignore self-similarity (diagonal)
-    masked_sims = sims.copy()
-    np.fill_diagonal(masked_sims, -np.inf)
-
-    # Find center star sequence if not given, ignore the diagonal (self-similarity)
-    if center_star is None:
-        center_ind = int(np.argmax(masked_sims.sum(axis=0)))
+    if not progressive:
+        msa, scores, new_order = _star_msa(sims, center_star, converter, aligner, int_seqs)
     else:
-        center_ind = int(center_star)
-
-    # Sort all by descending similarity to center star
-    sorted_indices = np.argsort(masked_sims[center_ind])[::-1]
-    other_inds = [int(i) for i in sorted_indices if i != center_ind]
-
-    # Align every sequence to the center star sequence
-    scores: list[float] = []
-
-    center_seq = int_seqs[center_ind]
-    msa: NDArray[np.int32] = np.array([center_seq], dtype=np.int32)
-
-    for other_ind in other_inds:
-        # Align other sequence to the original ungapped center star sequence
-        q = int_seqs[other_ind]
-
-        # Always align the new sequence to the original ungapped center. Do not align against msa[0],
-        # because msa[0] may already contain gap markers, which Biopython cannot accept as sequence items.
-        s, t_a, q_a = _pairwise_alignment(aligner, center_seq, q, converter.gap_repr)
-
-        # Merge the new pairwise center-query alignment into the growing MSA.
-        msa = _merge_center_alignment(msa=msa, t_a=t_a, q_a=q_a, gap_repr=converter.gap_repr)
-
-        scores.append(float(s))
-
-    # Double check if there are any gap-only columns, delete those
-    gap_columns = np.all(msa == converter.gap_repr, axis=0)
-    msa = msa[:, ~gap_columns]
+        msa, scores, new_order = _progressive_msa(norm_sims, converter, aligner, int_seqs)
 
     # Convert back to original sequences with None for gaps
     aligned_seqs: list[tuple[float, list[T | None]]] = []
     for i, int_seq in enumerate(msa):
         aligned_seq = converter.from_int_array(int_seq)
 
-        if i == 0:
-            # Center star sequence, score is self-alignment score
-            score = float(aligner.score(center_seq, center_seq))
-        else:
-            # Score is the pairwise alignment score to the center star sequence
-            score = scores[i - 1]
+        # Score is the pairwise alignment score to the center star sequence
+        score = scores[i]
 
         aligned_seqs.append((score, aligned_seq))
-
-    new_order = [center_ind] + other_inds
 
     return aligned_seqs, new_order

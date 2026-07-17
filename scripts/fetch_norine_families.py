@@ -28,24 +28,6 @@ def fetch_all_peptides(max_id=2020, out_path="norine_peptides.jsonl"):
             time.sleep(0.2)  # be polite -- avoid hammering their server
     return out_path
 
-def group_by_family(jsonl_path, composition_only=True):
-    families = {}
-    with open(jsonl_path) as f:
-        for line in f:
-            entry = json.loads(line)
-            if entry["norine"]["peptide"]:
-                fam = entry["norine"]["peptide"][0]["general"].get("family")  # confirm exact key name from a sample response first
-                if fam:
-                    has_comp = False
-
-                    if "structure" in entry["norine"]["peptide"][0] and "composition" in entry["norine"]["peptide"][0]["structure"]:
-                        has_comp = True
-                    if composition_only and not has_comp:
-                        continue
-
-                    families.setdefault(fam, []).append(entry)
-    return families
-
 def get_max_id(data):
     ids = []
     for entry in data:
@@ -59,24 +41,10 @@ def get_max_id(data):
 
 
 if __name__ == "__main__":
-    families = group_by_family(argv[1])
-    fams = sorted(families.keys())
-    for fam in fams:
-        data = families[fam]
-        print(fam)
-        for entry in data:
-            print(entry["norine"]["peptide"][0]["general"]["name"])
-            print(entry["norine"]["peptide"][0]["structure"]["composition"])
-        print('\n')
 
-
-
-    # for fam in fams:
-    #     print(fam)
-    # fetch_all_peptides(out_path=argv[1])
-    # r = requests.get("https://norine.univ-lille.fr/norine/rest/peptides/json/smiles", timeout=60)
-    # data = r.json()["peptides"]
-    # max_id = get_max_id(data)
-    # print(f"Max Norine ID: NOR{max_id:05d}")
-    # print(f"Total entries returned: {len(data)}")
+    r = requests.get("https://norine.univ-lille.fr/norine/rest/peptides/json/smiles", timeout=60)
+    data = r.json()["peptides"]
+    max_id = get_max_id(data)
+    print(f"Max Norine ID: NOR{max_id:05d}")
+    print(f"Total entries returned: {len(data)}")
 

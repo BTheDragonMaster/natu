@@ -80,9 +80,9 @@ def expand_substitution_matrix(df: pd.DataFrame, config: dict[str, Any]) -> pd.D
 
             chirality_score = 0.0
             methylation_score = 0.0
-            if Modification.D in row_variant.modification or col_variant.modification and Modification.D in col_variant.modification:
+            if Modification.D in modifications:
                 chirality_score = chirality_scores.loc[row_variant.chirality.name, col_variant.chirality.name]
-            if Modification.NME in row_variant.modification or col_variant.modification and Modification.NME in col_variant.modification:
+            if Modification.NME in modifications:
                 methylation_score = methylation_scores.loc[row_variant.methylation.name, col_variant.methylation.name]
 
             pair_scores[(row_variant.name, col_name)] = base_score + chirality_score + methylation_score

@@ -25,7 +25,7 @@ def setup_aligner(
     are often penalized less strongly when sequences may be incomplete or truncated.
 
     :param substitution_matrix: Substitution matrix used to score aligned symbols.
-    :param mode: Alignmet mode. Must be either "global" or "local".
+    :param mode: Alignment mode. Must be either "global" or "local".
     :param open_internal_gap_score: Score for opening and internal insertion or deletion gap.
     :param extend_internal_gap_score: Score for extending and internal insertion or deletion gap.
     :param open_end_gap_score: Score for opening a left or right end insertion or deletion gap.

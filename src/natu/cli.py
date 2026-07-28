@@ -13,7 +13,7 @@ from natu.aligner import setup_aligner, substitution_matrices
 from natu.pairwise import Converter
 from natu.msa import calculate_msa
 from natu.constants import GAP_REPR, AlignmentConfiguration, SubstitutionMatrix
-from natu.scoring import create_substitution_matrix
+from natu.matrix import create_substitution_matrix
 from natu.svg import msa_to_svg
 
 
@@ -147,7 +147,7 @@ def load_config(config_file: Path | None = None, matrix_type: SubstitutionMatrix
     :return: Configuration dictionary.
     """
 
-    default_config = yaml.safe_load(AlignmentConfiguration.DEFAULT.read_text())
+    default_config = yaml.safe_load(AlignmentConfiguration.MATCH_MISMATCH.read_text())
 
     if matrix_type:
         default_config = yaml.safe_load(matrix_type.get_config().read_text())
@@ -167,11 +167,12 @@ def load_config(config_file: Path | None = None, matrix_type: SubstitutionMatrix
     return deep_update(default_config, user_config)
 
 
-def load_substitution_matrix(substitution_matrix: SubstitutionMatrix) -> substitution_matrices.Array:
+def load_substitution_matrix(substitution_matrix: SubstitutionMatrix, config: dict[str, Any]) -> substitution_matrices.Array:
     """
     Load a substitution matrix from a file or from the packaged NATU default.
 
     :param substitution_matrix: Substitution matrix to load.
+    :param config: Configuration dictionary.
     :return: Substitution matrix.
     :raises ValueError: If substitution matrix is corrupt.
     """
@@ -181,7 +182,7 @@ def load_substitution_matrix(substitution_matrix: SubstitutionMatrix) -> substit
     if list(df.index) != list(df.columns):
         raise ValueError("substitution matrix row names and column names must be identical and in the same order")
 
-    return create_substitution_matrix(df)
+    return create_substitution_matrix(df, config)
 
 
 def read_monomer_fasta(fasta_file: Path) -> list[tuple[str, list[str]]]:
@@ -250,8 +251,7 @@ def main() -> None:
             raise FileNotFoundError(f"{args.config} does not exist")
 
         config = load_config(args.config, args.substitution_matrix)
-        print(config)
-        substitution_matrix = load_substitution_matrix(args.substitution_matrix)
+        substitution_matrix = load_substitution_matrix(args.substitution_matrix, config)
 
         alphabet = tuple(substitution_matrix.alphabet)
         alphabet_to_index = {symbol: np.int32(i) for i, symbol in enumerate(alphabet)}
@@ -285,6 +285,7 @@ def main() -> None:
         converter = Converter(to_identifier=to_identifier, from_identifier=from_identifier)
 
         aligner_config = config.get("aligner", {})
+
         aligner = setup_aligner(substitution_matrix=substitution_matrix, **aligner_config)
 
         headers, sequences = zip(*read_monomer_fasta(args.fasta))

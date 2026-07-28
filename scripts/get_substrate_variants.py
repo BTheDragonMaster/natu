@@ -1,12 +1,18 @@
+"""
+Script to obtain structure variants for all structures in a substitution matrix
+"""
+
 from argparse import ArgumentParser, Namespace
 import os
 from dataclasses import dataclass
-from enum import Flag
 
 from pikachu.reactions.functional_groups import GroupDefiner, find_atoms, combine_structures
 from pikachu.chem.structure import Structure
+from pikachu.chem.atom import Atom
 from pikachu.general import read_smiles
 from pikachu.general import structure_to_smiles
+
+from natu.variants import Modification
 
 C1_L_AMINO_ACID = GroupDefiner("C1 L-amino acid", "N[C@@H](C)C(=O)O", 1)
 C1_D_AMINO_ACID = GroupDefiner("C1 D-amino acid", "N[C@H](C)C(=O)O", 1)
@@ -19,13 +25,20 @@ def parse_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument("-s", "--smiles_file", required=True, help="SMILES file")
     parser.add_argument("-o", "--output_directory", required=True, help="Output directory")
-    parser.add_argument("-p", "--paras_results", required=True,
-                        help="PARAS results file predicting all substrates, used as reference")
+    parser.add_argument("-m", "--matrix", required=True,
+                        help="Path to substitution matrix")
+    parser.add_argument("-n", "--name", default="substrates",
+                        help="Prefix for output files")
     args = parser.parse_args()
     return args
 
 #Taken from RAIChU
-def epimerization(chiral_centre):
+def epimerization(chiral_centre: Atom) -> None:
+    """
+    Change chirality at given atom
+
+    :param chiral_centre: PIKAChU Atom object
+    """
     new_chirality = None
     if chiral_centre.chiral == 'clockwise':
         new_chirality = 'counterclockwise'
@@ -35,7 +48,14 @@ def epimerization(chiral_centre):
     chiral_centre.chiral = new_chirality
 
 # Taken from RAIChU
-def methylation(target_atom, structure):
+def methylation(target_atom, structure) -> Structure:
+    """
+    Methylate structure at given atom
+
+    :param target_atom: PIKAChU Atom object
+    :param structure: PIKAChU Structure object
+    :return: methylated structure
+    """
 
     methyl_group = read_smiles('C')
     carbon = methyl_group.atoms[0]
@@ -68,6 +88,12 @@ def methylation(target_atom, structure):
 
 
 def parse_smiles(smiles_file: str) -> dict[str, Structure]:
+    """
+    Return dictionary of molecule names to Structure objects
+
+    :param smiles_file: tabular file (with header) with molecule names in column 1 and SMILES in column 2
+    :return: dictionary of molecule names to Structure objects
+    """
     structure_lookup: dict[str, Structure] = {}
     with open(smiles_file, 'r') as smiles_data:
         smiles_data.readline()
@@ -79,6 +105,12 @@ def parse_smiles(smiles_file: str) -> dict[str, Structure]:
     return structure_lookup
 
 def get_d_structure(structure: Structure) -> Structure | None:
+    """
+    Return D-enantiomer if structure is L-amino acid; None otherwise
+
+    :param structure: PIKAChU Structure object
+    :return: PIKAChU Structure object of D-enantiomer if structure is L-amino acid, None otherwise
+    """
     structure = structure.deepcopy()
     c1_atoms_aa = find_atoms(C1_L_AMINO_ACID, structure)
 
@@ -93,6 +125,12 @@ def get_d_structure(structure: Structure) -> Structure | None:
 
 
 def get_nme_structure(name: str, structure: Structure) -> Structure | None:
+    """Return N-methylated structure if structure is amino acid and can be methylated at N; None otherwise
+
+    :param name: substrate name
+    :param structure: PIKAChU Structure object
+    :return: PIKAChU Structure object of N-methylated if structure is amino acid, None otherwise
+    """
     structure = structure.deepcopy()
 
     if "branched" not in name:
@@ -122,11 +160,21 @@ def get_nme_structure(name: str, structure: Structure) -> Structure | None:
 
 
 def is_equivalent(structure_1: Structure, structure_2: Structure) -> bool:
+    """ Return True if two structures are equivalent, False otherwise
+
+    :param structure_1: PIKAChU Structure object
+    :param structure_2: PIKAChU Structure object
+    :return: True if two structures are equivalent, False otherwise"""
     if structure_1.find_substructures(structure_2) and structure_2.find_substructures(structure_1):
         return True
     return False
 
 def remove_equivalents(structure_collections: list[StructureCollection]) -> list[StructureCollection]:
+    """Remove equivalent structures
+
+    :param structure_collections: list of structure collections
+    :return: list of structure collections with duplicate structures removed
+    """
     base_structures = [c.base_structure for c in structure_collections]
     d_variants = [d for c in structure_collections for d in c.variants if d.modifications == Modification.D]
 
@@ -147,25 +195,22 @@ def remove_equivalents(structure_collections: list[StructureCollection]) -> list
 
     return filtered_structures
 
-def parse_paras_substrates(paras_file: str) -> list[str]:
-    with open(paras_file, 'r') as paras_data:
-        paras_data.readline()
-        substrate_line = paras_data.readline()
-        substrate_line.strip()
-        substrates = []
-        substrates_and_conf = substrate_line.split('\t')[1:]
-        for i, substrate in enumerate(substrates_and_conf):
-            if i % 2 == 0:
-                substrates.append(substrate)
+def substrates_from_matrix(matrix_file: str) -> list[str]:
+    """Get substrate names from a substitution matrix file
 
-    return substrates
-
-class Modification(Flag):
-    D = 1
-    NME = 2
-    ME = 4
+    :param matrix_file: Path to substitution matrix file (see src.natu.data.substitution_matrices)
+    :return: list of substrate names
+    """
+    with open(matrix_file, 'r') as matrix:
+        header = matrix.readline()
+        header = header.strip()
+        substrates = header.split('\t')
+        return substrates
 
 class StructureCollection:
+    """
+    Class to store structure variants for a substrate
+    """
     def __init__(self, base_structure: StructureVariant, variants: list[StructureVariant]):
         self.base_structure = base_structure
         self.variants = variants
@@ -180,7 +225,7 @@ class StructureCollection:
         with open(file_name, "a") as f:
             variant_strings: list[str] = []
             f.write(f"{self.base_structure.name}\t{self.base_structure.smiles}\t")
-            for modification in [Modification.D, Modification.NME, Modification.D | Modification.NME]:
+            for modification in [Modification.D, Modification.NME, Modification.D_NME]:
                 variant = self.get_variant_from_modification(modification)
                 if variant is None:
                     variant_strings.append("\t")
@@ -197,6 +242,7 @@ class StructureCollection:
 
 @dataclass
 class StructureVariant:
+    """Class to store a structure variant"""
 
     name: str
     modifications: Modification | None
@@ -248,7 +294,7 @@ def get_structure_variants(name: str, structure: Structure) -> StructureCollecti
         else:
             nme_d_name = f"NMe-D-{name}"
 
-        modifications = Modification.NME | Modification.D
+        modifications = Modification.D_NME
 
         variants.append(StructureVariant(name=nme_d_name, modifications=modifications, structure=nme_d_structure))
 
@@ -262,24 +308,22 @@ def main():
         os.mkdir(args.output_directory)
 
     structures = parse_smiles(args.smiles_file)
-    paras_substrates = parse_paras_substrates(args.paras_results)
 
-    paras_structures: dict[str, Structure] = {}
+    structures_to_process: dict[str, Structure] = {}
 
-    for name in paras_substrates:
-        paras_structures[name] = structures[name]
+    substrates = substrates_from_matrix(args.matrix)
+    for name in substrates:
+        structures_to_process[name] = structures[name]
 
     structure_collections = []
 
-
-    for name, structure in paras_structures.items():
+    for name, structure in structures_to_process.items():
         structure_collections.append(get_structure_variants(name, structure))
 
     structure_collections = remove_equivalents(structure_collections)
 
-
-    variant_output = os.path.join(args.output_directory, "variants.tsv")
-    smiles_output = os.path.join(args.output_directory, "smiles.tsv")
+    variant_output = os.path.join(args.output_directory, f"{args.name}.variants.tsv")
+    smiles_output = os.path.join(args.output_directory, f"{args.name}.smiles.tsv")
 
     with open(variant_output, "w") as out:
         out.write(f"substrate\tsmiles\td_substrate\td_smiles\tnme_substrate\tnme_smiles\tnme_d_substrate\tnme_d_smiles\n")

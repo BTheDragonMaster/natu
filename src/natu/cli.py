@@ -12,6 +12,7 @@ import yaml
 from natu.aligner import setup_aligner, substitution_matrices
 from natu.pairwise import Converter
 from natu.msa import calculate_msa
+from natu.search import search
 from natu.constants import GAP_REPR, AlignmentConfiguration, SubstitutionMatrix
 from natu.matrix import create_substitution_matrix
 from natu.svg import msa_to_svg
@@ -118,6 +119,55 @@ def cli() -> argparse.Namespace:
         help="Path to output SVG file.",
     )
 
+    # NATU search
+
+    search_parser = subparsers.add_parser("search", help="Search for similar monomer sequences from FASTA")
+    search_parser.add_argument(
+        "-q", "--query",
+        type=Path,
+        required=True,
+        help="Path to query FASTA file."
+    )
+    search_parser.add_argument(
+        "-f", "--fasta",
+        type=Path,
+        required=True,
+        help="Path to FASTA file with subject sequences."
+    )
+    search_parser.add_argument(
+        "-s",
+        "--substitution-matrix",
+        type=parse_substitution_matrix,
+        choices=list(SubstitutionMatrix),
+        required=True,
+        help="Substitution matrix to use for sequence alignment.",
+    )
+    search_parser.add_argument(
+        "-o", "--output",
+        type=Path,
+        required=True,
+        help="Path to output folder.",
+    )
+    search_parser.add_argument(
+        "-c", "--config",
+        type=Path,
+        required=False,
+        help="Path to the configuration file (default: None)."
+    )
+    search_parser.add_argument(
+        "-t", "--threshold",
+        type=float,
+        required=False,
+        default=0.0,
+        help="Bitscore threshold for subject sequence inclusion."
+    )
+    search_parser.add_argument(
+        "-m", "--mode",
+        type=str,
+        choices=["global", "local"],
+        default="global",
+        help="Alignment mode"
+    )
     return parser.parse_args()
 
 
@@ -241,8 +291,12 @@ def main() -> None:
     """
     args = cli()
 
-    if args.command == "align":
-        # NATU align
+    if args.command in ["align", "search"]:
+        # NATU align and search
+
+        if args.command == "search":
+            if not args.query.is_file():
+                raise FileNotFoundError(f"{args.query} does not exist")
 
         if not args.fasta.is_file():
             raise FileNotFoundError(f"{args.fasta} does not exist")
@@ -286,24 +340,59 @@ def main() -> None:
 
         aligner_config = config.get("aligner", {})
 
-        aligner = setup_aligner(substitution_matrix=substitution_matrix, **aligner_config)
+        if args.command == "align":
 
-        headers, sequences = zip(*read_monomer_fasta(args.fasta))
+            aligner = setup_aligner(substitution_matrix=substitution_matrix, **aligner_config)
 
-        aligned, new_order = calculate_msa(
-            aligner=aligner,
-            to_align=sequences,
-            converter=converter,
-            center_star=None,
-            progressive=args.progressive
-        )
-        reorderd_headers = [headers[i] for i in new_order]
+            headers, sequences = zip(*read_monomer_fasta(args.fasta))
 
-        with open(args.output, "w", encoding="utf-8") as handle:
-            for header, (score, aligned_sequence)  in zip(reorderd_headers, aligned):
-                aligned_sequence_str = "|".join([GAP_REPR if item is None else item for item in aligned_sequence])
-                handle.write(f">{header}|alignment_score={score:.3f}\n")
-                handle.write(f"{aligned_sequence_str}\n")
+            aligned, new_order = calculate_msa(
+                aligner=aligner,
+                to_align=sequences,
+                converter=converter,
+                center_star=None,
+                progressive=args.progressive
+            )
+            reordered_headers = [headers[i] for i in new_order]
+
+            with open(args.output, "w", encoding="utf-8") as handle:
+                for header, (score, aligned_sequence)  in zip(reordered_headers, aligned):
+                    aligned_sequence_str = "|".join([GAP_REPR if item is None else item for item in aligned_sequence])
+                    handle.write(f">{header}|alignment_score={score:.3f}\n")
+                    handle.write(f"{aligned_sequence_str}\n")
+        elif args.command == "search":
+
+            aligner = setup_aligner(substitution_matrix=substitution_matrix, mode=args.mode,
+                                    **aligner_config)
+
+            query_headers, query_sequences = zip(*read_monomer_fasta(args.query))
+            subject_headers, subject_sequences = zip(*read_monomer_fasta(args.fasta))
+            subject_headers, subject_sequences = zip(*read_monomer_fasta(args.fasta))
+
+            search_results = search(
+                aligner=aligner,
+                query_sequences=query_sequences,
+                subject_sequences=subject_sequences,
+                converter=converter,
+                threshold=args.threshold)
+
+            with open(args.output, "w", encoding="utf-8") as handle:
+                handle.write("query\tsubject\tbitscore\taligned_q\ts_aligned_s\n")
+
+                for i, results in enumerate(search_results):
+                    query_header = query_headers[i]
+                    for result in results:
+                        score, gapped_query, gapped_subject, s_idx = result
+                        aligned_query_str = "|".join(
+                            [GAP_REPR if item is None else item for item in gapped_query])
+                        aligned_subject_str = "|".join(
+                            [GAP_REPR if item is None else item for item in gapped_subject])
+                        subject_header = subject_headers[s_idx]
+                        handle.write(f"{query_header}\t{subject_header}\t{score:.3f}\t{aligned_query_str}\t{aligned_subject_str}\n")
+
+        else:
+            raise ValueError(f"Unknown command {args.command}")
+
 
     elif args.command == "draw":
         # NATU draw

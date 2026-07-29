@@ -4,7 +4,6 @@ import argparse
 from pathlib import Path
 
 import pandas as pd
-from parasect.core.constants import SMILES_FILE
 
 
 def cli() -> argparse.Namespace:
@@ -14,6 +13,8 @@ def cli() -> argparse.Namespace:
     :return: Parse command line arguments.
     """
     parser = argparse.ArgumentParser()
+
+    parser.add_argument("-i", "--input", type=Path, required=True, help="SMILES file")
 
     parser.add_argument(
         "-o", "--output",
@@ -31,7 +32,7 @@ def main() -> None:
     """
     args = cli()
 
-    df = pd.read_csv(SMILES_FILE, sep="\t")
+    df = pd.read_csv(args.input, sep="\t")
     substrate_names = df["substrate"].unique().tolist()
 
     matrix = pd.DataFrame(

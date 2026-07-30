@@ -75,8 +75,15 @@ def msa_to_svg(msa: list[tuple[str, list[str]]]) -> str:
     block_width = 42
     block_height = 28
     row_gap = 8
-    label_width = 220
     padding = 16
+
+    # Monospace char width approximation at 12px font-size (~0.6em advance width)
+    font_size = 12
+    char_width = font_size * 0.6
+    label_gap = 16  # breathing room between longest label and first block
+
+    max_header_len = max(len(escape(header)) for header, _ in msa)
+    label_width = max_header_len * char_width + label_gap
 
     max_cols = max(len(sequence) for _, sequence in msa)
     row_height = block_height + row_gap

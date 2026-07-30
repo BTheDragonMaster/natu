@@ -57,12 +57,14 @@ def search(
         query_matches: list[tuple[float, list[T | None], list[T | None], int]] = []
 
         for j in candidate_js:
-            score, t_a, q_a = _pairwise_alignment(
+            alignment = _pairwise_alignment(
                 aligner, int_subject_seqs[j], int_query, gap_repr=converter.gap_repr
             )
-            gapped_subject = converter.from_int_array(t_a)
-            gapped_query = converter.from_int_array(q_a)
-            query_matches.append((float(score), gapped_query, gapped_subject, j))
+            if alignment is not None:
+                score, t_a, q_a = alignment
+                gapped_subject = converter.from_int_array(t_a)
+                gapped_query = converter.from_int_array(q_a)
+                query_matches.append((float(score), gapped_query, gapped_subject, j))
 
         all_results.append(query_matches)
 

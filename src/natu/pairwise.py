@@ -1,7 +1,7 @@
 """Pairwise sequence alignment module."""
 
 from dataclasses import dataclass
-from typing import TypeVar, Callable
+from typing import TypeVar, Callable, Iterable
 
 import numpy as np
 from numpy.typing import NDArray
@@ -46,6 +46,28 @@ class Converter:
         :return: List of items in the aligned sequence (with None for gaps).
         """
         return [self.from_identifier(item) if item != self.gap_repr else None for item in int_array]
+
+
+def replace_unknowns_with_wildcards(alphabet: Iterable[str],
+                                    sequence: list[str],
+                                    wildcard_character: str) -> list[str]:
+
+    """Replace unknowns with wildcard character in sequence.
+
+    :param alphabet: Known alphabet of sequence items.
+    :param sequence: sequence of items
+    :param wildcard_character: Wildcard character
+    :return: Sequence of items where unknowns are replaced with wildcard character."""
+
+    alphabet_lookup = set(alphabet)
+    new_sequence = []
+    for item in sequence:
+        if item in alphabet_lookup:
+            new_sequence.append(item)
+        else:
+            new_sequence.append(wildcard_character)
+
+    return new_sequence
 
 
 def _pairwise_alignment(

@@ -8,3 +8,5 @@ aligner:
 matrix:
   chirality_aware_scoring: true
   methylation_aware_scoring: true
+  wildcard_for_unknowns: false
+  wildcard_character: "X"

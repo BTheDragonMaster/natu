@@ -8,6 +8,7 @@ from natu.aligner import substitution_matrices
 from natu.variants import Modification, Variant, parse_variants
 from natu.constants import StructureData, MatrixOptions
 
+
 def load_matrix_options(matrix_options: MatrixOptions) -> pd.DataFrame:
     """Return dataframe containing scoring matrix from MatrixOptions enum
 
@@ -20,6 +21,69 @@ def load_matrix_options(matrix_options: MatrixOptions) -> pd.DataFrame:
             raise ValueError("Score row names and column names must be identical and in the same order")
 
     return scores
+
+
+def get_average_self_score(df: pd.DataFrame) -> float:
+    """
+    Obtain average substrate self score from matrix diagonal
+
+    :param df: substitution matrix
+    :return: average self score
+    """
+
+    diagonal = np.diag(df)
+    mean_score = diagonal.mean()
+    return mean_score
+
+
+def get_min_scores(df: pd.DataFrame) -> pd.Series:
+    """
+    Obtain the minimal score per substrate, based on that substrate's row
+
+    :param df: substitution matrix
+    :return: Series indexed by substrate, giving the min score per row
+    """
+    return df.min(axis=1)
+
+
+def add_wildcard(df: pd.DataFrame, config: dict[str, Any]) -> pd.DataFrame:
+    """
+    Add a wildcard substrate to the matrix
+
+    :param df: substitution matrix
+    :param config: Dictionary containing NATU configuration
+    :return: expanded matrix, including the wildcard
+    """
+    matrix_config = config.get("matrix", {})
+    if not matrix_config["wildcard_for_unknowns"]:
+        return df
+
+    character = matrix_config["wildcard_character"]
+
+    self_score = get_average_self_score(df)
+    other_scores = get_min_scores(df)
+
+    if character in df.index or character in df.columns:
+        raise ValueError(f"Wildcard character '{character}' already exists in the matrix")
+
+    df = df.copy()
+
+    # 1. add the wildcard column (one new value per existing row)
+    df[character] = other_scores
+
+    new_row = pd.concat([other_scores, pd.Series({character: self_score})])
+    new_row = new_row.reindex(df.columns)
+
+    assert new_row.isna().sum() == 0, "New row contains missing values before assignment"
+
+    # 2. add the wildcard row (one new value per existing column, including the new one)
+    df.loc[character] = new_row
+
+    assert df.isna().sum().sum() == 0, "Matrix contains missing values after adding wildcard"
+    assert df.shape[0] == df.shape[1], f"Matrix not square: {df.shape}"
+
+    return df
+
 def expand_substitution_matrix(df: pd.DataFrame, config: dict[str, Any]) -> pd.DataFrame:
     """Expand substitution matrix with structure variants
 
@@ -121,6 +185,7 @@ def create_substitution_matrix(df: pd.DataFrame, config: dict[str, Any]) -> subs
     """
 
     df = expand_substitution_matrix(df, config)
+    df = add_wildcard(df, config)
 
     if df.shape[0] != df.shape[1]:
         raise ValueError(f"substitution matrix must be square (same number of rows and columns), got {df.shape}")

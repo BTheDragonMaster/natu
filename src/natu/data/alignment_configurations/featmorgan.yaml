@@ -1,0 +1,12 @@
+general:
+  name: "ecfp"
+aligner:
+  open_internal_gap_score: -0.5
+  extend_internal_gap_score: -0.1
+  open_end_gap_score: -0.2
+  extend_end_gap_score: -0.05
+matrix:
+  chirality_aware_scoring: true
+  methylation_aware_scoring: true
+  wildcard_for_unknowns: false
+  wildcard_character: "X"

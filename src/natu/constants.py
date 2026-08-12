@@ -16,6 +16,7 @@ class StructureData(Enum):
     """
     MATCH_MISMATCH = "match_mismatch.variants.tsv"
     PARAS_BASED = "paras_based.variants.tsv"
+    ECFP = "ecfp.variants.tsv"
 
     @property
     def resource(self) -> Traversable:
@@ -65,6 +66,8 @@ class MatrixOptions(Enum):
     MATCH_MISMATCH_METHYLATION = "match_mismatch.methylation.tsv"
     PARAS_BASED_CHIRALITY = "paras_based.chirality.tsv"
     PARAS_BASED_METHYLATION = "paras_based.methylation.tsv"
+    ECFP_CHIRALITY = "ecfp.chirality.tsv"
+    ECFP_METHYLATION = "ecfp.methylation.tsv"
 
     @property
     def resource(self) -> Traversable:
@@ -116,6 +119,7 @@ class AlignmentConfiguration(Enum):
 
     MATCH_MISMATCH = "match_mismatch.yaml"
     PARAS_BASED = "paras_based.yaml"
+    ECFP = "ecfp.yaml"
 
     @property
     def resource(self) -> Traversable:
@@ -155,6 +159,7 @@ class SubstitutionMatrix(Enum):
 
     MATCH_MISMATCH = "match_mismatch.txt"
     PARAS_BASED = "paras_based.txt"
+    ECFP = "ecfp.txt"
 
     @property
     def resource(self) -> Traversable:
@@ -188,8 +193,5 @@ class SubstitutionMatrix(Enum):
         Return the packaged alignment configuration file.
         :return: alignment configuration.
         """
-        matrix_to_config: dict[SubstitutionMatrix, AlignmentConfiguration] = {SubstitutionMatrix.MATCH_MISMATCH: AlignmentConfiguration.MATCH_MISMATCH,
-                                                                              SubstitutionMatrix.PARAS_BASED: AlignmentConfiguration.PARAS_BASED}
-        return matrix_to_config[self]
 
-
+        return AlignmentConfiguration[self.name]

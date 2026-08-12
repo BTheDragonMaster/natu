@@ -17,6 +17,7 @@ class StructureData(Enum):
     MATCH_MISMATCH = "match_mismatch.variants.tsv"
     PARAS_BASED = "paras_based.variants.tsv"
     ECFP = "ecfp.variants.tsv"
+    FEATMORGAN = "featmorgan.variants.tsv"
 
     @property
     def resource(self) -> Traversable:
@@ -68,6 +69,8 @@ class MatrixOptions(Enum):
     PARAS_BASED_METHYLATION = "paras_based.methylation.tsv"
     ECFP_CHIRALITY = "ecfp.chirality.tsv"
     ECFP_METHYLATION = "ecfp.methylation.tsv"
+    FEATMORGAN_CHIRALITY = "featmorgan.chirality.tsv"
+    FEATMORGAN_METHYLATION = "featmorgan.methylation.tsv"
 
     @property
     def resource(self) -> Traversable:
@@ -120,6 +123,7 @@ class AlignmentConfiguration(Enum):
     MATCH_MISMATCH = "match_mismatch.yaml"
     PARAS_BASED = "paras_based.yaml"
     ECFP = "ecfp.yaml"
+    FEATMORGAN = "featmorgan.yaml"
 
     @property
     def resource(self) -> Traversable:
@@ -160,6 +164,7 @@ class SubstitutionMatrix(Enum):
     MATCH_MISMATCH = "match_mismatch.txt"
     PARAS_BASED = "paras_based.txt"
     ECFP = "ecfp.txt"
+    FEATMORGAN = "featmorgan.txt"
 
     @property
     def resource(self) -> Traversable:

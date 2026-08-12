@@ -3,14 +3,14 @@
 import argparse
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 import numpy as np
 import pandas as pd
 import yaml
 
 from natu.aligner import setup_aligner, substitution_matrices
-from natu.pairwise import Converter
+from natu.pairwise import Converter, replace_unknowns_with_wildcards
 from natu.msa import calculate_msa
 from natu.search import search
 from natu.constants import GAP_REPR, AlignmentConfiguration, SubstitutionMatrix
@@ -187,6 +187,29 @@ def deep_update(base: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
 
     return base
 
+def process_sequences(alphabet: Iterable[str], sequences: list[list[str]], config: dict[str, Any]) -> list[list[str]]:
+    """
+    Process a list of sequences.
+
+    :param alphabet: Known alphabet of sequence items.
+    :param sequences: list of sequences to process
+    :param config: alignment configuration
+    :return: list of processed sequences
+    """
+
+    matrix_config = config.get("matrix", {})
+
+    if not matrix_config["wildcard_for_unknowns"]:
+        return sequences
+    else:
+        new_sequences = []
+
+        for sequence in sequences:
+            new_sequence = replace_unknowns_with_wildcards(alphabet, sequence, matrix_config["wildcard_character"])
+            new_sequences.append(new_sequence)
+
+        return new_sequences
+
 
 def load_config(config_file: Path | None = None, matrix_type: SubstitutionMatrix | None = None) -> dict[str, Any]:
     """
@@ -345,6 +368,7 @@ def main() -> None:
             aligner = setup_aligner(substitution_matrix=substitution_matrix, **aligner_config)
 
             headers, sequences = zip(*read_monomer_fasta(args.fasta))
+            sequences = process_sequences(alphabet, sequences, config)
 
             aligned, new_order = calculate_msa(
                 aligner=aligner,
@@ -366,8 +390,10 @@ def main() -> None:
                                     **aligner_config)
 
             query_headers, query_sequences = zip(*read_monomer_fasta(args.query))
+            query_sequences = process_sequences(alphabet, query_sequences, config)
+
             subject_headers, subject_sequences = zip(*read_monomer_fasta(args.fasta))
-            subject_headers, subject_sequences = zip(*read_monomer_fasta(args.fasta))
+            subject_sequences = process_sequences(alphabet, subject_sequences, config)
 
             search_results = search(
                 aligner=aligner,

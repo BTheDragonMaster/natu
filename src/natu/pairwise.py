@@ -1,7 +1,7 @@
 """Pairwise sequence alignment module."""
 
 from dataclasses import dataclass
-from typing import TypeVar, Callable
+from typing import TypeVar, Callable, Iterable
 
 import numpy as np
 from numpy.typing import NDArray
@@ -48,12 +48,34 @@ class Converter:
         return [self.from_identifier(item) if item != self.gap_repr else None for item in int_array]
 
 
+def replace_unknowns_with_wildcards(alphabet: Iterable[str],
+                                    sequence: list[str],
+                                    wildcard_character: str) -> list[str]:
+
+    """Replace unknowns with wildcard character in sequence.
+
+    :param alphabet: Known alphabet of sequence items.
+    :param sequence: sequence of items
+    :param wildcard_character: Wildcard character
+    :return: Sequence of items where unknowns are replaced with wildcard character."""
+
+    alphabet_lookup = set(alphabet)
+    new_sequence = []
+    for item in sequence:
+        if item in alphabet_lookup:
+            new_sequence.append(item)
+        else:
+            new_sequence.append(wildcard_character)
+
+    return new_sequence
+
+
 def _pairwise_alignment(
     aligner: PairwiseAligner,
     t: NDArray[np.int32],
     q: NDArray[np.int32],
     gap_repr: np.int32 = np.int32(-1),
-) -> tuple[float, NDArray[np.int32], NDArray[np.int32]]:
+) -> tuple[float, NDArray[np.int32], NDArray[np.int32]] | None:
     """
     Align two sequences and return the alignment result.
 
@@ -66,12 +88,27 @@ def _pairwise_alignment(
     """
     alignments = aligner.align(seqA=t, seqB=q)
 
+    if not alignments:
+        return None
+
     # Pick first alignment
     alignment = alignments[0]
     score = alignments[0].score
 
     t_a: list[np.int32] = []
     q_a: list[np.int32] = []
+
+    # --- Handle unaligned prefix (relevant for local alignment) ---
+    t_start = alignment.coordinates[0][0]
+    q_start = alignment.coordinates[1][0]
+
+    if t_start > 0:
+        t_a.extend(t[0:t_start])
+        q_a.extend([gap_repr] * t_start)
+    if q_start > 0:
+        t_a.extend([gap_repr] * q_start)
+        q_a.extend(q[0:q_start])
+
     for i in range(alignment.coordinates.shape[1] - 1):
         a = alignment.coordinates[0][i:i + 2]
         b = alignment.coordinates[1][i:i + 2]
@@ -88,6 +125,20 @@ def _pairwise_alignment(
             q_a.extend([gap_repr] * len_a)
         else:
             raise ValueError("Invalid alignment coordinates!")
+
+    # --- Handle unaligned suffix (relevant for local alignment) ---
+    t_end = alignment.coordinates[0][-1]
+    q_end = alignment.coordinates[1][-1]
+
+    t_suffix_len = len(t) - t_end
+    q_suffix_len = len(q) - q_end
+
+    if t_suffix_len > 0:
+        t_a.extend(t[t_end:])
+        q_a.extend([gap_repr] * t_suffix_len)
+    if q_suffix_len > 0:
+        t_a.extend([gap_repr] * q_suffix_len)
+        q_a.extend(q[q_end:])
 
     return score, np.array(t_a, dtype=np.int32), np.array(q_a, dtype=np.int32)
 

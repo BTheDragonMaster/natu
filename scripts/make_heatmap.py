@@ -1,3 +1,5 @@
+"""Make heatmap of substitution matrix"""
+
 from argparse import ArgumentParser, Namespace
 
 import pandas as pd
@@ -37,11 +39,12 @@ def main() -> None:
         figsize=(15, 15)  # Size of the entire visual block
     )
 
+    font_size = round(750 / len(linkage_matrix))
     plt.setp(g.ax_heatmap.get_xticklabels(), rotation=45, ha='right')
     g.ax_row_dendrogram.set_visible(False)
     g.ax_col_dendrogram.set_visible(False)
-    plt.setp(g.ax_heatmap.get_xticklabels(), rotation=90, ha='right', fontsize=3)
-    plt.setp(g.ax_heatmap.get_yticklabels(), rotation=0, fontsize=3)
+    plt.setp(g.ax_heatmap.get_xticklabels(), rotation=90, ha='right', fontsize=font_size)
+    plt.setp(g.ax_heatmap.get_yticklabels(), rotation=0, fontsize=font_size)
     plt.savefig(args.output)
 
 if __name__ == "__main__":

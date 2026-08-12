@@ -1,3 +1,7 @@
+"""Script for printing specific element from substitution matrix"""
+
+from argparse import ArgumentParser
+
 from argparse import ArgumentParser, Namespace
 
 import pandas as pd

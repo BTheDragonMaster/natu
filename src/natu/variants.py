@@ -60,6 +60,7 @@ class Variant:
     """
     name: str
     smiles: str
+    structure: Structure
     base: Variant | None
     chirality: Chirality
     n_methylation: NMethylation
@@ -153,7 +154,7 @@ def get_d_structure(structure: Structure) -> Structure | None:
         epimerization(c1_atoms_aa[0])
         return structure
     else:
-        print(f"More than one chiral centre found")
+        logger.debug(f"More than one chiral centre found")
         return None
 
 
@@ -181,7 +182,7 @@ def get_nme_structure(structure: Structure) -> Structure | None:
             structure = methylation(n_atom, structure)
             return structure
     else:
-        print("More than one methylation site found")
+        logger.debug("More than one methylation site found")
         return None
 
 
@@ -286,7 +287,6 @@ def get_variant_name(name: str,
     :param modifications: list of modifications of the variant compared to the base structure
     :return: name of the variant
     """
-
     if Modification.chirality in modifications:
         chirality_config = tailoring_config.get("chirality", {})
         chirality_prefixes = chirality_config["nomenclature"]
@@ -306,14 +306,22 @@ def get_variant_name(name: str,
             existing_chirality_prefix = None
 
         allo_prefix = ""
-        if has_chiral_beta_carbon(structure):
-            allo_prefix = chirality_config["allo_prefix"]
+        add_allo_prefix = True
+        for excluded_substring in chirality_config["allo_exclusions"]:
+            if excluded_substring in name:
+                add_allo_prefix = False
+
+        if has_chiral_beta_carbon(structure) and add_allo_prefix:
+            if chirality_config["allo_prefix"] in name:
+                name = name.replace(chirality_config["allo_prefix"], '')
+            else:
+                allo_prefix = chirality_config["allo_prefix"]
 
         if existing_chirality_prefix is not None:
-
             name = allo_prefix + name.replace(existing_chirality_prefix, chirality_prefixes[existing_chirality_prefix])
         else:
             name = chirality_prefixes[existing_chirality_prefix] + allo_prefix + name
+
 
     if Modification.n_methylation in modifications:
         n_methylation_config = tailoring_config.get("n_methylation", {})
@@ -346,11 +354,12 @@ def compute_variants(name: str, smiles: str, tailoring_config: dict[str, Any]) -
     if chirality_config["chirality_aware_scoring"]:
         d_structure = get_d_structure(structure)
 
-    if n_methylation_config["methylation_aware_scoring"]:
+    if n_methylation_config["n_methylation_aware_scoring"]:
         nme_structure = get_nme_structure(structure)
 
     base = Variant(name=name,
                    smiles=smiles,
+                   structure=structure,
                    base=None,
                    chirality=Chirality.X,
                    n_methylation=NMethylation.X, modifications=[])
@@ -366,6 +375,7 @@ def compute_variants(name: str, smiles: str, tailoring_config: dict[str, Any]) -
 
         variant = Variant(name=nme_name,
                           smiles=structure_to_smiles(nme_structure),
+                          structure=nme_structure,
                           base=base,
                           chirality=Chirality.X,
                           n_methylation=NMethylation.Y,
@@ -381,6 +391,7 @@ def compute_variants(name: str, smiles: str, tailoring_config: dict[str, Any]) -
 
         variant = Variant(name=d_name,
                           smiles=structure_to_smiles(d_structure),
+                          structure=d_structure,
                           base=base,
                           chirality=Chirality.D,
                           n_methylation=base.n_methylation,
@@ -396,6 +407,7 @@ def compute_variants(name: str, smiles: str, tailoring_config: dict[str, Any]) -
 
         variant = Variant(name=nme_d_name,
                           smiles=structure_to_smiles(nme_d_structure),
+                          structure=nme_d_structure,
                           base=base,
                           chirality=Chirality.D,
                           n_methylation=NMethylation.Y,
@@ -414,31 +426,30 @@ def remove_equivalents(structure_collections: list[StructureCollection]) -> list
     :return: list of structure collections with duplicate structures removed
     """
 
-    structures_to_remove: list[Variant] = []
+    structures_to_remove: list[str] = []
     for i, collection_1 in enumerate(structure_collections):
-        base_structure_1 = read_smiles(collection_1.base_structure.smiles)
-        for j, collection_2 in enumerate(structure_collections[i:]):
-            base_structure_2 = read_smiles(collection_2.base_structure.smiles)
+        base_structure_1 = collection_1.base_structure.structure
+        for j, collection_2 in enumerate(structure_collections[i + 1:]):
+            base_structure_2 = collection_2.base_structure.structure
             if is_equivalent(base_structure_1, base_structure_2):
                 logger.warning(
-                    f"Monomers {collection_1.base_structure.name} and {collection_2.base_structure.name} in SMILES list are structurally identical. If you do not want to keep both, please remove one of these from your SMILES file")
+                    f"WARNING: Monomers {collection_1.base_structure.name} and {collection_2.base_structure.name} in SMILES list are structurally identical. If you do not want to keep both, please remove one of these from your SMILES file")
             if collection_1.base_structure.name == collection_2.base_structure.name:
                 raise ValueError(f"Duplicate substrates found in SMILES input file: {collection_1.base_structure.name}. Please remove all duplicates.")
 
             for variant in collection_2.variants:
-                if is_equivalent(base_structure_1, read_smiles(variant.smiles)):
+                if is_equivalent(base_structure_1, variant.structure):
                     if collection_1.base_structure.name == variant.name:
-
                         logger.warning(
-                            f"Structure variant of found for {collection_1.base_structure.name} found in SMILES input file: {variant.name}. Substrate {variant.name} is treated as variant of {collection_1.base_structure.name}.")
-                        structures_to_remove.append(variant)
-                else:
-                    logger.warning(f"Structure variant of found for {collection_1.base_structure.name} found in SMILES input file with mismatching name: {variant.name}. If you do not want to keep both, please remove one of these from your SMILES file")
+                            f"WARNING: Structure variant of {variant.base.name} found in SMILES input file: {variant.name}. Substrate {variant.name} is treated as variant of {variant.base.name}.")
+                        structures_to_remove.append(variant.name)
+                    else:
+                        logger.warning(f"WARNING: Structure variant of {variant.base.name}, {collection_1.base_structure.name} found in SMILES input file with mismatching name: {variant.name}. If you do not want to keep both, please remove one of these from your SMILES file")
 
     filtered_structures: list[StructureCollection] = []
 
     for collection in structure_collections:
-        if collection.base_structure not in structures_to_remove:
+        if collection.base_structure.name not in structures_to_remove:
             filtered_structures.append(collection)
 
     return filtered_structures
@@ -473,70 +484,3 @@ def get_structure_variants(smiles_file: Path, tailoring_config: dict[str, Any], 
             variants.append(variant)
 
     return variants
-
-
-# def parse_variants(structure_data: StructureData) -> list[Variant]:
-#     """
-#     Parse structure data and return a dictionary of variants
-#
-#     :param structure_data: StructureData enum, points to packaged natu.structures variants.tsv file
-#     :return: dictionary of variant name to structure variant instance
-#     """
-#     variants: list[Variant] = []
-#
-#     with structure_data.open() as handle:
-#         df = pd.read_csv(handle, sep="\t")
-#
-#     for i, row in df.iterrows():
-#         base = Variant(name=row["substrate"],
-#                        smiles=row["smiles"],
-#                        base=None,
-#                        chirality=Chirality.X,
-#                        methylation=NMethylation.X,
-#                        modification=None)
-#
-#         variants.append(base)
-#
-#         d_var = None
-#         nme_var = None
-#
-#         if not pd.isna(row["d_substrate"]):
-#             d_var = Variant(name=row["d_substrate"],
-#                             smiles=row["d_smiles"],
-#                             base=base,
-#                             chirality=Chirality.D,
-#                             methylation=NMethylation.X,
-#                             modification=Modification.chirality)
-#             base.chirality = Chirality.L
-#             variants.append(d_var)
-#
-#         if not pd.isna(row["nme_substrate"]):
-#             nme_var = Variant(name=
-#                               row["nme_substrate"],
-#                               smiles=row["nme_smiles"],
-#                               base=base,
-#                               chirality=base.chirality,
-#                               methylation=NMethylation.Y,
-#                               modification=Modification.n_methylation)
-#             base.methylation = NMethylation.N
-#             variants.append(nme_var)
-#
-#         if not pd.isna(row["nme_d_substrate"]):
-#             nme_d_var = Variant(name=row["nme_d_substrate"],
-#                                 smiles=row["nme_d_smiles"],
-#                                 base=base,
-#                                 chirality=Chirality.D,
-#                                 methylation=NMethylation.Y,
-#                                 modification=Modification.chirality_n_methylation)
-#
-#             # This means the D-variant was N-methylatable, so becomes 'BASE' rather than 'X'
-#             if d_var is not None:
-#                 d_var.methylation = NMethylation.N
-#             else:
-#                 raise ValueError("Cannot have NMe-D variant without a D-variant. Check variants.tsv")
-#
-#             assert nme_var is not None
-#
-#             variants.append(nme_d_var)
-#
-#     return variants

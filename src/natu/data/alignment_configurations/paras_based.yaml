@@ -22,11 +22,12 @@ tailoring:
       null: "D-"   # e.g. alanine -> D-alanine
       "L-": "D-"   # e.g. L-alanine -> D-alanine
       "2S": "2R" # e.g. 2S,3S-diaminobutyric acid -> 2R,3S-diaminobutyric acid
-    allo_prefix: "allo-"
+    allo_prefix: "allo-" # If the beta-carbon is also chiral, the D-form should become allo, e.g. L-threonine -> D-allo-threonine
+    allo_exclusions: ["3S", "3R", "R-beta", "S-beta", "R-3", "S-3"] # Some substrates have absolute stereochemistry defined at the beta-carbon. In these cases, the allo-prefix is not needed.
     exclude:
       [ "branched", "2-aminoadipic acid" ] # e.g. 'aspartic acid branched' will not be epimerized to its D-form
   n_methylation: # Bonuses/penalties for N-methylation matches and mismatches
-    methylation_aware_scoring: true # If true, use N-methylation-aware scoring
+    n_methylation_aware_scoring: true # If true, use N-methylation-aware scoring
     scoring:
       y_y: 1.0  # e.g. NMe-L-alanine vs NMe-L-cysteine
       y_n: -1.0 # e.g. NMe-L-alanine vs L-cysteine

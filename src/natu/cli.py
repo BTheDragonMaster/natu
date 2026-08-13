@@ -14,7 +14,7 @@ from natu.pairwise import Converter, replace_unknowns_with_wildcards
 from natu.msa import calculate_msa
 from natu.search import search
 from natu.constants import GAP_REPR, AlignmentConfiguration, SubstitutionMatrix
-from natu.matrix import create_substitution_matrix
+from natu.scoring import create_substitution_matrix
 from natu.svg import msa_to_svg
 
 
@@ -73,12 +73,19 @@ def cli() -> argparse.Namespace:
     # NATU align
     align_parser = subparsers.add_parser("align", help="Align monomer sequences from FASTA.")
     align_parser.add_argument(
-        "-s",
+        "-m",
         "--substitution-matrix",
         type=parse_substitution_matrix,
         choices=list(SubstitutionMatrix),
         required=True,
         help="Substitution matrix to use for sequence alignment.",
+    )
+    align_parser.add_argument(
+        "-s",
+        "--smiles",
+        type=Path,
+        default=None,
+        help="Path to SMILES file to use for variant calculation and tailoring-aware scoring."
     )
     align_parser.add_argument(
         "-f", "--fasta",
@@ -135,12 +142,19 @@ def cli() -> argparse.Namespace:
         help="Path to FASTA file with subject sequences."
     )
     search_parser.add_argument(
-        "-s",
+        "-m",
         "--substitution-matrix",
         type=parse_substitution_matrix,
         choices=list(SubstitutionMatrix),
         required=True,
         help="Substitution matrix to use for sequence alignment.",
+    )
+    search_parser.add_argument(
+        "-s",
+        "--smiles",
+        type=Path,
+        default=None,
+        help="Path to SMILES file to use for variant calculation and tailoring-aware scoring."
     )
     search_parser.add_argument(
         "-o", "--output",
@@ -162,12 +176,30 @@ def cli() -> argparse.Namespace:
         help="Bitscore threshold for subject sequence inclusion."
     )
     search_parser.add_argument(
-        "-m", "--mode",
+        "-a", "--alignment_mode",
         type=str,
         choices=["global", "local"],
         default="global",
         help="Alignment mode"
     )
+
+    # NATU build
+
+    build_parser = subparsers.add_parser("build",
+                                         help="Build a substitution matrix from a SMILES or variant file.")
+
+    build_parser.add_argument('-s', "--smiles",
+                              required=True,
+                              help="Input SMILES or variant file."
+                              )
+
+    build_parser.add_argument('-m', '--matrix_type',
+                              default=SubstitutionMatrix.ECFP,
+                              type=parse_substitution_matrix,
+                              choices=list(SubstitutionMatrix),
+                              help="Type of substitution matrix to build.",
+                              )
+
     return parser.parse_args()
 
 
@@ -197,15 +229,15 @@ def process_sequences(alphabet: Iterable[str], sequences: list[list[str]], confi
     :return: list of processed sequences
     """
 
-    matrix_config = config.get("matrix", {})
+    wildcard_config = config.get("wildcard", {})
 
-    if not matrix_config["wildcard_for_unknowns"]:
+    if not wildcard_config["wildcard_for_unknowns"]:
         return sequences
     else:
         new_sequences = []
 
         for sequence in sequences:
-            new_sequence = replace_unknowns_with_wildcards(alphabet, sequence, matrix_config["wildcard_character"])
+            new_sequence = replace_unknowns_with_wildcards(alphabet, sequence, wildcard_config["wildcard_character"])
             new_sequences.append(new_sequence)
 
         return new_sequences
@@ -240,12 +272,13 @@ def load_config(config_file: Path | None = None, matrix_type: SubstitutionMatrix
     return deep_update(default_config, user_config)
 
 
-def load_substitution_matrix(substitution_matrix: SubstitutionMatrix, config: dict[str, Any]) -> substitution_matrices.Array:
+def load_substitution_matrix(substitution_matrix: SubstitutionMatrix, config: dict[str, Any], smiles_file: Path | None = None) -> substitution_matrices.Array:
     """
     Load a substitution matrix from a file or from the packaged NATU default.
 
     :param substitution_matrix: Substitution matrix to load.
     :param config: Configuration dictionary.
+    :param smiles_file: Optional path to SMILES file; necessary for tailoring-aware scoring
     :return: Substitution matrix.
     :raises ValueError: If substitution matrix is corrupt.
     """
@@ -255,7 +288,7 @@ def load_substitution_matrix(substitution_matrix: SubstitutionMatrix, config: di
     if list(df.index) != list(df.columns):
         raise ValueError("substitution matrix row names and column names must be identical and in the same order")
 
-    return create_substitution_matrix(df, config)
+    return create_substitution_matrix(df, config, smiles_file)
 
 
 def read_monomer_fasta(fasta_file: Path) -> list[tuple[str, list[str]]]:
@@ -328,7 +361,7 @@ def main() -> None:
             raise FileNotFoundError(f"{args.config} does not exist")
 
         config = load_config(args.config, args.substitution_matrix)
-        substitution_matrix = load_substitution_matrix(args.substitution_matrix, config)
+        substitution_matrix = load_substitution_matrix(args.substitution_matrix, config, args.smiles)
 
         alphabet = tuple(substitution_matrix.alphabet)
         alphabet_to_index = {symbol: np.int32(i) for i, symbol in enumerate(alphabet)}
@@ -386,7 +419,7 @@ def main() -> None:
                     handle.write(f"{aligned_sequence_str}\n")
         elif args.command == "search":
 
-            aligner = setup_aligner(substitution_matrix=substitution_matrix, mode=args.mode,
+            aligner = setup_aligner(substitution_matrix=substitution_matrix, mode=args.alignment_mode,
                                     **aligner_config)
 
             query_headers, query_sequences = zip(*read_monomer_fasta(args.query))

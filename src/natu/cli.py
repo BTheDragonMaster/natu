@@ -465,7 +465,8 @@ def main() -> None:
 
         with open(args.output, "w", encoding="utf-8") as handle:
             handle.write(svg_str)
-
+    elif args.command == "build":
+        raise NotImplementedError()
     else:
         raise ValueError(f"unknown command {args.command}")
 

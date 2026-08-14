@@ -47,9 +47,9 @@ def summarize_block_name(block: str | None) -> str:
     if not name:
         return "---"
 
-    protected_name = PROTEINOGENIC_AMINO_ACID_NAMES.get(name.lower()).capitalize()
+    protected_name = PROTEINOGENIC_AMINO_ACID_NAMES.get(name.lower())
     if protected_name is not None:
-        return protected_name
+        return protected_name.capitalize()
 
     alnum = re.sub(r"[^A-Za-z0-9]", "", name).capitalize()
 

@@ -47,11 +47,11 @@ def summarize_block_name(block: str | None) -> str:
     if not name:
         return "---"
 
-    protected_name = PROTEINOGENIC_AMINO_ACID_NAMES.get(name.lower())
+    protected_name = PROTEINOGENIC_AMINO_ACID_NAMES.get(name.lower()).capitalize()
     if protected_name is not None:
         return protected_name
 
-    alnum = re.sub(r"[^A-Za-z0-9]", "", name).upper()
+    alnum = re.sub(r"[^A-Za-z0-9]", "", name).capitalize()
 
     if not alnum:
         return "---"
@@ -74,6 +74,7 @@ def msa_to_svg(msa: list[tuple[str, list[str]]]) -> str:
 
     block_width = 42
     block_height = 28
+    block_gap = 3
     row_gap = 8
     padding = 16
 
@@ -88,26 +89,30 @@ def msa_to_svg(msa: list[tuple[str, list[str]]]) -> str:
     max_cols = max(len(sequence) for _, sequence in msa)
     row_height = block_height + row_gap
 
-    width = padding * 2 + label_width + max_cols * block_width
+    width = (
+        padding * 2
+        + label_width
+        + max_cols * block_width
+        + max(max_cols - 1, 0) * block_gap
+    )
     height = padding * 2 + len(msa) * row_height - row_gap
 
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}" role="img">',
-        "<style>",
-        "text { font-family: Menlo, Consolas, monospace; font-size: 12px; }",
-        ".seq-label { fill: #222; dominant-baseline: middle; }",
-        ".block-text { fill: #111; text-anchor: middle; dominant-baseline: middle; }",
-        ".block { stroke: #000000; stroke-width: 1; rx: 4; ry: 4; }",
-        "</style>",
     ]
+
+    header_style = (
+        f'font-family="Verdana, sans-serif" font-size="{font_size}" '
+        'fill="#222222" dominant-baseline="middle"'
+    ).format(font_size)
 
     for row_index, (header, sequence) in enumerate(msa):
         y = padding + row_index * row_height
         label_y = y + block_height / 2
 
         parts.append(
-            f'<text class="seq-label" x="{padding}" y="{label_y}">'
+            f'<text x="{padding}" y="{label_y}" {header_style}>'
             f"{escape(header)}"
             "</text>"
         )
@@ -121,16 +126,19 @@ def msa_to_svg(msa: list[tuple[str, list[str]]]) -> str:
             label = summarize_block_name(block)
             fill = "#ffffff"
 
-            x = padding + label_width + col_index * block_width
+            x = padding + label_width + col_index * (block_width + block_gap)
             text_x = x + block_width / 2
             text_y = y + block_height / 2
 
             parts.append(
-                f'<rect class="block" x="{x}" y="{y}" '
-                f'width="{block_width}" height="{block_height}" fill="{fill}" />'
+                f'<rect x="{x}" y="{y}" rx="4" ry="4" '
+                f'width="{block_width}" height="{block_height}" '
+                f'fill="{fill}" stroke="#000000" stroke-width="1" />'
             )
             parts.append(
-                f'<text class="block-text" x="{text_x}" y="{text_y}">'
+                f'<text x="{text_x}" y="{text_y}" '
+                f'font-family="Verdana, sans-serif" font-size="{font_size}" '
+                f'fill="#111111" text-anchor="middle" dominant-baseline="middle">'
                 f"{escape(label)}"
                 "</text>"
             )

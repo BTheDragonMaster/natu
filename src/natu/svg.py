@@ -6,7 +6,7 @@ from html import escape
 from natu.constants import GAP_REPR
 
 
-PROTEINOGENIC_AMINO_ACID_NAMES = {
+COMMON_AMINO_ACID_NAMES = {
     "alanine": "ALA",
     "arginine": "ARG",
     "asparagine": "ASN",
@@ -29,6 +29,9 @@ PROTEINOGENIC_AMINO_ACID_NAMES = {
     "tryptophan": "TRP",
     "tyrosine": "TYR",
     "valine": "VAL",
+    "ornithine": "ORN",
+    "2,4-diaminobutyric acid": "DAB",
+    "diaminobutyric acid": "DAB"
 }
 
 
@@ -47,7 +50,7 @@ def summarize_block_name(block: str | None) -> str:
     if not name:
         return "---"
 
-    protected_name = PROTEINOGENIC_AMINO_ACID_NAMES.get(name.lower())
+    protected_name = COMMON_AMINO_ACID_NAMES.get(name.lower())
     if protected_name is not None:
         return protected_name.capitalize()
 

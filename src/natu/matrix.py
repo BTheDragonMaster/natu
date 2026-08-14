@@ -284,22 +284,17 @@ def rescale_similarity_matrix(
     scores = S * scale + offset
 
     score_df = pd.DataFrame(scores, index=labels, columns=labels)
-    info = {
-        "s_min": s_min,
-        "s_max": s_max,
-        "scale": scale,
-        "offset": offset,
-    }
-    return score_df, info
+
+    return score_df
 
 
-def check_smiles(name_to_smiles: dict[str, str]) -> None:
-    names = list(name_to_smiles.keys())
+def check_structures(name_to_structure: dict[str, Structure]) -> None:
+    names = list(name_to_structure.keys())
     names.sort()
     for i, name_1 in enumerate(names):
-        structure_1 = read_smiles(name_to_smiles[name_1])
+        structure_1 = name_to_structure[name_1]
         for name_2 in names[i + 1:]:
-            structure_2 = read_smiles(name_to_smiles[name_2])
+            structure_2 = name_to_structure[name_2]
             if name_1 == name_2:
                 raise ValueError(f"Duplicate substrates found in SMILES input file: {name_1}. Please remove all duplicates.")
             if is_equivalent(structure_1, structure_2):
@@ -312,17 +307,21 @@ def build_substitution_matrix(smiles_file: Path,
                               out_file: Path) -> None:
 
     name_to_smiles = parse_smiles(smiles_file)
-    check_smiles(name_to_smiles)
+    structure_lookup: dict[str, Structure] = {n: read_smiles(name_to_smiles[n]) for n in name_to_smiles.keys()}
+
+    check_structures(structure_lookup)
 
     if matrix_type == SubstitutionMatrix.PARAS_BASED:
         matrix: defaultdict[str, dict[str, float]] = defaultdict(dict)
-        with as_file(StructureData.DEFAULT.resource) as path:
+        with as_file(StructureData.PARAS.resource) as path:
             natu_name_to_smiles = parse_smiles(path)
+            natu_structure_lookup: dict[str, Structure] = {n: read_smiles(natu_name_to_smiles[n]) for n in natu_name_to_smiles.keys()}
+
             name_to_natu_name: dict[str, str] = {}
-            for name, smiles in name_to_smiles.items():
+            for name, structure in structure_lookup.items():
                 natu_equivalents = []
-                for natu_name, natu_smiles in natu_name_to_smiles.items():
-                    if is_equivalent(read_smiles(smiles), read_smiles(natu_smiles)):
+                for natu_name, natu_structure in natu_structure_lookup.items():
+                    if is_equivalent(structure, natu_structure):
                         natu_equivalents.append(natu_name)
                 natu_equivalents.sort()
 

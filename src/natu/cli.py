@@ -16,6 +16,7 @@ from natu.search import search
 from natu.constants import GAP_REPR, AlignmentConfiguration, SubstitutionMatrix
 from natu.scoring import create_substitution_matrix
 from natu.svg import msa_to_svg
+from natu.matrix import build_substitution_matrix
 
 
 try:
@@ -190,6 +191,7 @@ def cli() -> argparse.Namespace:
 
     build_parser.add_argument('-s', "--smiles",
                               required=True,
+                              type=Path,
                               help="Input SMILES or variant file."
                               )
 
@@ -199,6 +201,11 @@ def cli() -> argparse.Namespace:
                               choices=list(SubstitutionMatrix),
                               help="Type of substitution matrix to build.",
                               )
+
+    build_parser.add_argument('-o', '--output',
+                              required=True,
+                              type=Path,
+                              help="Path to output file with substitution matrix.")
 
     return parser.parse_args()
 
@@ -466,7 +473,7 @@ def main() -> None:
         with open(args.output, "w", encoding="utf-8") as handle:
             handle.write(svg_str)
     elif args.command == "build":
-        raise NotImplementedError()
+        build_substitution_matrix(args.smiles, args.matrix_type, args.output)
     else:
         raise ValueError(f"unknown command {args.command}")
 

@@ -15,6 +15,7 @@ class StructureData(Enum):
     Each enum member points to a TSV file containing the variant data
     """
     DEFAULT = "smiles.tsv"
+    PARAS = "paras_smiles.tsv"
 
     @property
     def resource(self) -> Traversable:

@@ -22,7 +22,8 @@ dependencies = [
     "paras",
     "biotite",
     "networkx",
-    "rdkit"
+    "rdkit",
+    "pikachu-chem>=1.1.6"
 ]
 
 classifiers = [
@@ -67,3 +68,6 @@ natu = "natu.cli:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "integration: end-to-end tests that drive the real `natu` CLI via natu.cli.main() (slower; real project data). Select with `-m integration`, or exclude from a fast run with `-m \"not integration\"`.",
+]

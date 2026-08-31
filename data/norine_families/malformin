@@ -1,9 +1,0 @@
-malformin A1	D-Cys,D-Cys,Val,D-Leu,Ile
-malformin A2	D-Cys,D-Cys,Val,D-Leu,Val
-malformin B1	D-Cys,D-Cys,Val,D-Leu,aIle
-malformin C	D-Cys,D-Cys,Val,D-Leu,Leu
-malformin B2	D-Cys,D-Cys,Val,D-Val,Leu
-allomalformin	D-Cys,D-Cys,Ile,D-Leu,Val
-malformin B3	D-Cys,D-Cys,Val,D-Ile,Leu
-malformin B4	D-Cys,D-Cys,Val,D-Ile,Ile
-malformin B5	D-Cys,D-Cys,Val,D-Val,Ile

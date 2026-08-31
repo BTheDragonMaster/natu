@@ -1,8 +1,0 @@
-nodularin R	D-bMe-Asp,Arg,Adda,D-Glu,2Dh-Mabu
-nodularin-Har	D-bMe-Asp,Har,Adda,D-Glu,2Dh-Mabu
-motuporin	D-bMe-Asp,Val,Adda,D-Glu,2Dh-Mabu
-linear nodularin	Adda, D-Glu, 2Dh-Mabu, D-bMe-Asp, Arg
-[D-Asp1]nodularin	D-Asp, Arg, Adda, D-Glu, 2Dh-Mabu
-[DMAdda3]nodularin	D-bMe-Asp, Arg, DMAdda, D-Glu, 2Dh-Mabu
-[Dhb5]nodularin	D-bMe-Asp, Arg, Adda, D-Glu, dhAbu
-[MeO-Glu4]nodularin	D-bMe-Asp, Arg, Adda, D-MeO-Glu, 2Dh-Mabu

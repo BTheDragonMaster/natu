@@ -1,5 +1,0 @@
-query	subject	bitscore	aligned_q	s_aligned_s
-query	subject_2	26.576	alanine|threonine|2,4-diaminobutyric acid|phenylalanine|ornithine	alanine|threonine|2,4-diaminobutyric acid|tryptophan|GAP
-query	subject_1	22.478	GAP|alanine|threonine|2,4-diaminobutyric acid|phenylalanine|ornithine|GAP	alanine|GAP|GAP|2,4-diaminobutyric acid|phenylalanine|ornithine|cysteine
-query	subject_3	16.534	alanine|threonine|2,4-diaminobutyric acid|phenylalanine|ornithine|GAP	GAP|GAP|2,4-diaminobutyric acid|phenylalanine|lysine|cysteine
-query	subject_4	7.644	GAP|GAP|alanine|GAP|GAP|threonine|2,4-diaminobutyric acid|phenylalanine|ornithine	glycine|glycine|alanine|ornithine|ornithine|GAP|GAP|GAP|GAP

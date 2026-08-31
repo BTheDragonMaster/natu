@@ -68,8 +68,7 @@ def configure_glocal_end_gaps(
     aligner, since which sequence is "longer" -- and therefore which side gets freed --
     changes from pair to pair; nothing here is sticky across calls.
 
-    Biopython naming note, confirmed empirically (not from memory -- gap-score attribute
-    names are easy to get backwards): a gap in seqB with unmatched residues left over in
+    Biopython naming note: a gap in seqB with unmatched residues left over in
     seqA is scored via the *deletion* attributes; a gap in seqA with unmatched residues
     left over in seqB is scored via the *insertion* attributes. NATU's own
     ``_pairwise_alignment``/``aligner.score`` calls always pass ``t`` as seqA and ``q`` as

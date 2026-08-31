@@ -237,9 +237,16 @@ def cli() -> argparse.Namespace:
     search_parser.add_argument(
         "-a", "--alignment_mode",
         type=str,
-        choices=["global", "local"],
+        choices=["global", "local", "glocal"],
         default="global",
-        help="Alignment mode"
+        help="Alignment mode. 'glocal' (BiG-SCAPE-style) forces the shorter of each "
+             "query/subject pair to align end-to-end while leaving the longer sequence's "
+             "non-matching overhang free (unpenalized), reconfigured per pair from the "
+             "aligner's own open_end_gap_score/extend_end_gap_score (from the active "
+             "config's aligner section). Note this reopens the failure mode that "
+             "motivated switching the default to 'global': a short, low-complexity "
+             "sequence embedded inside an unrelated longer one can score a high glocal "
+             "similarity, since the longer sequence's mismatched overhang is free."
     )
 
     # NATU cluster
@@ -687,7 +694,8 @@ def main() -> None:
                 subject_sequences=subject_sequences,
                 converter=converter,
                 threshold=args.threshold,
-                trim=config.get("trim", False))
+                trim=config.get("trim", False),
+                glocal=args.alignment_mode == "glocal")
 
             with open(args.output, "w", encoding="utf-8") as handle:
                 handle.write("query\tsubject\tbitscore\taligned_q\ts_aligned_s\n")
@@ -763,21 +771,32 @@ def main() -> None:
                 raise FileNotFoundError(f"{args.network} does not exist")
 
             highlight = list(args.highlight) if args.highlight else []
+            # No name to show for a raw -H/--highlight value -- it's only ever a sequence
+            # typed on the command line, so its own legend row falls back to showing that
+            # sequence (see natu.network_viz._assign_highlight_slots).
+            highlight_names: list[str | None] = [None] * len(highlight)
 
             if args.highlight_fasta is not None:
                 if not args.highlight_fasta.is_file():
                     raise FileNotFoundError(f"{args.highlight_fasta} does not exist")
 
-                # Headers are irrelevant here -- only the monomer sequences are used, turned
-                # into the same pipe-joined string a network node's "sequence" attribute
-                # uses, so matching behaves identically whether a sequence came from -H or
-                # from this file.
+                # Sequences are turned into the same pipe-joined string a network node's
+                # "sequence" attribute uses, so matching behaves identically whether a
+                # sequence came from -H or from this file. Headers are kept alongside
+                # (not used for matching) purely so the legend can show a readable name
+                # instead of the full sequence for each --highlight-fasta entry.
                 highlight_records = read_monomer_fasta(args.highlight_fasta)
-                highlight.extend(sequence_to_label(sequence) for _, sequence in highlight_records)
+                for header, sequence in highlight_records:
+                    highlight.append(sequence_to_label(sequence))
+                    highlight_names.append(header)
 
             graph = load_network(args.network)
             write_html(
-                graph, args.output, highlight=highlight or None, highlight_contains=args.highlight_contains
+                graph,
+                args.output,
+                highlight=highlight or None,
+                highlight_contains=args.highlight_contains,
+                highlight_names=highlight_names or None,
             )
         else:
             if args.highlight:

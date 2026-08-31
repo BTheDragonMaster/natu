@@ -137,12 +137,12 @@ def expand_substitution_matrix(df: pd.DataFrame, tailoring_config: dict[str, Any
     n_methylation_config = tailoring_config.get("n_methylation", {})
 
     if not chirality_config or not n_methylation_config:
-        logger.warning("WARNING: Tailoring configuration is not set up correctly or completely. Tailoring-aware scoring is disabled.")
+        logger.debug("WARNING: Tailoring configuration is not set up correctly or completely. Tailoring-aware scoring is disabled.")
         return df
 
     if smiles_file is None:
         if n_methylation_config["n_methylation_aware_scoring"] or chirality_config["chirality_aware_scoring"]:
-            logger.warning("WARNING: No SMILES file provided; cannot expand substitution matrix for tailoring-aware scoring")
+            logger.debug("WARNING: No SMILES file provided; cannot expand substitution matrix for tailoring-aware scoring")
         return df
 
     chirality_scores: defaultdict[Chirality, dict[Chirality, float]] = load_tailoring_scores(
@@ -303,7 +303,7 @@ def check_structures(name_to_structure: dict[str, Structure]) -> None:
             if name_1 == name_2:
                 raise ValueError(f"Duplicate substrates found in SMILES input file: {name_1}. Please remove all duplicates.")
             if is_equivalent(structure_1, structure_2):
-                logger.warning(
+                logger.debug(
                     f"Monomers {name_1} and {name_2} in SMILES list are structurally identical. If you do not want to keep both, please remove one of these from your SMILES file")
 
 
@@ -336,7 +336,7 @@ def build_substitution_matrix(smiles_file: Path,
                     if name in natu_equivalents:
                         name_to_natu_name[name] = name
                     else:
-                        logger.warning(
+                        logger.debug(
                             f"Substrate {name} matches to multiple SMILES in default dataset: "
                             f"{', '.join(natu_equivalents)}. Choosing the first one. If this is "
                             f"incorrect, manually update the substitution matrix or change the "
@@ -344,7 +344,7 @@ def build_substitution_matrix(smiles_file: Path,
                             f"dataset exactly.")
                         name_to_natu_name[name] = natu_equivalents[0]
                 else:
-                    logger.warning(
+                    logger.debug(
                         f"Substrate {name} not found in default dataset. Unable to generate "
                         f"PARAS-based substitution scores for this substrate. Scores will default "
                         f"to average scores.")

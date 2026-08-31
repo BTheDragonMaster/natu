@@ -122,8 +122,11 @@ def _contains_subsequence(needle: str, haystack: str) -> bool:
 
 
 def _assign_highlight_slots(
-    graph: nx.Graph, highlight: list[str], contains: bool = False
-) -> tuple[dict[str, int], list[dict[str, object]]]:
+    graph: nx.Graph,
+    highlight: list[str],
+    contains: bool = False,
+    highlight_names: list[str | None] | None = None,
+) -> tuple[dict[str, int], dict[str, bool], list[dict[str, object]]]:
     """
     Assign cluster slots for highlight mode: only the cluster(s) containing a node that
     matches one of the requested ``highlight`` strings get a real color slot (-1, the
@@ -146,15 +149,32 @@ def _assign_highlight_slots(
     silently dropped. A query matching nothing in the network gets its own legend row
     saying so, rather than disappearing without explanation.
 
+    A matched cluster's color is shared by every node in it, but only the node(s) that
+    actually matched a query are marked as a "hit" -- the rest of the cluster is along for
+    context. Rendering (see ``network_to_html``'s HTML template) uses this to draw hits
+    opaque and their non-matching cluster-mates in the same color but translucent, so the
+    real match doesn't get visually lost among everything merely clustered with it.
+
     :param graph: Similarity network.
     :param highlight: Sequence strings to highlight, in the order given on the command line
         (i.e. ``args.highlight`` from repeated -H/--highlight flags, plus anything read from
         --highlight-fasta).
     :param contains: If True, match by containment (a node's sequence contains the query as
         a contiguous run of monomers) instead of exact equality.
-    :return: Tuple of (node -> slot mapping, legend entries). Legend entries are
-        ``{"label": str, "slot": int}``, with ``slot`` possibly -1 for a no-match or
-        "Other" row.
+    :param highlight_names: Optional display name for each entry in ``highlight``, same
+        order, ``None`` for an entry with no name (e.g. a raw -H/--highlight value, which
+        is only ever a sequence typed on the command line). Matching always happens against
+        ``highlight`` (the actual sequence) regardless of this -- names only change what the
+        legend prints, never what matches. When ``None`` or shorter than ``highlight``,
+        every entry without a corresponding name falls back to showing its sequence, same
+        as before this parameter existed.
+    :return: Tuple of (node -> slot mapping, node -> is-a-direct-hit mapping, legend
+        entries). A node with a real slot (>= 0) is either a direct hit -- it actually
+        matched a query itself, by exact or contains match depending on ``contains`` -- or
+        merely a cluster-mate of one (same cluster, same slot/color, but never matched any
+        query on its own); rendering tells the two apart by opacity, see
+        ``network_to_html``. Legend entries are ``{"label": str, "slot": int}``, with
+        ``slot`` possibly -1 for a no-match or "Other" row.
     """
     clusters = get_clusters(graph)  # largest first
 
@@ -164,6 +184,7 @@ def _assign_highlight_slots(
             node_to_cluster_idx[node] = idx
 
     node_slot: dict[str, int] = dict.fromkeys(graph.nodes, -1)
+    node_is_hit: dict[str, bool] = dict.fromkeys(graph.nodes, False)
     cluster_slot: dict[int, int] = {}
     legend_entries: list[dict[str, object]] = []
     match_kind = "contains" if contains else "exact match"
@@ -171,16 +192,28 @@ def _assign_highlight_slots(
     def matches(label: str, query: str) -> bool:
         return _contains_subsequence(query, label) if contains else label == query
 
+    names = list(highlight_names) if highlight_names is not None else []
+    names += [None] * (len(highlight) - len(names))
+
     next_slot = 0
-    for query in highlight:
+    for query, name in zip(highlight, names):
+        # The legend shows a query's name when it has one (from --highlight-fasta's
+        # headers) and falls back to the sequence itself otherwise (a raw -H value has no
+        # name to show) -- but matching is always against the sequence, never the name, so
+        # this only changes what the legend prints.
+        display = f'"{name}"' if name else f'"{query}"'
+
         matching_nodes = [node for node in graph.nodes if matches(_node_label(graph, node), query)]
 
         if not matching_nodes:
             log.warning(
                 "draw --highlight: no node in the network matches sequence %r (%s)", query, match_kind
             )
-            legend_entries.append({"label": f'"{query}" -- no match found ({match_kind})', "slot": -1})
+            legend_entries.append({"label": f"{display} -- no match found ({match_kind})", "slot": -1})
             continue
+
+        for node in matching_nodes:
+            node_is_hit[node] = True
 
         matched_cluster_indices = sorted({node_to_cluster_idx[node] for node in matching_nodes})
         newly_claimed = [ci for ci in matched_cluster_indices if ci not in cluster_slot]
@@ -196,11 +229,16 @@ def _assign_highlight_slots(
             slot = cluster_slot[matched_cluster_indices[0]]
 
         total_nodes = sum(len(clusters[ci]) for ci in matched_cluster_indices)
+        n_hits = len(matching_nodes)
         n_clusters = len(matched_cluster_indices)
         cluster_word = "cluster" if n_clusters == 1 else "clusters"
+        hit_word = "hit" if n_hits == 1 else "hits"
         legend_entries.append(
             {
-                "label": f'"{query}" ({match_kind}, {total_nodes} nodes, {n_clusters} {cluster_word})',
+                "label": (
+                    f"{display} ({match_kind}, {n_hits} {hit_word} in {total_nodes} nodes "
+                    f"across {n_clusters} {cluster_word})"
+                ),
                 "slot": slot,
             }
         )
@@ -213,7 +251,7 @@ def _assign_highlight_slots(
     if background_nodes:
         legend_entries.append({"label": f"Other ({background_nodes} nodes)", "slot": -1})
 
-    return node_slot, legend_entries
+    return node_slot, node_is_hit, legend_entries
 
 
 def _normalize_positions(
@@ -253,6 +291,7 @@ def network_to_html(
     seed: int = 0,
     highlight: list[str] | None = None,
     highlight_contains: bool = False,
+    highlight_names: list[str | None] | None = None,
 ) -> str:
     """
     Render a similarity network as a self-contained, interactive HTML page.
@@ -278,11 +317,23 @@ def network_to_html(
         "leucine|glycine" matches "serine|leucine|glycine|alanine"), instead of requiring
         the node's whole sequence to equal the query. Ignored when ``highlight`` is not
         given.
+    :param highlight_names: Optional display name for each entry in ``highlight``, same
+        order and length semantics as ``highlight`` itself (e.g. a --highlight-fasta
+        record's header). The legend shows a query's name instead of its sequence when one
+        is given, but matching is always against the sequence in ``highlight`` -- this
+        only changes what the legend prints, never what matches. The network canvas itself
+        (nodes, hover tooltip) is unaffected either way -- it always shows both a node's
+        sequence and its own header/id, regardless of highlight_names. ``None`` (default)
+        or a shorter list falls back to showing the sequence, as before this parameter
+        existed.
     :return: Complete standalone HTML document as a string.
     """
     highlight_mode = bool(highlight)
+    node_is_hit: dict[str, bool] = {}
     if highlight_mode:
-        node_slot, legend_entries = _assign_highlight_slots(graph, highlight, contains=highlight_contains)
+        node_slot, node_is_hit, legend_entries = _assign_highlight_slots(
+            graph, highlight, contains=highlight_contains, highlight_names=highlight_names
+        )
     else:
         node_slot, cluster_sizes = _assign_cluster_slots(graph)
         # Every cluster has a real color slot now (see _assign_cluster_slots), but listing
@@ -319,6 +370,12 @@ def network_to_html(
                 "x": round(x, 2),
                 "y": round(y, 2),
                 "slot": node_slot.get(node, 0),
+                # Only meaningful in highlight mode: True if this node actually matched a
+                # --highlight/--highlight-fasta query itself (exact or contains match, see
+                # highlight_contains), False if it's merely sharing a cluster/color with a
+                # node that did. Rendering uses this to draw hits opaque and their
+                # non-matching cluster-mates in the same color but translucent.
+                "hit": node_is_hit.get(node, False),
                 "degree": graph.degree[node],
             }
         )
@@ -342,6 +399,7 @@ def network_to_html(
         "otherLight": _OTHER_COLOR_LIGHT,
         "otherDark": _OTHER_COLOR_DARK,
         "highlightMode": highlight_mode,
+        "legendMaxClusters": _LEGEND_MAX_CLUSTERS,
     }
 
     stats = (
@@ -350,7 +408,16 @@ def network_to_html(
     )
     if highlight_mode:
         mode_note = "containing" if highlight_contains else "matching"
-        stats += f" &middot; highlighting sequences {mode_note} " + ", ".join(f'"{h}"' for h in highlight)
+        query_word = "sequence" if len(highlight) == 1 else "sequences"
+        # Each query's own match detail (and full, possibly long, sequence text) already
+        # gets a row in the legend -- listing every query again here too used to make this
+        # header grow without bound for the same reason (many and/or long
+        # --highlight/--highlight-fasta queries), leaving little to no room for the
+        # network itself above the fold. Point at the (now collapsible) legend instead.
+        stats += (
+            f" &middot; highlighting {len(highlight)} {query_word} "
+            f"({mode_note}, see legend for details)"
+        )
 
     return _HTML_TEMPLATE.format(
         title=escape(title),
@@ -366,6 +433,7 @@ def write_html(
     seed: int = 0,
     highlight: list[str] | None = None,
     highlight_contains: bool = False,
+    highlight_names: list[str | None] | None = None,
 ) -> None:
     """
     Render a similarity network to an interactive HTML file.
@@ -376,9 +444,15 @@ def write_html(
     :param seed: Random seed for the spring layout.
     :param highlight: See ``network_to_html``.
     :param highlight_contains: See ``network_to_html``.
+    :param highlight_names: See ``network_to_html``.
     """
     html = network_to_html(
-        graph, title=title, seed=seed, highlight=highlight, highlight_contains=highlight_contains
+        graph,
+        title=title,
+        seed=seed,
+        highlight=highlight,
+        highlight_contains=highlight_contains,
+        highlight_names=highlight_names,
     )
     with open(output, "w", encoding="utf-8") as handle:
         handle.write(html)
@@ -437,15 +511,38 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
     position: absolute;
     top: 12px;
     left: 12px;
+    max-width: min(320px, calc(100% - 24px));
     background: var(--surface-1);
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 8px 12px;
     font-size: 12px;
     color: var(--text-secondary);
+    overflow: hidden;
   }}
-  .legend-row {{ display: flex; align-items: center; gap: 6px; margin: 3px 0; }}
-  .swatch {{ width: 10px; height: 10px; border-radius: 50%; flex: none; }}
+  .legend-header {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 600;
+    color: var(--text-primary);
+  }}
+  .legend.collapsed .legend-header {{ border-bottom: none; }}
+  .legend:not(.collapsed) .legend-header {{ border-bottom: 1px solid var(--border); }}
+  .legend-chevron {{ transition: transform 0.15s ease; flex: none; }}
+  .legend.collapsed .legend-chevron {{ transform: rotate(-90deg); }}
+  .legend-body {{
+    max-height: min(60vh, 420px);
+    overflow-y: auto;
+    padding: 8px 12px;
+  }}
+  .legend.collapsed .legend-body {{ display: none; }}
+  .legend-row {{ display: flex; align-items: flex-start; gap: 6px; margin: 3px 0; }}
+  .legend-row span {{ overflow-wrap: anywhere; }}
+  .swatch {{ width: 10px; height: 10px; border-radius: 50%; flex: none; margin-top: 3px; }}
   .hint {{
     position: absolute;
     bottom: 12px;
@@ -453,6 +550,21 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
     font-size: 11px;
     color: var(--text-muted);
   }}
+  .save-btn {{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-primary);
+    cursor: pointer;
+  }}
+  .save-btn:hover {{ background: var(--page); }}
   .tooltip {{
     position: absolute;
     pointer-events: none;
@@ -476,8 +588,15 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
 </header>
 <div class="viz-wrap">
   <canvas id="viz"></canvas>
-  <div class="legend" id="legend"></div>
+  <div class="legend" id="legend">
+    <div class="legend-header" id="legendHeader">
+      <span id="legendTitle">Legend</span>
+      <span class="legend-chevron" id="legendChevron">&#9662;</span>
+    </div>
+    <div class="legend-body" id="legendBody"></div>
+  </div>
   <div class="hint">Drag to pan &middot; scroll to zoom &middot; hover a node for details</div>
+  <button class="save-btn" id="saveBtn" type="button">Save current display</button>
   <div class="tooltip" id="tooltip"></div>
 </div>
 <script>
@@ -509,6 +628,11 @@ for (const e of DATA.edges) {{
 }}
 
 // Legend
+const legendBody = document.getElementById("legendBody");
+const legendHeader = document.getElementById("legendHeader");
+const legendChevron = document.getElementById("legendChevron");
+const legendTitle = document.getElementById("legendTitle");
+
 for (const entry of DATA.legend) {{
   const row = document.createElement("div");
   row.className = "legend-row";
@@ -519,8 +643,24 @@ for (const entry of DATA.legend) {{
   const label = document.createElement("span");
   label.textContent = entry.label;
   row.appendChild(label);
-  legendEl.appendChild(row);
+  legendBody.appendChild(row);
 }}
+
+legendTitle.textContent = `Legend (${{DATA.legend.length}})`;
+
+// Long or numerous labels (e.g. many --highlight/--highlight-fasta queries, each a full
+// pipe-joined polymer sequence) can otherwise grow this panel to cover most of the page,
+// leaving no room to see the network -- so it's collapsible, and starts collapsed
+// whenever its content would be large enough to cause that.
+const LEGEND_AUTO_COLLAPSE_CHARS = 300;
+const legendCharCount = DATA.legend.reduce((sum, entry) => sum + entry.label.length, 0);
+if (DATA.legend.length > DATA.legendMaxClusters || legendCharCount > LEGEND_AUTO_COLLAPSE_CHARS) {{
+  legendEl.classList.add("collapsed");
+}}
+
+legendHeader.addEventListener("click", () => {{
+  legendEl.classList.toggle("collapsed");
+}});
 
 let dpr = window.devicePixelRatio || 1;
 let panX = 0, panY = 0, zoom = 1;
@@ -560,10 +700,16 @@ function draw() {{
   for (const e of DATA.edges) {{
     const a = DATA.nodes[e.s], b = DATA.nodes[e.t];
     const dim = hoverIndex >= 0 && e.s !== hoverIndex && e.t !== hoverIndex;
-    // In highlight mode, edges entirely within the un-highlighted background fade further
-    // so the highlighted cluster's own edges stand out.
-    const inBackground = DATA.highlightMode && a.slot < 0 && b.slot < 0;
-    const baseAlpha = inBackground ? 0.03 : 0.10 + e.w * 0.5;
+    // In highlight mode: an edge whose endpoints aren't in any highlighted cluster fades
+    // into the background; an edge inside a highlighted cluster that doesn't touch an
+    // actual hit (both endpoints are cluster-mates, not matches themselves) is dimmer than
+    // one that does, so the real match's own edges stand out from the cluster it's in.
+    // (Both endpoints are always in the same cluster/slot -- an edge can't connect a
+    // highlighted cluster to the background -- so checking either endpoint suffices.)
+    const inBackground = DATA.highlightMode && a.slot < 0;
+    const touchesHit = !DATA.highlightMode || a.hit || b.hit;
+    const highlightedAlpha = 0.10 + e.w * 0.5;
+    const baseAlpha = inBackground ? 0.03 : (touchesHit ? highlightedAlpha : highlightedAlpha * 0.35);
     const alpha = dim ? baseAlpha * 0.4 : baseAlpha;
     const [ax, ay] = worldToScreen(a.x, a.y);
     const [bx, by] = worldToScreen(b.x, b.y);
@@ -583,18 +729,30 @@ function draw() {{
     const isHover = i === hoverIndex;
     const isNeighbor = hoverIndex >= 0 && neighbors[hoverIndex].includes(i);
     const dim = hoverIndex >= 0 && !isHover && !isNeighbor;
-    // In highlight mode, nodes outside every highlighted cluster recede into the
-    // background by default (not just on hover), so the highlighted cluster(s) pop.
-    const inBackground = DATA.highlightMode && n.slot < 0;
-    const baseAlpha = inBackground ? 0.15 : 1.0;
+    // In highlight mode: a node outside every highlighted cluster recedes into the
+    // background by default (not just on hover); a node inside a highlighted cluster that
+    // isn't itself an actual hit (--highlight/--highlight-fasta match, exact or contains
+    // per highlight_contains) shares the cluster's color but stays translucent, so the
+    // real match(es) pop out of the cluster they belong to instead of the whole cluster
+    // looking equally "highlighted".
+    let baseAlpha;
+    if (!DATA.highlightMode) {{
+      baseAlpha = 1.0;
+    }} else if (n.slot < 0) {{
+      baseAlpha = 0.15;
+    }} else if (n.hit) {{
+      baseAlpha = 1.0;
+    }} else {{
+      baseAlpha = 0.4;
+    }}
 
     ctx.globalAlpha = dim ? baseAlpha * 0.4 : baseAlpha;
     ctx.beginPath();
     ctx.arc(sx, sy, isHover ? r * 1.4 : r, 0, Math.PI * 2);
     ctx.fillStyle = colorForSlot(n.slot);
     ctx.fill();
-    if (isHover) {{
-      ctx.lineWidth = 2;
+    if (isHover || (DATA.highlightMode && n.hit)) {{
+      ctx.lineWidth = isHover ? 2 : 1.5;
       ctx.strokeStyle = isDark ? "#ffffff" : "#0b0b0b";
       ctx.stroke();
     }}
@@ -656,7 +814,14 @@ window.addEventListener("mousemove", (ev) => {{
 
   if (idx >= 0) {{
     const n = DATA.nodes[idx];
-    const clusterLabel = n.slot >= 0 ? `Cluster ${{n.slot + 1}}` : "Not highlighted";
+    let clusterLabel;
+    if (n.slot < 0) {{
+      clusterLabel = "Not highlighted";
+    }} else if (DATA.highlightMode) {{
+      clusterLabel = n.hit ? "Highlight hit" : "In highlighted cluster (not itself a hit)";
+    }} else {{
+      clusterLabel = `Cluster ${{n.slot + 1}}`;
+    }}
     const escapedLabel = String(n.label).replace(/</g, "&lt;");
     const escapedId = String(n.id).replace(/</g, "&lt;");
     tooltip.style.display = "block";
@@ -681,6 +846,79 @@ canvas.addEventListener("wheel", (ev) => {{
   panY = sy / zoom - wy;
   draw();
 }}, {{ passive: false }});
+
+function escapeXml(s) {{
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}}
+
+// Rebuilds exactly what draw() currently has on the canvas (same pan/zoom, same
+// highlight-mode opacity rules, same hit outlines) as a standalone SVG, so "the current
+// display" means literally that -- not a fresh re-layout or a reset view.
+function buildSvg() {{
+  const rect = wrap.getBoundingClientRect();
+  const w = rect.width, h = rect.height;
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--surface-1").trim() || "#ffffff";
+
+  const parts = [];
+  parts.push(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${{w}}" height="${{h}}" `
+    + `viewBox="0 0 ${{w}} ${{h}}">`
+  );
+  parts.push(`<rect x="0" y="0" width="${{w}}" height="${{h}}" fill="${{bg}}"/>`);
+
+  for (const e of DATA.edges) {{
+    const a = DATA.nodes[e.s], b = DATA.nodes[e.t];
+    const inBackground = DATA.highlightMode && a.slot < 0;
+    const touchesHit = !DATA.highlightMode || a.hit || b.hit;
+    const highlightedAlpha = 0.10 + e.w * 0.5;
+    const alpha = inBackground ? 0.03 : (touchesHit ? highlightedAlpha : highlightedAlpha * 0.35);
+    const [ax, ay] = worldToScreen(a.x, a.y);
+    const [bx, by] = worldToScreen(b.x, b.y);
+    parts.push(
+      `<line x1="${{ax.toFixed(2)}}" y1="${{ay.toFixed(2)}}" x2="${{bx.toFixed(2)}}" `
+      + `y2="${{by.toFixed(2)}}" stroke="rgba(137,135,129,${{alpha.toFixed(3)}})" stroke-width="1"/>`
+    );
+  }}
+
+  for (const n of DATA.nodes) {{
+    const [sx, sy] = worldToScreen(n.x, n.y);
+    const r = nodeRadius(n.degree) * Math.min(zoom, 1.6);
+    let fillAlpha;
+    if (!DATA.highlightMode) {{
+      fillAlpha = 1.0;
+    }} else if (n.slot < 0) {{
+      fillAlpha = 0.15;
+    }} else if (n.hit) {{
+      fillAlpha = 1.0;
+    }} else {{
+      fillAlpha = 0.4;
+    }}
+    let circle = `<circle cx="${{sx.toFixed(2)}}" cy="${{sy.toFixed(2)}}" r="${{r.toFixed(2)}}" `
+      + `fill="${{colorForSlot(n.slot)}}" fill-opacity="${{fillAlpha.toFixed(3)}}"`;
+    if (DATA.highlightMode && n.hit) {{
+      circle += ` stroke="${{isDark ? "#ffffff" : "#0b0b0b"}}" stroke-width="1.5"`;
+    }}
+    circle += `><title>${{escapeXml(n.label)}}</title></circle>`;
+    parts.push(circle);
+  }}
+
+  parts.push("</svg>");
+  return parts.join(" ");
+}}
+
+document.getElementById("saveBtn").addEventListener("click", () => {{
+  const svgText = buildSvg();
+  const blob = new Blob([svgText], {{ type: "image/svg+xml" }});
+  const url = URL.createObjectURL(blob);
+  const filename = (document.title || "natu_network").replace(/[^a-z0-9_-]+/gi, "_") + ".svg";
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}});
 
 window.addEventListener("resize", resize);
 resize();

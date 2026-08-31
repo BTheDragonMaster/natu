@@ -297,7 +297,7 @@ def get_variant_name(name: str,
             if prefix is not None and prefix in name:
                 contained_chirality_prefixes.append(prefix)
         if len(contained_chirality_prefixes) > 1:
-            logger.warning(
+            logger.debug(
                 "More than one chirality prefix found in name. Choosing longest. Chirality prefix options can be found in the alignment configuration.yaml file.")
             existing_chirality_prefix = max(contained_chirality_prefixes, key=len)
         elif len(contained_chirality_prefixes) == 1:
@@ -432,7 +432,7 @@ def remove_equivalents(structure_collections: list[StructureCollection]) -> list
         for j, collection_2 in enumerate(structure_collections[i + 1:]):
             base_structure_2 = collection_2.base_structure.structure
             if is_equivalent(base_structure_1, base_structure_2):
-                logger.warning(
+                logger.debug(
                     f"WARNING: Monomers {collection_1.base_structure.name} and {collection_2.base_structure.name} in SMILES list are structurally identical. If you do not want to keep both, please remove one of these from your SMILES file")
             if collection_1.base_structure.name == collection_2.base_structure.name:
                 raise ValueError(f"Duplicate substrates found in SMILES input file: {collection_1.base_structure.name}. Please remove all duplicates.")
@@ -440,11 +440,11 @@ def remove_equivalents(structure_collections: list[StructureCollection]) -> list
             for variant in collection_2.variants:
                 if is_equivalent(base_structure_1, variant.structure):
                     if collection_1.base_structure.name == variant.name:
-                        logger.warning(
+                        logger.debug(
                             f"WARNING: Structure variant of {variant.base.name} found in SMILES input file: {variant.name}. Substrate {variant.name} is treated as variant of {variant.base.name}.")
                         structures_to_remove.append(variant.name)
                     else:
-                        logger.warning(f"WARNING: Structure variant of {variant.base.name}, {collection_1.base_structure.name} found in SMILES input file with mismatching name: {variant.name}. If you do not want to keep both, please remove one of these from your SMILES file")
+                        logger.debug(f"WARNING: Structure variant of {variant.base.name}, {collection_1.base_structure.name} found in SMILES input file with mismatching name: {variant.name}. If you do not want to keep both, please remove one of these from your SMILES file")
 
     filtered_structures: list[StructureCollection] = []
 

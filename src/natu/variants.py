@@ -61,7 +61,7 @@ class Variant:
     name: str
     smiles: str
     structure: Structure
-    base: Variant | None
+    base: "Variant | None"
     chirality: Chirality
     n_methylation: NMethylation
     modifications: list[Modification]

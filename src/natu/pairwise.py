@@ -267,30 +267,3 @@ def _pairwise_alignment(
             q_a.extend(q[q_end:])
 
     return score, np.array(t_a, dtype=np.int32), np.array(q_a, dtype=np.int32)
-
-
-def align(
-    aligner: PairwiseAligner,
-    t: list[T],
-    q: list[T],
-    converter: Converter,
-    trim: bool
-) -> tuple[float, list[T | None], list[T | None]]:
-    """
-    Align two sequences and return the alignment result.
-
-    :param aligner: PairwiseAligner object to use for alignment
-    :param t: First sequence as a list of items.
-    :param q: Second sequence as a list of items.
-    :param converter: Converter object to convert items in sequences to integers for alignment and back.
-    :return: Tuple containing the alignment score, aligned first sequence, and aligned second sequence.
-    """
-    t_int = np.array([converter.to_identifier(item) for item in t], dtype=np.int32)
-    q_int = np.array([converter.to_identifier(item) for item in q], dtype=np.int32)
-
-    s, t_a, q_a = _pairwise_alignment(aligner=aligner, t=t_int, q=q_int, gap_repr=converter.gap_repr, trim=trim)
-
-    t_a_converted = [converter.from_identifier(item) if item != converter.gap_repr else None for item in t_a]
-    q_a_converted = [converter.from_identifier(item) if item != converter.gap_repr else None for item in q_a]
-
-    return s, t_a_converted, q_a_converted

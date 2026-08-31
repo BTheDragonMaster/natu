@@ -565,7 +565,7 @@ def read_monomer_fasta(fasta_file: Path) -> list[tuple[str, list[str]]]:
         if header is None:
             return
 
-        sequence = "".join(sequence_lines).strip()
+        sequence = "|".join(sequence_lines).strip()
         if not sequence:
             raise ValueError(f"record {header!r} has an empty sequence")
 

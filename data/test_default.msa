@@ -1,0 +1,16 @@
+>seq_8|alignment_score=5.000
+phenylalanine|tyrosine|GAP|alanine|threonine|serine|GAP
+>seq_7|alignment_score=4.500
+phenylalanine|tyrosine|glutamine|alanine|threonine|serine|GAP
+>seq_6|alignment_score=4.500
+phenylalanine|tyrosine|glutamic acid|alanine|threonine|serine|GAP
+>seq2|alignment_score=2.500
+phenylalanine|GAP|GAP|asparagine|threonine|serine|GAP
+>seq_5|alignment_score=2.500
+phenylalanine|tryptophan|aspartic acid|glycine|threonine|serine|GAP
+>seq1|alignment_score=1.800
+GAP|tryptophan|aspartic acid|GAP|threonine|serine|GAP
+>seq_4|alignment_score=2.600
+GAP|tyrosine|tryptophan|GAP|threonine|serine|cysteine
+>seq3|alignment_score=2.600
+GAP|tyrosine|glutamine|GAP|threonine|serine|cysteine

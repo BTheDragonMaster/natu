@@ -45,7 +45,7 @@ class StructureData(Enum):
         return self.resource.read_text(encoding=encoding)
 
     @classmethod
-    def from_name(cls, name: str) -> StructureData:
+    def from_name(cls, name: str) -> "StructureData":
         """
         Return the packaged structure data file.
         :return: structure data.

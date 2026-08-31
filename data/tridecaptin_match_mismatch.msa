@@ -1,0 +1,32 @@
+>Hybrid 4|alignment_score=14.600
+glycine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|isoleucine|glutamic acid|valine|D-allo-isoleucine|alanine
+>Hybrid 1|alignment_score=14.600
+glycine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|isoleucine|glutamic acid|valine|D-allo-isoleucine|alanine
+>Hybrid 3|alignment_score=13.600
+alanine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|isoleucine|glutamic acid|valine|D-allo-isoleucine|alanine
+>Hybrid 2|alignment_score=12.600
+glycine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|isoleucine|glutamic acid|isoleucine|D-allo-isoleucine|serine
+>Truncated TriD 2|alignment_score=9.900
+alanine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|isoleucine|glutamic acid|GAP|GAP|GAP
+>Truncated TriD 1|alignment_score=10.900
+glycine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|isoleucine|glutamic acid|GAP|GAP|GAP
+>Predicted new tridecaptin 4|alignment_score=11.700
+D-valine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|tryptophan|glutamic acid|isoleucine|D-allo-isoleucine|alanine
+>Predicted new tridecaptin 1|alignment_score=11.700
+D-valine|D-2,4-diaminobutyric acid|D-alanine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|phenylalanine|glutamic acid|valine|D-allo-isoleucine|alanine
+>Tridecaptin A5|alignment_score=12.700
+D-valine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|tryptophan|glutamic acid|valine|D-allo-isoleucine|alanine
+>Tridecaptin A1|alignment_score=12.700
+D-valine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|phenylalanine|glutamic acid|valine|D-allo-isoleucine|alanine
+>Predicted new tridecaptin 3|alignment_score=11.700
+D-valine|D-2,4-diaminobutyric acid|glycine|D-serine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|valine|glutamic acid|valine|D-allo-isoleucine|serine
+>Predicted new tridecaptin 2|alignment_score=9.700
+D-valine|D-2,4-diaminobutyric acid|D-alanine|D-serine|D-tryptophan|glycine|serine|D-2,4-diaminobutyric acid|phenylalanine|glutamic acid|valine|D-allo-isoleucine|alanine
+>Predicted new tridecaptin 5|alignment_score=8.700
+D-valine|D-2,4-diaminobutyric acid|D-serine|glycine|D-tryptophan|serine|2,4-diaminobutyric acid|D-2,4-diaminobutyric acid|phenylalanine|glutamic acid|isoleucine|D-allo-isoleucine|serine
+>Predicted new tridecaptin 6|alignment_score=8.800
+D-valine|D-2,4-diaminobutyric acid|D-valine|D-serine|D-tryptophan|serine|glutamine|D-2,4-diaminobutyric acid|phenylalanine|glutamic acid|valine|D-valine|arginine
+>Truncated TriE 4|alignment_score=2.750
+GAP|GAP|GAP|GAP|GAP|GAP|GAP|GAP|GAP|GAP|valine|D-allo-isoleucine|alanine
+>Truncated TriE 3|alignment_score=1.250
+GAP|GAP|GAP|GAP|GAP|GAP|GAP|GAP|GAP|GAP|isoleucine|D-allo-isoleucine|serine

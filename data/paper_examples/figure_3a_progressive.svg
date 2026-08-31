@@ -1,0 +1,278 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="957.5999999999999" height="384" viewBox="0 0 957.5999999999999 384" role="img">
+<style>
+text { font-family: Menlo, Consolas, monospace; font-size: 12px; }
+.seq-label { fill: #222; dominant-baseline: middle; }
+.block-text { fill: #111; text-anchor: middle; dominant-baseline: middle; }
+.block { stroke: #000000; stroke-width: 1; rx: 4; ry: 4; }
+</style>
+<text class="seq-label" x="16" y="30.0">A21978C3|alignment_score=97.375</text>
+<rect class="block" x="269.59999999999997" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="30.0">TRP</text>
+<rect class="block" x="353.59999999999997" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="30.0">ASN</text>
+<rect class="block" x="395.59999999999997" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="416.59999999999997" y="30.0">ASP</text>
+<rect class="block" x="437.59999999999997" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="30.0">THR</text>
+<rect class="block" x="479.59999999999997" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="30.0">GLY</text>
+<rect class="block" x="521.5999999999999" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="542.5999999999999" y="30.0">ORN</text>
+<rect class="block" x="563.5999999999999" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="584.5999999999999" y="30.0">ASP</text>
+<rect class="block" x="605.5999999999999" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="30.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="30.0">ASP</text>
+<rect class="block" x="773.5999999999999" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="30.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="30.0">SER</text>
+<rect class="block" x="857.5999999999999" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="30.0">3RM</text>
+<rect class="block" x="899.5999999999999" y="16" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="30.0">KYN</text>
+<text class="seq-label" x="16" y="66.0">A21978C2|alignment_score=97.375</text>
+<rect class="block" x="269.59999999999997" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="66.0">TRP</text>
+<rect class="block" x="353.59999999999997" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="66.0">ASN</text>
+<rect class="block" x="395.59999999999997" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="416.59999999999997" y="66.0">ASP</text>
+<rect class="block" x="437.59999999999997" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="66.0">THR</text>
+<rect class="block" x="479.59999999999997" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="66.0">GLY</text>
+<rect class="block" x="521.5999999999999" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="542.5999999999999" y="66.0">ORN</text>
+<rect class="block" x="563.5999999999999" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="584.5999999999999" y="66.0">ASP</text>
+<rect class="block" x="605.5999999999999" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="66.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="66.0">ASP</text>
+<rect class="block" x="773.5999999999999" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="66.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="66.0">SER</text>
+<rect class="block" x="857.5999999999999" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="66.0">3RM</text>
+<rect class="block" x="899.5999999999999" y="52" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="66.0">KYN</text>
+<text class="seq-label" x="16" y="102.0">A21978C1|alignment_score=97.375</text>
+<rect class="block" x="269.59999999999997" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="102.0">TRP</text>
+<rect class="block" x="353.59999999999997" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="102.0">ASN</text>
+<rect class="block" x="395.59999999999997" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="416.59999999999997" y="102.0">ASP</text>
+<rect class="block" x="437.59999999999997" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="102.0">THR</text>
+<rect class="block" x="479.59999999999997" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="102.0">GLY</text>
+<rect class="block" x="521.5999999999999" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="542.5999999999999" y="102.0">ORN</text>
+<rect class="block" x="563.5999999999999" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="584.5999999999999" y="102.0">ASP</text>
+<rect class="block" x="605.5999999999999" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="102.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="102.0">ASP</text>
+<rect class="block" x="773.5999999999999" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="102.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="102.0">SER</text>
+<rect class="block" x="857.5999999999999" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="102.0">3RM</text>
+<rect class="block" x="899.5999999999999" y="88" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="102.0">KYN</text>
+<text class="seq-label" x="16" y="138.0">daptomycin|alignment_score=97.375</text>
+<rect class="block" x="269.59999999999997" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="138.0">TRP</text>
+<rect class="block" x="353.59999999999997" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="138.0">ASN</text>
+<rect class="block" x="395.59999999999997" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="416.59999999999997" y="138.0">ASP</text>
+<rect class="block" x="437.59999999999997" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="138.0">THR</text>
+<rect class="block" x="479.59999999999997" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="138.0">GLY</text>
+<rect class="block" x="521.5999999999999" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="542.5999999999999" y="138.0">ORN</text>
+<rect class="block" x="563.5999999999999" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="584.5999999999999" y="138.0">ASP</text>
+<rect class="block" x="605.5999999999999" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="138.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="138.0">ASP</text>
+<rect class="block" x="773.5999999999999" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="138.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="138.0">SER</text>
+<rect class="block" x="857.5999999999999" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="138.0">3RM</text>
+<rect class="block" x="899.5999999999999" y="124" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="138.0">KYN</text>
+<text class="seq-label" x="16" y="174.0">A54145 F|alignment_score=44.702</text>
+<rect class="block" x="269.59999999999997" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="174.0">TRP</text>
+<rect class="block" x="311.59999999999997" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="332.59999999999997" y="174.0">GLU</text>
+<rect class="block" x="353.59999999999997" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="174.0">3HY</text>
+<rect class="block" x="437.59999999999997" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="174.0">THR</text>
+<rect class="block" x="479.59999999999997" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="174.0">GLY</text>
+<rect class="block" x="605.5999999999999" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="174.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="174.0">ASP</text>
+<rect class="block" x="689.5999999999999" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="710.5999999999999" y="174.0">LYS</text>
+<rect class="block" x="731.5999999999999" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="752.5999999999999" y="174.0">3ME</text>
+<rect class="block" x="773.5999999999999" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="174.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="174.0">ASN</text>
+<rect class="block" x="857.5999999999999" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="174.0">GLU</text>
+<rect class="block" x="899.5999999999999" y="160" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="174.0">VAL</text>
+<text class="seq-label" x="16" y="210.0">A54145 C|alignment_score=49.040</text>
+<rect class="block" x="269.59999999999997" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="210.0">TRP</text>
+<rect class="block" x="311.59999999999997" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="332.59999999999997" y="210.0">GLU</text>
+<rect class="block" x="353.59999999999997" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="210.0">3HY</text>
+<rect class="block" x="437.59999999999997" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="210.0">THR</text>
+<rect class="block" x="479.59999999999997" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="210.0">GLY</text>
+<rect class="block" x="605.5999999999999" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="210.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="210.0">ASP</text>
+<rect class="block" x="689.5999999999999" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="710.5999999999999" y="210.0">LYS</text>
+<rect class="block" x="731.5999999999999" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="752.5999999999999" y="210.0">3ME</text>
+<rect class="block" x="773.5999999999999" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="210.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="210.0">ASN</text>
+<rect class="block" x="857.5999999999999" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="210.0">3RM</text>
+<rect class="block" x="899.5999999999999" y="196" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="210.0">VAL</text>
+<text class="seq-label" x="16" y="246.0">A54145 E|alignment_score=49.010</text>
+<rect class="block" x="269.59999999999997" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="246.0">TRP</text>
+<rect class="block" x="311.59999999999997" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="332.59999999999997" y="246.0">GLU</text>
+<rect class="block" x="353.59999999999997" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="246.0">3HY</text>
+<rect class="block" x="437.59999999999997" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="246.0">THR</text>
+<rect class="block" x="479.59999999999997" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="246.0">GLY</text>
+<rect class="block" x="605.5999999999999" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="246.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="246.0">ASP</text>
+<rect class="block" x="689.5999999999999" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="710.5999999999999" y="246.0">LYS</text>
+<rect class="block" x="731.5999999999999" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="752.5999999999999" y="246.0">3ME</text>
+<rect class="block" x="773.5999999999999" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="246.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="246.0">ASN</text>
+<rect class="block" x="857.5999999999999" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="246.0">3RM</text>
+<rect class="block" x="899.5999999999999" y="232" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="246.0">ILE</text>
+<text class="seq-label" x="16" y="282.0">A54145 B|alignment_score=49.010</text>
+<rect class="block" x="269.59999999999997" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="282.0">TRP</text>
+<rect class="block" x="311.59999999999997" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="332.59999999999997" y="282.0">GLU</text>
+<rect class="block" x="353.59999999999997" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="282.0">3HY</text>
+<rect class="block" x="437.59999999999997" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="282.0">THR</text>
+<rect class="block" x="479.59999999999997" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="282.0">GLY</text>
+<rect class="block" x="605.5999999999999" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="282.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="282.0">ASP</text>
+<rect class="block" x="689.5999999999999" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="710.5999999999999" y="282.0">LYS</text>
+<rect class="block" x="731.5999999999999" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="752.5999999999999" y="282.0">3ME</text>
+<rect class="block" x="773.5999999999999" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="282.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="282.0">ASN</text>
+<rect class="block" x="857.5999999999999" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="282.0">3RM</text>
+<rect class="block" x="899.5999999999999" y="268" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="282.0">ILE</text>
+<text class="seq-label" x="16" y="318.0">A54145 D|alignment_score=44.672</text>
+<rect class="block" x="269.59999999999997" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="318.0">TRP</text>
+<rect class="block" x="311.59999999999997" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="332.59999999999997" y="318.0">GLU</text>
+<rect class="block" x="353.59999999999997" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="318.0">3HY</text>
+<rect class="block" x="437.59999999999997" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="318.0">THR</text>
+<rect class="block" x="479.59999999999997" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="318.0">GLY</text>
+<rect class="block" x="605.5999999999999" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="318.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="318.0">ASP</text>
+<rect class="block" x="689.5999999999999" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="710.5999999999999" y="318.0">LYS</text>
+<rect class="block" x="731.5999999999999" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="752.5999999999999" y="318.0">3ME</text>
+<rect class="block" x="773.5999999999999" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="318.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="318.0">ASN</text>
+<rect class="block" x="857.5999999999999" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="318.0">GLU</text>
+<rect class="block" x="899.5999999999999" y="304" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="318.0">ILE</text>
+<text class="seq-label" x="16" y="354.0">A54145 A|alignment_score=44.672</text>
+<rect class="block" x="269.59999999999997" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="290.59999999999997" y="354.0">TRP</text>
+<rect class="block" x="311.59999999999997" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="332.59999999999997" y="354.0">GLU</text>
+<rect class="block" x="353.59999999999997" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="374.59999999999997" y="354.0">3HY</text>
+<rect class="block" x="437.59999999999997" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="458.59999999999997" y="354.0">THR</text>
+<rect class="block" x="479.59999999999997" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="500.59999999999997" y="354.0">GLY</text>
+<rect class="block" x="605.5999999999999" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="626.5999999999999" y="354.0">ALA</text>
+<rect class="block" x="647.5999999999999" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="668.5999999999999" y="354.0">ASP</text>
+<rect class="block" x="689.5999999999999" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="710.5999999999999" y="354.0">LYS</text>
+<rect class="block" x="731.5999999999999" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="752.5999999999999" y="354.0">3ME</text>
+<rect class="block" x="773.5999999999999" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="794.5999999999999" y="354.0">GLY</text>
+<rect class="block" x="815.5999999999999" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="836.5999999999999" y="354.0">ASN</text>
+<rect class="block" x="857.5999999999999" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="878.5999999999999" y="354.0">GLU</text>
+<rect class="block" x="899.5999999999999" y="340" width="42" height="28" fill="#ffffff" />
+<text class="block-text" x="920.5999999999999" y="354.0">ILE</text>
+</svg>

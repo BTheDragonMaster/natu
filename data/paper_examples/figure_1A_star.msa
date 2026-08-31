@@ -1,0 +1,8 @@
+>seq_1|alignment_score=39.347
+alanine|threonine|2,4-diaminobutyric acid|phenylalanine|ornithine|GAP|GAP
+>seq_3|alignment_score=14.576
+alanine|threonine|2,4-diaminobutyric acid|tryptophan|GAP|GAP|GAP
+>seq_2|alignment_score=6.122
+alanine|GAP|2,4-diaminobutyric acid|phenylalanine|ornithine|GAP|cysteine
+>seq_4|alignment_score=-17.466
+GAP|GAP|2,4-diaminobutyric acid|phenylalanine|lysine|cysteine|GAP

@@ -17,6 +17,7 @@ def search(
     subject_sequences: list[list[T]],
     converter: Converter,
     threshold: float,
+    trim: bool = False
 ) -> list[list[tuple[float, list[T | None], list[T | None], int]]]:
     """
     Search for all subject sequences scoring above threshold, for each query sequence.
@@ -58,7 +59,7 @@ def search(
 
         for j in candidate_js:
             alignment = _pairwise_alignment(
-                aligner, int_subject_seqs[j], int_query, gap_repr=converter.gap_repr
+                aligner, int_subject_seqs[j], int_query, gap_repr=converter.gap_repr, trim=trim
             )
             if alignment is not None:
                 score, t_a, q_a = alignment

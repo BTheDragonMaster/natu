@@ -11,7 +11,7 @@ __all__ = ["PairwiseAligner", "substitution_matrices"]
 def setup_aligner(
     substitution_matrix: substitution_matrices.Array,
     *,
-    mode: Literal["global", "local"] = "global",
+    mode: Literal["global", "local", "glocal"] = "global",
     open_internal_gap_score: float = -0.5,
     extend_internal_gap_score: float = -0.1,
     open_end_gap_score: float = -0.2,
@@ -25,19 +25,30 @@ def setup_aligner(
     are often penalized less strongly when sequences may be incomplete or truncated.
 
     :param substitution_matrix: Substitution matrix used to score aligned symbols.
-    :param mode: Alignment mode. Must be either "global" or "local".
+    :param mode: Alignment mode. Must be "global", "local", or "glocal". "glocal" (as in
+        BiG-SCAPE: a shorter sequence is forced to align in full -- "both arms" -- against
+        a local region of a longer one, whose non-matching overhang goes unpenalized)
+        configures a global-mode aligner here, but that alone is NOT sufficient to get
+        glocal behavior: which side should have its end gaps freed depends on which
+        sequence in a given pair is longer, and that varies pair to pair. Every pairwise
+        alignment done with a "glocal" aligner must call
+        ``natu.pairwise.configure_glocal_end_gaps`` first, passing that pair's actual
+        lengths -- see its docstring. An aligner built with mode="glocal" that never gets
+        reconfigured that way will just behave like plain "global".
     :param open_internal_gap_score: Score for opening and internal insertion or deletion gap.
     :param extend_internal_gap_score: Score for extending and internal insertion or deletion gap.
     :param open_end_gap_score: Score for opening a left or right end insertion or deletion gap.
     :param extend_end_gap_score: Score for extending a left or right end insertion or deletion gap.
     :return: Configured Biopython PairwiseAligner instance.
-    :raises ValueError: If mode is not "global" or "local".
+    :raises ValueError: If mode is not "global", "local", or "glocal".
     """
-    if mode not in ("global", "local"):
-        raise ValueError(f"mode must be one of 'global' or 'local', got {mode}")
+    if mode not in ("global", "local", "glocal"):
+        raise ValueError(f"mode must be one of 'global', 'local', or 'glocal', got {mode}")
 
     aligner = PairwiseAligner()
-    aligner.mode = mode
+    # Biopython itself only knows "local"/"global" -- "glocal" is built on top of "global"
+    # by asymmetrically freeing one side's end gaps per pair (see configure_glocal_end_gaps).
+    aligner.mode = "global" if mode == "glocal" else mode
     aligner.substitution_matrix = substitution_matrix
     aligner.wildcard = None
 

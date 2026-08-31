@@ -289,6 +289,11 @@ def rescale_similarity_matrix(
 
 
 def check_structures(name_to_structure: dict[str, Structure]) -> None:
+    """Check for duplicate names and structures
+
+    :param name_to_structure: dict of [
+    :return:
+    """
     names = list(name_to_structure.keys())
     names.sort()
     for i, name_1 in enumerate(names):

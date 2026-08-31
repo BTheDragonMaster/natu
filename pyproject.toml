@@ -20,7 +20,8 @@ dependencies = [
     "biopython",
     "pyyaml",
     "paras",
-    "biotite"
+    "biotite",
+    "networkx"
 ]
 
 classifiers = [

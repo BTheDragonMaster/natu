@@ -102,7 +102,8 @@ def _progressive_msa(
 def _star_msa(sims: NDArray[np.float32], center_star: int | None,
               converter: Converter,
               aligner: PairwiseAligner,
-              int_seqs: list[NDArray[np.int32]]) -> tuple[NDArray[np.int32], list[float], list[int]]:
+              int_seqs: list[NDArray[np.int32]]
+              ) -> tuple[NDArray[np.int32], list[float], list[int]]:
     masked_sims = sims.copy()
     np.fill_diagonal(masked_sims, -np.inf)
 
@@ -130,7 +131,7 @@ def _star_msa(sims: NDArray[np.float32], center_star: int | None,
 
         # Always align the new sequence to the original ungapped center. Do not align against msa[0],
         # because msa[0] may already contain gap markers, which Biopython cannot accept as sequence items.
-        s, t_a, q_a = _pairwise_alignment(aligner, center_seq, q, converter.gap_repr)
+        s, t_a, q_a = _pairwise_alignment(aligner, center_seq, q, converter.gap_repr, trim=False)
 
         # Merge the new pairwise center-query alignment into the growing MSA.
         if i != 0:

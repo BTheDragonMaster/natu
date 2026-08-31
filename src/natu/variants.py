@@ -420,10 +420,25 @@ def compute_variants(name: str, smiles: str, tailoring_config: dict[str, Any]) -
 
 
 def remove_equivalents(structure_collections: list[StructureCollection]) -> list[StructureCollection]:
-    """Detect equivalent structures
+    """Remove substrate entries that duplicate a variant already generated for another substrate
+
+    For each pair of collections, checks whether one collection's computed
+    variant structures (D-/N-methylated forms) are structurally equivalent
+    to the other collection's base structure. When such a variant's name
+    also matches that base structure's name exactly (e.g. someone listed
+    "D-alanine" as its own substrate, even though it is already produced as
+    a variant of "alanine"), the redundant "D-alanine" entry is dropped.
+
+    This check is name-based, not purely structure-based: two *base*
+    structures that are structurally identical but carry different names
+    (e.g. two synonyms for the same substrate) are only logged as a debug
+    warning and are intentionally left in place, not deduplicated. Two
+    entries sharing the exact same substrate name are treated as a genuine
+    input error and raise ValueError rather than being silently resolved.
 
     :param structure_collections: list of structure collections
-    :return: list of structure collections with duplicate structures removed
+    :return: list of structure collections with redundant self-declared
+        variant entries removed
     """
 
     structures_to_remove: list[str] = []

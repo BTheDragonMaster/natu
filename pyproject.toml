@@ -20,7 +20,9 @@ dependencies = [
     "biopython",
     "pyyaml",
     "paras",
-    "biotite"
+    "biotite",
+    "networkx",
+    "rdkit"
 ]
 
 classifiers = [
@@ -62,3 +64,6 @@ include = [
 
 [project.scripts]
 natu = "natu.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

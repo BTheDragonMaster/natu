@@ -187,6 +187,47 @@ class TestExpandSubstitutionMatrix:
         result = expand_substitution_matrix(base_matrix, tailoring_config, smiles_file=None)
         assert result is base_matrix
 
+    def test_logs_when_tailoring_is_enabled_but_no_smiles_file_is_given(self, base_matrix, tailoring_config, caplog):
+        """There is no exception raised anywhere for "tailoring-aware
+        scoring is on but no --smiles was given" -- expansion is just
+        silently skipped (see the test above). This is the only signal
+        that a matrix expected to have tailoring bonuses baked into it
+        was actually returned as-is: a debug-level log line, previously
+        untested. If the caller's alphabet doesn't happen to need any of
+        the never-generated variants, nothing downstream ever notices;
+        if it does, the failure surfaces much later and generically, as
+        natu.cli's "symbol ... was not found in the substitution matrix
+        alphabet" (see test_align.py's
+        test_smiles_flag_expands_the_alphabet_with_tailoring_variants)."""
+        assert tailoring_config["chirality"]["chirality_aware_scoring"] is True
+        assert tailoring_config["n_methylation"]["n_methylation_aware_scoring"] is True
+
+        with caplog.at_level(logging.DEBUG, logger="natu.matrix"):
+            expand_substitution_matrix(base_matrix, tailoring_config, smiles_file=None)
+
+        assert "No SMILES file provided" in caplog.text
+        assert "cannot expand substitution matrix" in caplog.text
+
+    def test_does_not_log_the_no_smiles_message_when_tailoring_is_off(self, caplog):
+        """The 'no SMILES file' debug message is conditioned on tailoring
+        actually being enabled -- with both scoring flags off, smiles_file
+        being None is a complete non-issue and must not log that message
+        (a different, earlier debug line covers a genuinely incomplete
+        config; this is a fully *complete* config with scoring disabled)."""
+        base_matrix = pd.DataFrame(
+            [[10.0, 2.0], [2.0, 8.0]], index=["alanine", "glycine"], columns=["alanine", "glycine"]
+        )
+        tailoring_config = {
+            "chirality": {"chirality_aware_scoring": False},
+            "n_methylation": {"n_methylation_aware_scoring": False},
+        }
+
+        with caplog.at_level(logging.DEBUG, logger="natu.matrix"):
+            result = expand_substitution_matrix(base_matrix, tailoring_config, smiles_file=None)
+
+        assert result is base_matrix
+        assert "No SMILES file provided" not in caplog.text
+
     def test_does_not_mutate_the_input_matrix(self, base_matrix, tailoring_config, smiles_file):
         original = base_matrix.copy()
         expand_substitution_matrix(base_matrix, tailoring_config, smiles_file)

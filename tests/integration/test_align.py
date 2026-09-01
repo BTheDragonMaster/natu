@@ -3,14 +3,16 @@ end-to-end via natu.cli.main().
 """
 
 from __future__ import annotations
+from pathlib import Path
 
 import pytest
 
 
-def _write_custom_matrix(path, rows):
+def _write_custom_matrix(path: Path, rows: list[tuple[str, list[float]]]):
     """Write a tab-separated custom substitution matrix file: rows is a
     list of (name, [scores...]) in the same order as the header."""
     names = [name for name, _ in rows]
+    # Header row
     lines = ["\t" + "\t".join(names)]
     for name, scores in rows:
         lines.append(name + "\t" + "\t".join(f"{s:.1f}" for s in scores))
@@ -74,6 +76,16 @@ class TestAlign:
         get_structure_variants) over the complete real substrate list.
         Confirmed by actually running both the without- and with-`-s`
         cases first, not assumed.
+
+        Note on the without-`-s` failure mode: there is no dedicated
+        "a SMILES file is required for tailoring-aware expansion" error
+        anywhere in NATU. When smiles_file is None, expand_substitution_matrix
+        silently skips expansion (only a natu.matrix debug-level log fires,
+        see test_matrix.py's TestExpandSubstitutionMatrix -- specifically
+        test_logs_when_tailoring_is_enabled_but_no_smiles_file_is_given).
+        The ValueError asserted below is a later, unrelated, and much more
+        generic failure: cli.py simply can't find novel_variant in the
+        (unexpanded) matrix alphabet once alignment actually starts.
         """
         novel_variant = "(2R,3R)-2-amino-3-hydroxy-4-(4-nitrophenyl)butanoic acid"
         fasta = tmp_path / "in.fasta"

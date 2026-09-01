@@ -202,7 +202,7 @@ class TestExpandSubstitutionMatrix:
         assert tailoring_config["chirality"]["chirality_aware_scoring"] is True
         assert tailoring_config["n_methylation"]["n_methylation_aware_scoring"] is True
 
-        with caplog.at_level(logging.DEBUG, logger="natu.matrix"):
+        with caplog.at_level(logging.WARNING, logger="natu.matrix"):
             expand_substitution_matrix(base_matrix, tailoring_config, smiles_file=None)
 
         assert "No SMILES file provided" in caplog.text
@@ -222,7 +222,7 @@ class TestExpandSubstitutionMatrix:
             "n_methylation": {"n_methylation_aware_scoring": False},
         }
 
-        with caplog.at_level(logging.DEBUG, logger="natu.matrix"):
+        with caplog.at_level(logging.WARNING, logger="natu.matrix"):
             result = expand_substitution_matrix(base_matrix, tailoring_config, smiles_file=None)
 
         assert result is base_matrix

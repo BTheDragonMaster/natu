@@ -137,12 +137,12 @@ def expand_substitution_matrix(df: pd.DataFrame, tailoring_config: dict[str, Any
     n_methylation_config = tailoring_config.get("n_methylation", {})
 
     if not chirality_config or not n_methylation_config:
-        logger.debug("WARNING: Tailoring configuration is not set up correctly or completely. Tailoring-aware scoring is disabled.")
+        logger.warning("WARNING: Tailoring configuration is not set up correctly or completely. Tailoring-aware scoring is disabled.")
         return df
 
     if smiles_file is None:
         if n_methylation_config["n_methylation_aware_scoring"] or chirality_config["chirality_aware_scoring"]:
-            logger.debug("WARNING: No SMILES file provided; cannot expand substitution matrix for tailoring-aware scoring")
+            logger.warning("WARNING: No SMILES file provided; cannot expand substitution matrix for tailoring-aware scoring")
         return df
 
     chirality_scores: defaultdict[Chirality, dict[Chirality, float]] = load_tailoring_scores(

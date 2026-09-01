@@ -14,6 +14,7 @@ import pytest
 from Bio.Align import PairwiseAligner, substitution_matrices
 
 from natu.aligner import setup_aligner
+from natu.constants import AlignmentMode
 from natu.pairwise import Converter
 
 # Note: natu.variants used to have a self-referential dataclass field
@@ -63,13 +64,13 @@ def substitution_matrix() -> substitution_matrices.Array:
 @pytest.fixture
 def make_aligner():
     """
-    Factory fixture: ``make_aligner(mode="global", **gap_kwargs)`` builds a
-    real ``PairwiseAligner`` over the shared test alphabet via
+    Factory fixture: ``make_aligner(mode=AlignmentMode.GLOBAL, **gap_kwargs)``
+    builds a real ``PairwiseAligner`` over the shared test alphabet via
     ``natu.aligner.setup_aligner``, so tests exercise NATU's own aligner
     setup code rather than a hand-rolled one.
     """
 
-    def _make(mode: str = "global", **gap_kwargs) -> PairwiseAligner:
+    def _make(mode: AlignmentMode = AlignmentMode.GLOBAL, **gap_kwargs) -> PairwiseAligner:
         return setup_aligner(_substitution_matrix(), mode=mode, **gap_kwargs)
 
     return _make

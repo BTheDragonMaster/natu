@@ -14,7 +14,7 @@ from natu.aligner import setup_aligner, substitution_matrices
 from natu.pairwise import Converter, replace_unknowns_with_wildcards
 from natu.msa import calculate_msa
 from natu.search import search
-from natu.constants import GAP_REPR, AlignmentConfiguration, SubstitutionMatrix
+from natu.constants import GAP_REPR, AlignmentConfiguration, AlignmentMode, SubstitutionMatrix
 from natu.scoring import create_substitution_matrix
 from natu.svg import msa_to_svg
 from natu.matrix import build_substitution_matrix
@@ -33,24 +33,58 @@ except PackageNotFoundError:
     __version__ = "unknown"
 
 
-def parse_substitution_matrix(value: str) -> SubstitutionMatrix:
+def parse_substitution_matrix(value: str) -> SubstitutionMatrix | Path:
     """
-    Parse a substitution matrix enum from a command line value.
+    Parse a substitution matrix from a command line value.
 
-    Accepts enum names case-insensitively, for example:
-    MATCH_MISMATCH, match_mismatch, PARAS_BASED, paras_based.
+    First tries to match a built-in substitution matrix by name, case-insensitively,
+    for example: MATCH_MISMATCH, match_mismatch, PARAS_BASED, paras_based. If that
+    does not match, falls back to treating the value as a path to a custom
+    substitution matrix file (same format as a packaged one: tab-separated, with
+    identical row and column labels) -- so a custom matrix is usable anywhere a
+    built-in one is, without a matching packaged alignment config existing for it
+    (see load_config's DEFAULT fallback for what alignment settings apply then).
 
     :param value: Command line value.
-    :return: SubstitutionMatrix enum member.
-    :raises argparse.ArgumentTypeError: If value does not match a substitution matrix.
+    :return: SubstitutionMatrix enum member, or a Path to a custom matrix file.
+    :raises argparse.ArgumentTypeError: If value matches neither a built-in
+        substitution matrix nor an existing file.
     """
     normalized = value.upper()
 
     try:
         return SubstitutionMatrix[normalized]
+    except KeyError:
+        pass
+
+    path = Path(value)
+    if path.is_file():
+        return path
+
+    valid = ", ".join(matrix.name.lower() for matrix in SubstitutionMatrix)
+    raise argparse.ArgumentTypeError(
+        f"invalid substitution matrix {value!r}; choose from: {valid}, "
+        f"or a path to an existing custom substitution matrix file"
+    )
+
+
+def parse_alignment_mode(value: str) -> AlignmentMode:
+    """
+    Parse an alignment mode enum from a command line value.
+
+    Accepts enum names case-insensitively, for example: GLOBAL, global, GLOCAL, glocal.
+
+    :param value: Command line value.
+    :return: AlignmentMode enum member.
+    :raises argparse.ArgumentTypeError: If value does not match an alignment mode.
+    """
+    normalized = value.upper()
+
+    try:
+        return AlignmentMode[normalized]
     except KeyError as error:
-        valid = ", ".join(matrix.name.lower() for matrix in SubstitutionMatrix)
-        raise argparse.ArgumentTypeError(f"invalid substitution matrix {value!r}; choose from: {valid}") from error
+        valid = ", ".join(mode.name.lower() for mode in AlignmentMode)
+        raise argparse.ArgumentTypeError(f"invalid alignment mode {value!r}; choose from: {valid}") from error
 
 
 def cli() -> argparse.Namespace:
@@ -83,9 +117,10 @@ def cli() -> argparse.Namespace:
         "-m",
         "--substitution-matrix",
         type=parse_substitution_matrix,
-        choices=list(SubstitutionMatrix),
         required=True,
-        help="Substitution matrix to use for sequence alignment.",
+        help="Substitution matrix to use for sequence alignment: a built-in name "
+             f"({', '.join(m.name.lower() for m in SubstitutionMatrix)}), or a path "
+             "to a custom tab-separated substitution matrix file.",
     )
 
     align_parser.add_argument(
@@ -204,9 +239,10 @@ def cli() -> argparse.Namespace:
         "-m",
         "--substitution-matrix",
         type=parse_substitution_matrix,
-        choices=list(SubstitutionMatrix),
         required=True,
-        help="Substitution matrix to use for sequence alignment.",
+        help="Substitution matrix to use for sequence alignment: a built-in name "
+             f"({', '.join(m.name.lower() for m in SubstitutionMatrix)}), or a path "
+             "to a custom tab-separated substitution matrix file.",
     )
     search_parser.add_argument(
         "-s",
@@ -236,9 +272,10 @@ def cli() -> argparse.Namespace:
     )
     search_parser.add_argument(
         "-a", "--alignment_mode",
-        type=str,
-        choices=["global", "local", "glocal"],
-        default="global",
+        type=parse_alignment_mode,
+        choices=list(AlignmentMode),
+        default=AlignmentMode.GLOBAL,
+        metavar="{global,local,glocal}",
         help="Alignment mode. 'glocal' (BiG-SCAPE-style) forces the shorter of each "
              "query/subject pair to align end-to-end while leaving the longer sequence's "
              "non-matching overhang free (unpenalized), reconfigured per pair from the "
@@ -264,9 +301,10 @@ def cli() -> argparse.Namespace:
         "-m",
         "--substitution-matrix",
         type=parse_substitution_matrix,
-        choices=list(SubstitutionMatrix),
         required=True,
-        help="Substitution matrix to use for sequence alignment.",
+        help="Substitution matrix to use for sequence alignment: a built-in name "
+             f"({', '.join(m.name.lower() for m in SubstitutionMatrix)}), or a path "
+             "to a custom tab-separated substitution matrix file.",
     )
     cluster_parser.add_argument(
         "-s",
@@ -298,9 +336,10 @@ def cli() -> argparse.Namespace:
     )
     cluster_parser.add_argument(
         "-a", "--alignment_mode",
-        type=str,
-        choices=["global", "local", "glocal"],
-        default="global",
+        type=parse_alignment_mode,
+        choices=list(AlignmentMode),
+        default=AlignmentMode.GLOBAL,
+        metavar="{global,local,glocal}",
         help="Alignment mode. 'glocal' (BiG-SCAPE-style) forces the shorter of each pair's "
              "two sequences to align end-to-end while leaving the longer sequence's "
              "non-matching overhang free (unpenalized), reconfigured per pair from the "
@@ -501,19 +540,31 @@ def filter_by_max_unknown_fraction(
     return kept_headers, kept_sequences
 
 
-def load_config(config_file: Path | None = None, matrix_type: SubstitutionMatrix | None = None) -> dict[str, Any]:
+def load_config(config_file: Path | None = None, matrix_type: SubstitutionMatrix | Path | None = None) -> dict[str, Any]:
     """
     Load the default NATU config and optionally override it with a user config.
 
     :param config_file: Optional path to a user-provided YAML config file.
-    :param matrix_type: Optional substitution matrix type.
+    :param matrix_type: Optional substitution matrix type: a built-in SubstitutionMatrix
+        member, or a Path to a custom matrix file (no packaged alignment config exists
+        for a custom matrix, so AlignmentConfiguration.DEFAULT is used instead; a
+        warning is logged unless config_file also overrides it).
     :return: Configuration dictionary.
     """
 
     default_config = yaml.safe_load(AlignmentConfiguration.MATCH_MISMATCH.read_text())
 
-    if matrix_type:
+    if isinstance(matrix_type, SubstitutionMatrix):
         default_config = yaml.safe_load(matrix_type.get_config().read_text())
+    elif matrix_type is not None:
+        default_config = yaml.safe_load(AlignmentConfiguration.DEFAULT.read_text())
+        if config_file is None:
+            log.warning(
+                "no built-in alignment config matches custom substitution matrix %r; "
+                "falling back to the default alignment config (aligner gap penalties "
+                "borrowed from ecfp.yaml). Pass -c/--config to use different settings.",
+                str(matrix_type),
+            )
 
     if default_config is None:
         default_config = {}
@@ -530,17 +581,21 @@ def load_config(config_file: Path | None = None, matrix_type: SubstitutionMatrix
     return deep_update(default_config, user_config)
 
 
-def load_substitution_matrix(substitution_matrix: SubstitutionMatrix, config: dict[str, Any], smiles_file: Path | None = None) -> substitution_matrices.Array:
+def load_substitution_matrix(substitution_matrix: SubstitutionMatrix | Path, config: dict[str, Any], smiles_file: Path | None = None) -> substitution_matrices.Array:
     """
     Load a substitution matrix from a file or from the packaged NATU default.
 
-    :param substitution_matrix: Substitution matrix to load.
+    :param substitution_matrix: A built-in SubstitutionMatrix member, or a Path to a
+        custom substitution matrix file (same tab-separated format as a packaged one).
     :param config: Configuration dictionary.
     :param smiles_file: Optional path to SMILES file; necessary for tailoring-aware scoring
     :return: Substitution matrix.
     :raises ValueError: If substitution matrix is corrupt.
     """
-    with substitution_matrix.open() as handle:
+    # Both SubstitutionMatrix.open() and Path.open() accept `encoding` as a keyword,
+    # so this works uniformly whether substitution_matrix is a packaged resource or
+    # a plain filesystem path -- no isinstance branch needed here.
+    with substitution_matrix.open(encoding="utf-8") as handle:
         df = pd.read_csv(handle, sep="\t", index_col=0)
 
     if list(df.index) != list(df.columns):
@@ -695,7 +750,7 @@ def main() -> None:
                 converter=converter,
                 threshold=args.threshold,
                 trim=config.get("trim", False),
-                glocal=args.alignment_mode == "glocal")
+                glocal=args.alignment_mode == AlignmentMode.GLOCAL)
 
             with open(args.output, "w", encoding="utf-8") as handle:
                 handle.write("query\tsubject\tbitscore\taligned_q\ts_aligned_s\n")
@@ -746,7 +801,7 @@ def main() -> None:
                 converter=converter,
                 cutoff=args.cutoff,
                 min_alignment_length=args.min_alignment_length,
-                glocal=args.alignment_mode == "glocal",
+                glocal=args.alignment_mode == AlignmentMode.GLOCAL,
             )
 
             args.output.mkdir(parents=True, exist_ok=True)

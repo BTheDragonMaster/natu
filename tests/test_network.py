@@ -16,6 +16,7 @@ from Bio.Align import substitution_matrices
 
 import natu.network as network_mod
 from natu.aligner import setup_aligner
+from natu.constants import AlignmentMode
 from natu.network import cluster_sequences, get_clusters, sequence_to_label
 
 
@@ -77,12 +78,12 @@ class TestClusterSequences:
     # --- input validation ---------------------------------------------
 
     def test_rejects_header_sequence_length_mismatch(self, make_aligner, converter):
-        aligner = make_aligner(mode="global")
+        aligner = make_aligner(mode=AlignmentMode.GLOBAL)
         with pytest.raises(ValueError, match="got 2 headers for 3 sequences"):
             cluster_sequences(aligner, ["a", "b"], [["p"], ["p"], ["p"]], converter, cutoff=0.5)
 
     def test_rejects_duplicate_headers(self, make_aligner, converter):
-        aligner = make_aligner(mode="global")
+        aligner = make_aligner(mode=AlignmentMode.GLOBAL)
         with pytest.raises(ValueError, match="headers must be unique"):
             cluster_sequences(aligner, ["a", "a"], [["p"], ["q"]], converter, cutoff=0.5)
 
@@ -94,7 +95,7 @@ class TestClusterSequences:
         data = np.full((4, 4), -1.0)
         np.fill_diagonal(data, -2.0)
         bad_matrix = substitution_matrices.Array(alphabet, 2, data, np.float64)
-        aligner = setup_aligner(bad_matrix, mode="global")
+        aligner = setup_aligner(bad_matrix, mode=AlignmentMode.GLOBAL)
 
         with pytest.raises(ValueError, match="non-positive self-scores at sequence indices \\[0, 1\\]"):
             cluster_sequences(aligner, ["a", "b"], [["p"], ["q"]], converter, cutoff=0.5)
@@ -102,7 +103,7 @@ class TestClusterSequences:
     # --- similarity / cutoff / min_alignment_length --------------------
 
     def test_identical_sequences_get_a_full_similarity_edge(self, make_aligner, converter):
-        aligner = make_aligner(mode="global")
+        aligner = make_aligner(mode=AlignmentMode.GLOBAL)
         graph, clusters = cluster_sequences(
             aligner, ["a", "b"], [["p", "p"], ["p", "p"]], converter, cutoff=0.99
         )
@@ -112,7 +113,7 @@ class TestClusterSequences:
         assert clusters == [{"a", "b"}]
 
     def test_cutoff_excludes_low_similarity_pairs(self, make_aligner, converter):
-        aligner = make_aligner(mode="global")
+        aligner = make_aligner(mode=AlignmentMode.GLOBAL)
         graph, clusters = cluster_sequences(
             aligner, ["a", "b"], [["p", "p"], ["q", "q"]], converter, cutoff=0.5
         )
@@ -121,7 +122,7 @@ class TestClusterSequences:
         assert clusters == [{"a"}, {"b"}]
 
     def test_node_carries_its_sequence_label(self, make_aligner, converter):
-        aligner = make_aligner(mode="global")
+        aligner = make_aligner(mode=AlignmentMode.GLOBAL)
         graph, _ = cluster_sequences(aligner, ["a"], [["p", "q"]], converter, cutoff=0.5)
         assert graph.nodes["a"]["sequence"] == "p|q"
 
@@ -137,7 +138,7 @@ class TestClusterSequences:
         columns. min_alignment_length is the mitigation -- this confirms
         it actually drops such an edge rather than being a no-op.
         """
-        aligner = make_aligner(mode="local")
+        aligner = make_aligner(mode=AlignmentMode.LOCAL)
         short = ["r", "r"]
         long_ = ["p", "p", "r", "r", "p", "p"]
 
@@ -162,7 +163,7 @@ class TestClusterSequences:
     # non-empty bucket instead of once per pair.
 
     def test_glocal_reconfigures_once_per_non_empty_length_bucket_per_row(self, make_aligner, converter):
-        aligner = make_aligner(mode="glocal")
+        aligner = make_aligner(mode=AlignmentMode.GLOCAL)
         headers = ["s2", "s4a", "s4b", "s6"]
         # lengths: 2, 4, 4, 6
         sequences = [["p"] * 2, ["p"] * 4, ["q"] * 4, ["p"] * 6]
@@ -189,7 +190,7 @@ class TestClusterSequences:
         assert len(calls) == 5
 
     def test_glocal_false_never_calls_configure_glocal_end_gaps(self, make_aligner, converter):
-        aligner = make_aligner(mode="global")
+        aligner = make_aligner(mode=AlignmentMode.GLOBAL)
         with patch.object(network_mod, "configure_glocal_end_gaps") as mocked:
             cluster_sequences(
                 aligner, ["a", "b"], [["p", "p"], ["p", "p"]], converter, cutoff=0.5, glocal=False

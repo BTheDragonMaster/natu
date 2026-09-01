@@ -10,6 +10,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from natu.constants import AlignmentMode
 from natu.pairwise import (
     Converter,
     _pairwise_alignment,
@@ -59,7 +60,7 @@ class TestConfigureGlocalEndGaps:
     """
 
     def test_frees_deletion_side_when_t_longer(self, make_aligner):
-        aligner = make_aligner(mode="glocal", open_end_gap_score=-3.0, extend_end_gap_score=-2.0)
+        aligner = make_aligner(mode=AlignmentMode.GLOCAL, open_end_gap_score=-3.0, extend_end_gap_score=-2.0)
         configure_glocal_end_gaps(aligner, len_t=5, len_q=2, open_end_gap_score=-3.0, extend_end_gap_score=-2.0)
 
         assert aligner.open_left_deletion_score == 0.0
@@ -73,7 +74,7 @@ class TestConfigureGlocalEndGaps:
         assert aligner.extend_right_insertion_score == -2.0
 
     def test_frees_insertion_side_when_q_longer(self, make_aligner):
-        aligner = make_aligner(mode="glocal", open_end_gap_score=-3.0, extend_end_gap_score=-2.0)
+        aligner = make_aligner(mode=AlignmentMode.GLOCAL, open_end_gap_score=-3.0, extend_end_gap_score=-2.0)
         configure_glocal_end_gaps(aligner, len_t=2, len_q=5, open_end_gap_score=-3.0, extend_end_gap_score=-2.0)
 
         assert aligner.open_left_insertion_score == 0.0
@@ -86,7 +87,7 @@ class TestConfigureGlocalEndGaps:
         assert aligner.extend_right_deletion_score == -2.0
 
     def test_frees_nothing_when_lengths_equal(self, make_aligner):
-        aligner = make_aligner(mode="glocal", open_end_gap_score=-3.0, extend_end_gap_score=-2.0)
+        aligner = make_aligner(mode=AlignmentMode.GLOCAL, open_end_gap_score=-3.0, extend_end_gap_score=-2.0)
         configure_glocal_end_gaps(aligner, len_t=3, len_q=3, open_end_gap_score=-3.0, extend_end_gap_score=-2.0)
 
         for attr in (
@@ -144,7 +145,7 @@ class TestStripGlocalFreeOverhang:
 
 class TestPairwiseAlignment:
     def test_global_identical_sequences(self, make_aligner, converter):
-        aligner = make_aligner(mode="global")
+        aligner = make_aligner(mode=AlignmentMode.GLOBAL)
         t = converter.to_int_array(["p", "q", "r"])
         q = converter.to_int_array(["p", "q", "r"])
 
@@ -155,7 +156,7 @@ class TestPairwiseAlignment:
         assert converter.from_int_array(q_a) == ["p", "q", "r"]
 
     def test_local_trim_false_pads_to_full_length(self, make_aligner, converter):
-        aligner = make_aligner(mode="local")
+        aligner = make_aligner(mode=AlignmentMode.LOCAL)
         t = converter.to_int_array(["p", "p", "q", "q", "p"])
         q = converter.to_int_array(["q", "q"])
 
@@ -167,7 +168,7 @@ class TestPairwiseAlignment:
         assert converter.from_int_array(q_a) == [None, None, "q", "q", None]
 
     def test_local_trim_true_keeps_only_aligned_core(self, make_aligner, converter):
-        aligner = make_aligner(mode="local")
+        aligner = make_aligner(mode=AlignmentMode.LOCAL)
         t = converter.to_int_array(["p", "p", "q", "q", "p"])
         q = converter.to_int_array(["q", "q"])
 
@@ -186,7 +187,7 @@ class TestPairwiseAlignment:
         matrix with negative mismatch scores, since the empty alignment
         (score 0) then beats every non-empty one.
         """
-        aligner = make_aligner(mode="local")
+        aligner = make_aligner(mode=AlignmentMode.LOCAL)
         t = converter.to_int_array(["p", "p", "p"])
         q = converter.to_int_array(["q", "q", "q"])  # shares no symbol with t
 

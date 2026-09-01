@@ -9,6 +9,7 @@ from __future__ import annotations
 import pytest
 
 from natu.aligner import setup_aligner
+from natu.constants import AlignmentMode
 
 
 class TestSetupAligner:
@@ -16,7 +17,7 @@ class TestSetupAligner:
         with pytest.raises(ValueError, match="mode must be one of"):
             setup_aligner(substitution_matrix, mode="banana")
 
-    @pytest.mark.parametrize("mode", ["global", "local", "glocal"])
+    @pytest.mark.parametrize("mode", list(AlignmentMode))
     def test_accepts_valid_modes(self, substitution_matrix, mode):
         aligner = setup_aligner(substitution_matrix, mode=mode)
         assert aligner is not None
@@ -24,18 +25,18 @@ class TestSetupAligner:
     def test_glocal_is_implemented_as_global_mode(self, substitution_matrix):
         """
         Biopython itself only knows "local"/"global" -- setup_aligner's own
-        docstring says "glocal" configures a global-mode aligner that must
-        be reconfigured per-pair (via configure_glocal_end_gaps) to behave
-        differently. An aligner built with mode="glocal" that's never
-        reconfigured should behave exactly like plain "global".
+        docstring says AlignmentMode.GLOCAL configures a global-mode aligner
+        that must be reconfigured per-pair (via configure_glocal_end_gaps)
+        to behave differently. An aligner built with mode=AlignmentMode.GLOCAL
+        that's never reconfigured should behave exactly like plain GLOBAL.
         """
-        aligner = setup_aligner(substitution_matrix, mode="glocal")
+        aligner = setup_aligner(substitution_matrix, mode=AlignmentMode.GLOCAL)
         assert aligner.mode == "global"
 
     def test_wires_internal_and_end_gap_scores(self, substitution_matrix):
         aligner = setup_aligner(
             substitution_matrix,
-            mode="global",
+            mode=AlignmentMode.GLOBAL,
             open_internal_gap_score=-9.0,
             extend_internal_gap_score=-8.0,
             open_end_gap_score=-7.0,
@@ -57,7 +58,7 @@ class TestSetupAligner:
         assert aligner.extend_right_deletion_score == -6.0
 
     def test_sets_substitution_matrix_and_disables_wildcard(self, substitution_matrix):
-        aligner = setup_aligner(substitution_matrix, mode="global")
+        aligner = setup_aligner(substitution_matrix, mode=AlignmentMode.GLOBAL)
         assert aligner.wildcard is None
         # round-trips through Biopython's own equality for Array objects
         assert list(aligner.substitution_matrix.alphabet) == list(substitution_matrix.alphabet)

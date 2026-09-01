@@ -7,6 +7,16 @@ from __future__ import annotations
 import pytest
 
 
+def _write_custom_matrix(path, rows):
+    """Write a tab-separated custom substitution matrix file: rows is a
+    list of (name, [scores...]) in the same order as the header."""
+    names = [name for name, _ in rows]
+    lines = ["\t" + "\t".join(names)]
+    for name, scores in rows:
+        lines.append(name + "\t" + "\t".join(f"{s:.1f}" for s in scores))
+    path.write_text("\n".join(lines) + "\n")
+
+
 def _parse_clusters(text: str) -> dict[str, str]:
     lines = text.splitlines()
     return dict(line.split("\t") for line in lines[1:] if line)
@@ -99,3 +109,35 @@ class TestCluster:
 
         clusters = _parse_clusters((out_with / "clusters.tsv").read_text())
         assert set(clusters) == {"seq1", "seq2"}
+
+    def test_accepts_a_path_to_a_custom_substitution_matrix_file(
+        self, tmp_path, run_natu, write_fasta
+    ):
+        """Same custom matrix as the align/search cases: c1/c2 are
+        identical (similarity 1.0, same cluster), c3 differs at one
+        position and lands in its own cluster -- confirmed against a real
+        run before writing these assertions."""
+        matrix_file = tmp_path / "custom_matrix.tsv"
+        _write_custom_matrix(matrix_file, [
+            ("alanine", [100.0, 3.0, 3.0]),
+            ("glycine", [3.0, 100.0, 3.0]),
+            ("threonine", [3.0, 3.0, 100.0]),
+        ])
+
+        fasta = tmp_path / "in.fasta"
+        write_fasta(fasta, [
+            ("c1", ["alanine", "glycine"]),
+            ("c2", ["alanine", "glycine"]),
+            ("c3", ["alanine", "threonine"]),
+        ])
+        out_dir = tmp_path / "cluster_out"
+
+        run_natu([
+            "cluster", "-m", str(matrix_file),
+            "-f", str(fasta), "-o", str(out_dir), "-t", "0.9",
+        ])
+
+        clusters = _parse_clusters((out_dir / "clusters.tsv").read_text())
+        assert clusters["c1"] == clusters["c2"]
+        assert clusters["c3"] not in (clusters["c1"],)
+        assert len(set(clusters.values())) == 2

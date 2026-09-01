@@ -65,6 +65,7 @@ class AlignmentConfiguration(Enum):
     PARAS_BASED = "paras_based.yaml"
     ECFP = "ecfp.yaml"
     FEATMORGAN = "featmorgan.yaml"
+    DEFAULT = "default.yaml"  # fallback config for a custom (non-built-in) substitution matrix
 
     @property
     def resource(self) -> Traversable:
@@ -141,3 +142,18 @@ class SubstitutionMatrix(Enum):
         """
 
         return AlignmentConfiguration[self.name]
+
+
+class AlignmentMode(Enum):
+    """
+    Alignment mode for natu.aligner.setup_aligner.
+
+    GLOBAL and LOCAL map directly onto Biopython's own PairwiseAligner.mode.
+    GLOCAL (as in BiG-SCAPE) is NATU's own addition, built on top of
+    Biopython's "global" mode by asymmetrically freeing one side's end gaps
+    per pair -- see setup_aligner and natu.pairwise.configure_glocal_end_gaps.
+    """
+
+    GLOBAL = "global"
+    LOCAL = "local"
+    GLOCAL = "glocal"

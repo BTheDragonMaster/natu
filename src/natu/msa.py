@@ -107,9 +107,19 @@ def _star_msa(sims: NDArray[np.float32], center_star: int | None,
     masked_sims = sims.copy()
     np.fill_diagonal(masked_sims, -np.inf)
 
-    # Find center star sequence if not given, ignore the diagonal (self-similarity)
+    # Find center star sequence if not given: the one with the highest total
+    # similarity to every other sequence. This must sum a version of the
+    # matrix with the diagonal excluded as 0, NOT masked_sims (whose
+    # diagonal is -inf) -- summing masked_sims made every single row/column
+    # sum -inf (each one includes its own -inf diagonal entry), so
+    # np.argmax always returned index 0 regardless of the real similarity
+    # structure. masked_sims itself is still exactly what the descending
+    # sort just below needs (it deliberately keeps the center's
+    # self-similarity out of contention there).
     if center_star is None:
-        center_ind = int(np.argmax(masked_sims.sum(axis=0)))
+        self_excluded_sims = sims.copy()
+        np.fill_diagonal(self_excluded_sims, 0.0)
+        center_ind = int(np.argmax(self_excluded_sims.sum(axis=0)))
     else:
         center_ind = int(center_star)
 

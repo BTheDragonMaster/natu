@@ -240,7 +240,7 @@ class TestExpandSubstitutionMatrix:
         the hood."""
         expanded = expand_substitution_matrix(base_matrix, tailoring_config, smiles_file)
 
-        expected_columns = ["alanine", "glycine", "NMe-alanine", "D-alanine", "NMe-D-alanine", "NMe-glycine"]
+        expected_columns = ["alanine", "glycine", "NMe-alanine", "D-alanine", "D-NMe-alanine", "NMe-glycine"]
         assert list(expanded.columns) == expected_columns
         assert list(expanded.index) == expected_columns  # rows and columns in the same order
         assert expanded.shape == (6, 6)

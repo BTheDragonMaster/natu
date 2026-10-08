@@ -1,0 +1,278 @@
+substrate	smiles	d_substrate	d_smiles	nme_substrate	nme_smiles	d_nme_substrate	d_nme_smiles
+(2S,3R)-2-amino-3-hydroxy-4-(4-nitrophenyl)butanoic acid	C1=CC(=CC=C1C[C@H]([C@@H](C(=O)O)N)O)[N+](=O)[O-]	(2R,3R)-2-amino-3-hydroxy-4-(4-nitrophenyl)butanoic acid	O=C(O)[C@H](N)[C@H](O)Cc1ccc([N+]([O-])=O)cc1	NMe-(2S,3R)-2-amino-3-hydroxy-4-(4-nitrophenyl)butanoic acid	CN[C@H](C(O)=O)[C@H](O)Cc1ccc([N+]([O-])=O)cc1	NMe-(2R,3R)-2-amino-3-hydroxy-4-(4-nitrophenyl)butanoic acid	CN[C@@H](C(O)=O)[C@H](O)Cc1ccc([N+]([O-])=O)cc1
+(2S,6R)-diamino-(5R,7)-dihydroxy-heptanoic acid	C(C[C@@H](C(=O)O)N)[C@H]([C@@H](CO)N)O	(2R,6R)-diamino-(5R,7)-dihydroxy-heptanoic acid	O=C(O)[C@H](N)CC[C@@H](O)[C@H](N)CO	NMe-(2S,6R)-diamino-(5R,7)-dihydroxy-heptanoic acid	CN[C@H](C(O)=O)CC[C@@H](O)[C@H](N)CO	NMe-(2R,6R)-diamino-(5R,7)-dihydroxy-heptanoic acid	CN[C@@H](C(O)=O)CC[C@@H](O)[C@H](N)CO
+(4S)-5,5,5-trichloroleucine	OC(=O)[C@@H](N)C[C@H](C)C(Cl)(Cl)Cl	D-(4S)-5,5,5-trichloroleucine	OC([C@@H](C[C@@H](C(Cl)(Cl)Cl)C)N)=O	NMe-(4S)-5,5,5-trichloroleucine	CN[C@@H](C[C@@H](C(Cl)(Cl)Cl)C)C(=O)O	D-NMe-(4S)-5,5,5-trichloroleucine	CN[C@H](C[C@@H](C(Cl)(Cl)Cl)C)C(=O)O
+(E)-4-methylhex-2-enoic acid	CCC(C)/C=C/C(=O)O						
+(S,E)-2-amino-4-decenoic acid	CCCCC/C=C/C[C@@H](C(=O)O)N	D-(S,E)-2-amino-4-decenoic acid	CCCCC/C=C/C[C@@H](N)C(O)=O	NMe-(S,E)-2-amino-4-decenoic acid	CN[C@H](C(O)=O)C\C=C\CCCCC	D-NMe-(S,E)-2-amino-4-decenoic acid	CN[C@@H](C(O)=O)C\C=C\CCCCC
+1-(1,1-dimethylallyl)-tryptophan	CC(C)(C=C)N1C=C(C2=CC=CC=C21)C[C@@H](C(=O)O)N	D-1-(1,1-dimethylallyl)-tryptophan	CC(n1cc(C[C@@H](N)C(O)=O)c2ccccc12)(C=C)C	NMe-1-(1,1-dimethylallyl)-tryptophan	CN[C@H](C(O)=O)Cc(c2ccccc12)cn1C(C=C)(C)C	D-NMe-1-(1,1-dimethylallyl)-tryptophan	CN[C@@H](C(O)=O)Cc(c2ccccc12)cn1C(C=C)(C)C
+1-aminocyclopropane-1-carboxylic acid	C(O)(=O)C1(CC1)(N)			NMe-1-aminocyclopropane-1-carboxylic acid	CNC1(CC1)C(=O)O		
+1-pyrroline-5-carboxylic acid	O=C(O)C1/N=C\CC1						
+10,14-dimethyloctadecanoic acid	OC(CCCCCCCCC(C)CCCC(C)CCCC)=O						
+2,3-diaminobutyric acid	NC(C)[C@@H](C(=O)O)N	D-2,3-diaminobutyric acid	NC([C@@H](N)C(O)=O)C	NMe-2,3-diaminobutyric acid	CN[C@H](C(O)=O)C(C)N	D-NMe-2,3-diaminobutyric acid	CN[C@@H](C(O)=O)C(C)N
+2,3-diaminopropionic acid	C([C@@H](C(=O)O)N)N	D-2,3-diaminopropionic acid	O=C(O)[C@H](N)CN	NMe-2,3-diaminopropionic acid	CN[C@H](C(O)=O)CN	D-NMe-2,3-diaminopropionic acid	CN[C@@H](C(O)=O)CN
+2,3-dihydroxy-para-aminobenzoic acid	C1=CC(=C(C(=C(N)1)O)O)C(=O)O						
+2,3-dihydroxybenzoic acid	C1=CC(=C(C(=C1)O)O)C(=O)O						
+2,3-dihydroxyhexadecanoic acid	CCCCCCCCCCCCCC(C(C(=O)O)O)O						
+2,4-diaminobutyric acid	C(CN)[C@@H](C(=O)O)N	D-2,4-diaminobutyric acid	N[C@@H](C(O)=O)CCN	NMe-2,4-diaminobutyric acid	CN[C@H](C(O)=O)CCN	D-NMe-2,4-diaminobutyric acid	CN[C@@H](C(O)=O)CCN
+2,4-dihydroxypentanoic acid	CC(CC(C(=O)O)O)O						
+2-(1-methylcyclopropyl)-D-glycine	CC1(CC1)[C@H](C(=O)O)N			NMe-2-(1-methylcyclopropyl)-D-glycine	CN[C@@H](C(O)=O)C1(CC1)C		
+2-amino-3,5-dimethyl-4-hexenoic Acid	CC(C=C(C)C)C(C(=O)O)N			NMe-2-amino-3,5-dimethyl-4-hexenoic Acid	CNC(C(O)=O)C(C=C(C)C)C		
+2-amino-3-hydroxycyclopent-2-enone	C1CC(=O)C(=C1O)N						
+2-amino-6-hydroxy-4-methyl-8-oxodecanoic acid	CCC(=O)CC(CC(C)CC(C(=O)O)N)O			NMe-2-amino-6-hydroxy-4-methyl-8-oxodecanoic acid	CNC(C(O)=O)CC(C)CC(O)CC(=O)CC		
+2-aminoadipic acid	C(C[C@@H](C(=O)O)N)CC(=O)O			NMe-2-aminoadipic acid	CN[C@H](C(O)=O)CCCC(O)=O		
+2-aminobutyric acid	CC[C@@H](C(=O)O)N	D-2-aminobutyric acid	CC[C@@H](N)C(O)=O	NMe-2-aminobutyric acid	CN[C@H](C(O)=O)CC	D-NMe-2-aminobutyric acid	CN[C@@H](C(O)=O)CC
+2-aminoisobutyric acid	O=C(O)C(N)(C)C			NMe-2-aminoisobutyric acid	CNC(C)(C)C(O)=O		
+2-carboxy-6-hydroxyoctahydroindole	N1[C@H](C(=O)O)C[C@@H]2CC[C@@H](O)C[C@H]12	D-2-carboxy-6-hydroxyoctahydroindole	O[C@@H](C2)CC[C@H]1C[C@H](C(O)=O)N[C@H]12	NMe-2-carboxy-6-hydroxyoctahydroindole	CN([C@@H](C[C@H](O)CC2)[C@@H]2C1)[C@@H]1C(O)=O	D-NMe-2-carboxy-6-hydroxyoctahydroindole	CN([C@@H](C[C@H](O)CC2)[C@@H]2C1)[C@H]1C(O)=O
+2-chloro-3,5-dihydroxy-4-methylphenylglycine	CC1=C(O)C(Cl)=C(C=C(O)1)[C@@H](C(=O)O)N	D-2-chloro-3,5-dihydroxy-4-methylphenylglycine	Cc(c(O)cc([C@@H](N)C(O)=O)c1Cl)c1O	NMe-2-chloro-3,5-dihydroxy-4-methylphenylglycine	CN[C@H](C(O)=O)c(cc1O)c(Cl)c(O)c1C	D-NMe-2-chloro-3,5-dihydroxy-4-methylphenylglycine	CN[C@@H](C(O)=O)c(cc1O)c(Cl)c(O)c1C
+2-chlorobenzoic acid	C1=CC=C(C(=C1)C(=O)O)Cl						
+2-hydroxy-4-methylpentanoic acid	CC(C)CC(C(=O)O)O						
+2-hydroxypent-4-enoic acid	C=CCC(C(=O)O)O						
+2-ketoglutaric acid	C(CC(=O)O)C(=O)C(=O)O						
+2-ketoisocaproic acid	O=C(C(=O)O)CC(C)C						
+2-ketoisovaleric acid	O=C(C(=O)O)C(C)C						
+2-methylserine	C[C@](CO)(C(=O)O)N			NMe-2-methylserine	CN[C@](C(O)=O)(CO)C		
+2-sulfamoylacetic acid	C(C(=O)O)S(=O)(=O)N						
+2R-hydroxy-3-methylpentanoic acid	CCC(C)[C@H](C(=O)O)O						
+2R-hydroxyisovaleric acid	CC(C)[C@H](C(=O)O)O						
+2S,3R-diaminobutyric acid	C[C@H]([C@@H](C(=O)O)N)N	2R,3R-diaminobutyric acid	C[C@@H](N)[C@@H](N)C(O)=O	NMe-2S,3R-diaminobutyric acid	CN[C@H](C(O)=O)[C@H](N)C	NMe-2R,3R-diaminobutyric acid	CN[C@@H](C(O)=O)[C@H](N)C
+2S,3S-diaminobutyric acid	C[C@@H]([C@@H](C(=O)O)N)N	2R,3S-diaminobutyric acid	C[C@H](N)[C@@H](N)C(O)=O	NMe-2S,3S-diaminobutyric acid	CN[C@H](C(O)=O)[C@@H](N)C	NMe-2R,3S-diaminobutyric acid	CN[C@@H](C(O)=O)[C@@H](N)C
+2S-amino-8-oxodecanoic acid	CCC(=O)CCCCC[C@@H](C(=O)O)N	2R-amino-8-oxodecanoic acid	CCC(CCCCC[C@@H](N)C(O)=O)=O	NMe-2S-amino-8-oxodecanoic acid	CN[C@H](C(O)=O)CCCCCC(=O)CC	NMe-2R-amino-8-oxodecanoic acid	CN[C@@H](C(O)=O)CCCCCC(=O)CC
+2S-amino-9,10-epoxy-8-oxodecanoic acid	C1C(O1)C(=O)CCCCC[C@@H](C(=O)O)N	2R-amino-9,10-epoxy-8-oxodecanoic acid	O=C(CCCCC[C@@H](N)C(O)=O)C1CO1	NMe-2S-amino-9,10-epoxy-8-oxodecanoic acid	CN[C@H](C(O)=O)CCCCCC(=O)C1CO1	NMe-2R-amino-9,10-epoxy-8-oxodecanoic acid	CN[C@@H](C(O)=O)CCCCCC(=O)C1CO1
+2S-aminodecanoic acid	CCCCCCCC[C@@H](C(=O)O)N	2R-aminodecanoic acid	CCCCCCCC[C@@H](N)C(O)=O	NMe-2S-aminodecanoic acid	CN[C@H](C(O)=O)CCCCCCCC	NMe-2R-aminodecanoic acid	CN[C@@H](C(O)=O)CCCCCCCC
+2S-aminododecanoic acid	CCCCCCCCCC[C@@H](C(=O)O)N	2R-aminododecanoic acid	CCCCCCCCCC[C@@H](N)C(O)=O	NMe-2S-aminododecanoic acid	CN[C@H](C(O)=O)CCCCCCCCCC	NMe-2R-aminododecanoic acid	CN[C@@H](C(O)=O)CCCCCCCCCC
+2S-aminooctanoic acid	CCCCCC[C@@H](C(=O)O)N	2R-aminooctanoic acid	CCCCCC[C@@H](N)C(O)=O	NMe-2S-aminooctanoic acid	CN[C@H](C(O)=O)CCCCCC	NMe-2R-aminooctanoic acid	CN[C@@H](C(O)=O)CCCCCC
+2S-hydroxyisocaproic acid	CC(C)C[C@@H](C(=O)O)O						
+2S-hydroxyisovaleric acid	CC(C)[C@@H](C(=O)O)O						
+2S-methyl-3-oxobutyrine	CC(=O)[C@](C)(N)C(=O)O	2R-methyl-3-oxobutyrine	CC([C@](C(O)=O)(N)C)=O	NMe-2S-methyl-3-oxobutyrine	CN[C@@](C(O)=O)(C)C(=O)C	NMe-2R-methyl-3-oxobutyrine	CN[C@](C(O)=O)(C)C(=O)C
+3,3-dihomo-4-methoxytyrosine	N[C@@H](CCCC1=CC=C(OC)C=C1)C(=O)O	D-3,3-dihomo-4-methoxytyrosine	N[C@@H](C(O)=O)CCCc(cc1)ccc1OC	NMe-3,3-dihomo-4-methoxytyrosine	CN[C@H](C(O)=O)CCCc(cc1)ccc1OC	D-NMe-3,3-dihomo-4-methoxytyrosine	CN[C@@H](C(O)=O)CCCc(cc1)ccc1OC
+3,3-dihomophenylalanine	N[C@@H](CCCC1=CC=CC=C1)C(=O)O	D-3,3-dihomophenylalanine	N[C@@H](C(O)=O)CCCc1ccccc1	NMe-3,3-dihomophenylalanine	CN[C@H](C(O)=O)CCCc1ccccc1	D-NMe-3,3-dihomophenylalanine	CN[C@@H](C(O)=O)CCCc1ccccc1
+3,3-dihomotyrosine	N[C@@H](CCCC1=CC=C(O)C=C1)C(=O)O	D-3,3-dihomotyrosine	N[C@@H](C(O)=O)CCCc(cc1)ccc1O	NMe-3,3-dihomotyrosine	CN[C@H](C(O)=O)CCCc(cc1)ccc1O	D-NMe-3,3-dihomotyrosine	CN[C@@H](C(O)=O)CCCc(cc1)ccc1O
+3,4-dehydrolysine	C(CCN)=C[C@@H](C(=O)O)N	D-3,4-dehydrolysine	O=C(O)[C@H](N)C=CCCN	NMe-3,4-dehydrolysine	CN[C@H](C(O)=O)C=CCCN	D-NMe-3,4-dehydrolysine	CN[C@@H](C(O)=O)C=CCCN
+3,4-dihydroxybenzoic acid	C1=CC(=C(C=C1C(=O)O)O)O						
+3,5-dichloro-4-hydroxyphenylglycine	C1=C(Cl)C(=C(Cl)C=C1[C@@H](C(=O)O)N)O	D-3,5-dichloro-4-hydroxyphenylglycine	Clc1cc([C@@H](N)C(O)=O)cc(Cl)c1O	NMe-3,5-dichloro-4-hydroxyphenylglycine	CN[C@H](C(O)=O)c(cc(Cl)c1O)cc1Cl	D-NMe-3,5-dichloro-4-hydroxyphenylglycine	CN[C@@H](C(O)=O)c(cc(Cl)c1O)cc1Cl
+3,5-dihydroxyphenylglycine	N[C@H](C(=O)O)c1cc(O)cc(O)c1	D-3,5-dihydroxyphenylglycine	N[C@H](c(cc(O)c1)cc1O)C(O)=O	NMe-3,5-dihydroxyphenylglycine	CN[C@@H](c(cc(O)c1)cc1O)C(O)=O	D-NMe-3,5-dihydroxyphenylglycine	CN[C@H](c(cc(O)c1)cc1O)C(O)=O
+3-(2-nitrocyclopropylalanine)	C1[C@H]([C@@H]1[N+](=O)[O-])C[C@@H](C(=O)O)N	D-3-(2-nitrocyclopropylalanine)	O=[N+]([O-])[C@@H]1C[C@H]1C[C@@H](N)C(O)=O	NMe-3-(2-nitrocyclopropylalanine)	CN[C@H](C(O)=O)C[C@@H]1C[C@H]1[N+]([O-])=O	D-NMe-3-(2-nitrocyclopropylalanine)	CN[C@@H](C(O)=O)C[C@@H]1C[C@H]1[N+]([O-])=O
+3-(3-pyridyl)-alanine	C1=CC(=CN=C1)C[C@@H](C(=O)O)N	D-3-(3-pyridyl)-alanine	O=C(O)[C@H](N)Cc1cccnc1	NMe-3-(3-pyridyl)-alanine	CN[C@H](C(O)=O)Cc1cccnc1	D-NMe-3-(3-pyridyl)-alanine	CN[C@@H](C(O)=O)Cc1cccnc1
+3-amino-2,4-dihydroxybenzoic acid	C1=CC(=C(C(=C1C(=O)O)O)N)O						
+3-amino-4-hydroxybenzoic acid	C1=CC(=C(C=C1C(=O)O)N)O						
+3-amino-6-hydroxy-2-piperidone	C1CC(NC(=O)C1N)O						
+3-aminoisobutyric acid	CC(CN)C(=O)O			NMe-3-aminoisobutyric acid	CNCC(C(O)=O)C		
+3-chlorotyrosine	C1=C(Cl)C(=CC=C1C[C@@H](C(=O)O)N)O	D-3-chlorotyrosine	Clc1cc(C[C@@H](N)C(O)=O)ccc1O	NMe-3-chlorotyrosine	CN[C@H](C(O)=O)Cc(ccc1O)cc1Cl	D-NMe-3-chlorotyrosine	CN[C@@H](C(O)=O)Cc(ccc1O)cc1Cl
+3-hydroxy-4-methylproline	CC1C(O)[C@H](NC1)C(=O)O	D-3-hydroxy-4-methylproline	CC(CN[C@H]1C(O)=O)C1O	NMe-3-hydroxy-4-methylproline	CN(C1)[C@H](C(O)=O)C(O)C1C	D-NMe-3-hydroxy-4-methylproline	CN(C1)[C@@H](C(O)=O)C(O)C1C
+3-hydroxy-O-methyl-5-methyltyrosine	C1=C(O)C(=C(C)C=C1C[C@@H](C(=O)O)N)OC	D-3-hydroxy-O-methyl-5-methyltyrosine	Oc1cc(C[C@@H](N)C(O)=O)cc(C)c1OC	NMe-3-hydroxy-O-methyl-5-methyltyrosine	CN[C@H](C(O)=O)Cc(cc(C)c1OC)cc1O	D-NMe-3-hydroxy-O-methyl-5-methyltyrosine	CN[C@@H](C(O)=O)Cc(cc(C)c1OC)cc1O
+3-hydroxy-para-aminobenzoic acid	C1=CC(=C(C=C1C(=O)O)O)N						
+3-hydroxyasparagine	N[C@H](C(O)=O)C(O)C(N)=O	D-3-hydroxyasparagine	N[C@H](C(C(=O)N)O)C(=O)O	NMe-3-hydroxyasparagine	CN[C@@H](C(C(=O)N)O)C(=O)O	D-NMe-3-hydroxyasparagine	CN[C@H](C(C(=O)N)O)C(=O)O
+3-hydroxyaspartic acid	N[C@@H](C(C(=O)O)O)(C(=O)O)	D-3-hydroxyaspartic acid	N[C@@H](C(O)=O)C(O)C(O)=O	NMe-3-hydroxyaspartic acid	CN[C@H](C(O)=O)C(O)C(O)=O	D-NMe-3-hydroxyaspartic acid	CN[C@@H](C(O)=O)C(O)C(O)=O
+3-hydroxyglutamine	C(C([C@@H](C(=O)O)N)O)C(=O)N	D-3-hydroxyglutamine	O=C(O)[C@H](N)C(O)CC(N)=O	NMe-3-hydroxyglutamine	CN[C@H](C(O)=O)C(O)CC(N)=O	D-NMe-3-hydroxyglutamine	CN[C@@H](C(O)=O)C(O)CC(N)=O
+3-hydroxykynurenine	C1=CC(=C(C(=C1)O)N)C(=O)C[C@@H](C(=O)O)N	D-3-hydroxykynurenine	Oc1c(N)c(C(C[C@@H](N)C(O)=O)=O)ccc1	NMe-3-hydroxykynurenine	CN[C@H](C(O)=O)CC(=O)c1cccc(O)c1N	D-NMe-3-hydroxykynurenine	CN[C@@H](C(O)=O)CC(=O)c1cccc(O)c1N
+3-hydroxyleucine	CC(C)C([C@@H](C(=O)O)N)O	D-3-hydroxyleucine	CC(C(O)[C@@H](N)C(O)=O)C	NMe-3-hydroxyleucine	CN[C@H](C(O)=O)C(O)C(C)C	D-NMe-3-hydroxyleucine	CN[C@@H](C(O)=O)C(O)C(C)C
+3-hydroxypicolinic acid	C1=CC(=C(N=C1)C(=O)O)O						
+3-hydroxyquinaldic acid	c1ccc2c(c1)cc(c(n2)C(=O)O)O						
+3-hydroxytyrosine	C1=CC(=C(C=C1C[C@@H](C(=O)O)N)O)O	D-3-hydroxytyrosine	O=C(O)[C@H](N)Cc1ccc(O)c(O)c1	NMe-3-hydroxytyrosine	CN[C@H](C(O)=O)Cc1ccc(O)c(O)c1	D-NMe-3-hydroxytyrosine	CN[C@@H](C(O)=O)Cc1ccc(O)c(O)c1
+3-hydroxyvaline	CC(O)(C)[C@@H](C(=O)O)N	D-3-hydroxyvaline	CC([C@@H](N)C(O)=O)(C)O	NMe-3-hydroxyvaline	CN[C@H](C(O)=O)C(C)(O)C	D-NMe-3-hydroxyvaline	CN[C@@H](C(O)=O)C(C)(O)C
+3-methoxyanthranilic acid	COC1=CC=CC(=C1N)C(=O)O						
+3-methoxyaspartic acid	N[C@@H](C(C(=O)O)OC)(C(=O)O)	D-3-methoxyaspartic acid	N[C@@H](C(O)=O)C(OC)C(O)=O	NMe-3-methoxyaspartic acid	CN[C@H](C(O)=O)C(OC)C(O)=O	D-NMe-3-methoxyaspartic acid	CN[C@@H](C(O)=O)C(OC)C(O)=O
+3-methylasparagine	CC([C@@H](C(=O)O)N)C(=O)N	D-3-methylasparagine	CC(C(N)=O)[C@@H](N)C(O)=O	NMe-3-methylasparagine	CN[C@H](C(O)=O)C(C(N)=O)C	D-NMe-3-methylasparagine	CN[C@@H](C(O)=O)C(C(N)=O)C
+3-nitrotyrosine	C1=CC(=C(C=C1C[C@@H](C(=O)O)N)[N+](=O)[O-])O	D-3-nitrotyrosine	O=C(O)[C@H](N)Cc1ccc(O)c([N+]([O-])=O)c1	NMe-3-nitrotyrosine	CN[C@H](C(O)=O)Cc1ccc(O)c([N+]([O-])=O)c1	D-NMe-3-nitrotyrosine	CN[C@@H](C(O)=O)Cc1ccc(O)c([N+]([O-])=O)c1
+3R-chloroproline	C1[C@@H](Cl)[C@H](NC1)C(=O)O	D-3R-chloroproline	O=C(O)[C@H]1[C@H](Cl)CCN1	NMe-3R-chloroproline	CN1[C@H](C(O)=O)[C@H](Cl)CC1	D-NMe-3R-chloroproline	CN1[C@@H](C(O)=O)[C@H](Cl)CC1
+3R-hydroxy-2,4-diaminobutyric acid	NC[C@@H](O)[C@@H](C(=O)O)N	D-3R-hydroxy-2,4-diaminobutyric acid	NC[C@H]([C@@H](N)C(O)=O)O	NMe-3R-hydroxy-2,4-diaminobutyric acid	CN[C@H](C(O)=O)[C@H](O)CN	D-NMe-3R-hydroxy-2,4-diaminobutyric acid	CN[C@@H](C(O)=O)[C@H](O)CN
+3R-hydroxyasparagine	N[C@H](C(O)=O)[C@@H](O)C(N)=O	D-3R-hydroxyasparagine	N[C@H]([C@H](C(=O)N)O)C(=O)O	NMe-3R-hydroxyasparagine	CN[C@@H]([C@H](C(=O)N)O)C(=O)O	D-NMe-3R-hydroxyasparagine	CN[C@H]([C@H](C(=O)N)O)C(=O)O
+3R-hydroxyaspartic acid	N[C@@H]([C@H](C(=O)O)O)(C(=O)O)	D-3R-hydroxyaspartic acid	N[C@@H](C(O)=O)[C@@H](O)C(O)=O	NMe-3R-hydroxyaspartic acid	CN[C@H](C(O)=O)[C@@H](O)C(O)=O	D-NMe-3R-hydroxyaspartic acid	CN[C@@H](C(O)=O)[C@@H](O)C(O)=O
+3R-hydroxyglutamine	C([C@H]([C@@H](C(=O)O)N)O)C(=O)N	D-3R-hydroxyglutamine	O=C(O)[C@H](N)[C@H](O)CC(N)=O	NMe-3R-hydroxyglutamine	CN[C@H](C(O)=O)[C@H](O)CC(N)=O	D-NMe-3R-hydroxyglutamine	CN[C@@H](C(O)=O)[C@H](O)CC(N)=O
+3R-hydroxyhomotyrosine	C1=CC(=CC=C1C[C@H]([C@@H](C(=O)O)N)O)O	D-3R-hydroxyhomotyrosine	O=C(O)[C@H](N)[C@H](O)Cc1ccc(O)cc1	NMe-3R-hydroxyhomotyrosine	CN[C@H](C(O)=O)[C@H](O)Cc1ccc(O)cc1	D-NMe-3R-hydroxyhomotyrosine	CN[C@@H](C(O)=O)[C@H](O)Cc1ccc(O)cc1
+3R-hydroxyleucine	CC(C)[C@H]([C@@H](C(=O)O)N)O	D-3R-hydroxyleucine	CC([C@@H](O)[C@@H](N)C(O)=O)C	NMe-3R-hydroxyleucine	CN[C@H](C(O)=O)[C@H](O)C(C)C	D-NMe-3R-hydroxyleucine	CN[C@@H](C(O)=O)[C@H](O)C(C)C
+3R-methylaspartic acid	C[C@H]([C@@H](C(=O)O)N)C(=O)O	D-3R-methylaspartic acid	C[C@@H](C(O)=O)[C@@H](N)C(O)=O	NMe-3R-methylaspartic acid	CN[C@H](C(O)=O)[C@H](C(O)=O)C	D-NMe-3R-methylaspartic acid	CN[C@@H](C(O)=O)[C@H](C(O)=O)C
+3R-methylbeta-alanine	NC[C@@H](C)C(=O)O			NMe-3R-methylbeta-alanine	CNC[C@H](C(O)=O)C		
+3R-methylglutamic acid	C[C@H](CC(=O)O)[C@@H](C(=O)O)N	D-3R-methylglutamic acid	C[C@@H]([C@@H](N)C(O)=O)CC(O)=O	NMe-3R-methylglutamic acid	CN[C@H](C(O)=O)[C@@H](CC(O)=O)C	D-NMe-3R-methylglutamic acid	CN[C@@H](C(O)=O)[C@@H](CC(O)=O)C
+3S,4R-dichloroproline	Cl[C@H]1[C@@H](Cl)[C@H](NC1)C(=O)O	D-3S,4R-dichloroproline	Cl[C@H](CN[C@H]1C(O)=O)[C@H]1Cl	NMe-3S,4R-dichloroproline	CN(C1)[C@H](C(O)=O)[C@H](Cl)[C@@H]1Cl	D-NMe-3S,4R-dichloroproline	CN(C1)[C@@H](C(O)=O)[C@H](Cl)[C@@H]1Cl
+3S-cyclohex-2-enylalanine	C1C=C[C@H](CC1)C[C@@H](C(=O)O)N	D-3S-cyclohex-2-enylalanine	O=C(O)[C@H](N)C[C@@H]1C=CCCC1	NMe-3S-cyclohex-2-enylalanine	CN[C@H](C(O)=O)C[C@@H]1C=CCCC1	D-NMe-3S-cyclohex-2-enylalanine	CN[C@@H](C(O)=O)C[C@@H]1C=CCCC1
+3S-hydroxy-4R-methyloctanoic acid	CCCC[C@H]([C@H](CC(O)=O)O)C						
+3S-hydroxy-4S-methylproline	C[C@@H]1[C@H](O)[C@H](NC1)C(=O)O	D-3S-hydroxy-4S-methylproline	C[C@@H](CN[C@H]1C(O)=O)[C@@H]1O	NMe-3S-hydroxy-4S-methylproline	CN(C1)[C@H](C(O)=O)[C@@H](O)[C@H]1C	D-NMe-3S-hydroxy-4S-methylproline	CN(C1)[C@@H](C(O)=O)[C@@H](O)[C@H]1C
+3S-hydroxy-6-chlorohistidine	C1=C(NC(Cl)=N1)[C@H]([C@@H](C(=O)O)N)O	D-3S-hydroxy-6-chlorohistidine	Clc1[nH]c([C@@H](O)[C@@H](N)C(O)=O)cn1	NMe-3S-hydroxy-6-chlorohistidine	CN[C@H](C(O)=O)[C@H](O)c1cnc(Cl)[nH]1	D-NMe-3S-hydroxy-6-chlorohistidine	CN[C@@H](C(O)=O)[C@H](O)c1cnc(Cl)[nH]1
+3S-hydroxyasparagine	N[C@H](C(O)=O)[C@H](O)C(N)=O	D-3S-hydroxyasparagine	N[C@H]([C@@H](C(=O)N)O)C(=O)O	NMe-3S-hydroxyasparagine	CN[C@@H]([C@@H](C(=O)N)O)C(=O)O	D-NMe-3S-hydroxyasparagine	CN[C@H]([C@@H](C(=O)N)O)C(=O)O
+3S-hydroxyleucine	CC(C)[C@@H]([C@@H](C(=O)O)N)O	D-3S-hydroxyleucine	CC([C@H](O)[C@@H](N)C(O)=O)C	NMe-3S-hydroxyleucine	CN[C@H](C(O)=O)[C@@H](O)C(C)C	D-NMe-3S-hydroxyleucine	CN[C@@H](C(O)=O)[C@@H](O)C(C)C
+3S-hydroxypipecolic acid	C1C[C@@H]([C@H](NC1)C(=O)O)O	D-3S-hydroxypipecolic acid	O=C(O)[C@H]1[C@@H](O)CCCN1	NMe-3S-hydroxypipecolic acid	CN1[C@H](C(O)=O)[C@@H](O)CCC1	D-NMe-3S-hydroxypipecolic acid	CN1[C@@H](C(O)=O)[C@@H](O)CCC1
+3S-hydroxyproline	O[C@@H]1[C@H](NCC1)C(=O)O	D-3S-hydroxyproline	O[C@@H]1[C@H](C(O)=O)NCC1	NMe-3S-hydroxyproline	CN(CC1)[C@H](C(O)=O)[C@H]1O	D-NMe-3S-hydroxyproline	CN(CC1)[C@@H](C(O)=O)[C@H]1O
+3S-methyl-D-aspartic acid branched	C[C@@H]([C@H](C(=O)O)N)C(=O)O			NMe-3S-methyl-D-aspartic acid branched	CN[C@@H](C(O)=O)[C@@H](C(O)=O)C		
+3S-methylaspartic acid	C[C@@H]([C@@H](C(=O)O)N)C(=O)O	D-3S-methylaspartic acid	C[C@H](C(O)=O)[C@@H](N)C(O)=O	NMe-3S-methylaspartic acid	CN[C@H](C(O)=O)[C@@H](C(O)=O)C	D-NMe-3S-methylaspartic acid	CN[C@@H](C(O)=O)[C@@H](C(O)=O)C
+3S-methylaspartic acid branched	C[C@@H]([C@@H](C(=O)O)N)C(=O)O			NMe-3S-methylaspartic acid branched	CN[C@H](C(O)=O)[C@@H](C(O)=O)C		
+3S-methylleucine	CC(C)[C@H](C)[C@@H](C(=O)O)N	D-3S-methylleucine	CC([C@@H]([C@@H](N)C(O)=O)C)C	NMe-3S-methylleucine	CN[C@H](C(O)=O)[C@@H](C)C(C)C	D-NMe-3S-methylleucine	CN[C@@H](C(O)=O)[C@@H](C)C(C)C
+3S-methylproline	C[C@@H]1[C@H](NCC1)C(=O)O	D-3S-methylproline	C[C@@H]1[C@H](C(O)=O)NCC1	NMe-3S-methylproline	CN(CC1)[C@H](C(O)=O)[C@H]1C	D-NMe-3S-methylproline	CN(CC1)[C@@H](C(O)=O)[C@H]1C
+4,5-dehydroarginine	O=C(O)[C@@H](N)C/C=C/NC(N)=N	D-4,5-dehydroarginine	O=C([C@@H](C/C=C/NC(=N)N)N)O	NMe-4,5-dehydroarginine	CN[C@@H](C/C=C/NC(=N)N)C(O)=O	D-NMe-4,5-dehydroarginine	CN[C@H](C/C=C/NC(=N)N)C(O)=O
+4-acetamidopyrrole-2-carboxylic acid	CC(=O)NC1=CNC(=C1)C(=O)O						
+4-amino-2-hydroxy-3-isopropoxybenzoic acid	CC(C)OC1=C(C=CC(=C1O)C(=O)O)N						
+4-aminobutyric acid	NCCCC(=O)O						
+4-aminophenylalanine	C1=CC(=CC=C1C[C@@H](C(=O)O)N)N	D-4-aminophenylalanine	O=C(O)[C@H](N)Cc1ccc(N)cc1	NMe-4-aminophenylalanine	CN[C@H](C(O)=O)Cc1ccc(N)cc1	D-NMe-4-aminophenylalanine	CN[C@@H](C(O)=O)Cc1ccc(N)cc1
+4-chlorobenzoic acid	C1=CC(=CC=C1C(=O)O)Cl						
+4-chlorokynurenine	C1=C(Cl)C=C(C(=C1)C(=O)C[C@@H](C(=O)O)N)N	D-4-chlorokynurenine	Clc1ccc(C(C[C@@H](N)C(O)=O)=O)c(N)c1	NMe-4-chlorokynurenine	CN[C@H](C(O)=O)CC(=O)c1c(N)cc(Cl)cc1	D-NMe-4-chlorokynurenine	CN[C@@H](C(O)=O)CC(=O)c1c(N)cc(Cl)cc1
+4-fluorophenylglycine	C1=CC(=CC=C1[C@@H](C(=O)O)N)F	D-4-fluorophenylglycine	O=C(O)[C@H](N)c1ccc(F)cc1	NMe-4-fluorophenylglycine	CN[C@H](C(O)=O)c1ccc(F)cc1	D-NMe-4-fluorophenylglycine	CN[C@@H](C(O)=O)c1ccc(F)cc1
+4-hydroxy-3-nitrobenzoic acid	C1=CC(=C(C=C1C(=O)O)[N+](=O)[O-])O						
+4-hydroxy-D-kynurenine	C1=C(O)C=C(C(=C1)C(=O)C[C@H](C(=O)O)N)N			NMe-4-hydroxy-D-kynurenine	CN[C@@H](C(O)=O)CC(=O)c1c(N)cc(O)cc1		
+4-hydroxybenzoic acid	C1=CC(=CC=C1C(=O)O)O						
+4-hydroxyglutamine	C(C(O)C(=O)N)[C@@H](C(=O)O)N	D-4-hydroxyglutamine	OC(C(N)=O)C[C@@H](N)C(O)=O	NMe-4-hydroxyglutamine	CN[C@H](C(O)=O)CC(C(N)=O)O	D-NMe-4-hydroxyglutamine	CN[C@@H](C(O)=O)CC(C(N)=O)O
+4-hydroxyphenylglycine	C1=CC(=CC=C1[C@@H](C(=O)O)N)O	D-4-hydroxyphenylglycine	O=C(O)[C@H](N)c1ccc(O)cc1	NMe-4-hydroxyphenylglycine	CN[C@H](C(O)=O)c1ccc(O)cc1	D-NMe-4-hydroxyphenylglycine	CN[C@@H](C(O)=O)c1ccc(O)cc1
+4-hydroxyphenylpyruvic acid	C1=CC(=CC=C1CC(=O)C(=O)O)O						
+4-hydroxythreonine	C([C@H]([C@@H](C(=O)O)N)O)O	D-allo-4-hydroxythreonine	O=C(O)[C@H](N)[C@H](O)CO	NMe-4-hydroxythreonine	CN[C@H](C(O)=O)[C@H](O)CO	D-allo-NMe-4-hydroxythreonine	CN[C@@H](C(O)=O)[C@H](O)CO
+4-methoxytryptophan	C1=CC=C2C(=C1OC)C(=CN2)C[C@@H](C(=O)O)N	D-4-methoxytryptophan	OC(=O)[C@H](N)Cc2c1c([nH]c2)cccc1OC	NMe-4-methoxytryptophan	CN[C@H](C(O)=O)Cc(c[nH]2)c1c2cccc1OC	D-NMe-4-methoxytryptophan	CN[C@@H](C(O)=O)Cc(c[nH]2)c1c2cccc1OC
+4-methylproline	CC1C[C@H](NC1)C(=O)O	D-4-methylproline	CC1C[C@H](C(O)=O)NC1	NMe-4-methylproline	CN(C1)[C@H](C(O)=O)CC1C	D-NMe-4-methylproline	CN(C1)[C@@H](C(O)=O)CC1C
+4-nitrotryptophan	C1=CC=C2C(=C1[N+](=O)[O-])C(=CN2)C[C@@H](C(=O)O)N	D-4-nitrotryptophan	O=[N+]([O-])c1cccc([nH]cc2C[C@@H](N)C(O)=O)c12	NMe-4-nitrotryptophan	CN[C@H](C(O)=O)Cc(c[nH]2)c1c2cccc1[N+]([O-])=O	D-NMe-4-nitrotryptophan	CN[C@@H](C(O)=O)Cc(c[nH]2)c1c2cccc1[N+]([O-])=O
+4-oxoproline	C1[C@H](NCC1=O)C(=O)O	D-4-oxoproline	O=C(O)[C@H]1CC(=O)CN1	NMe-4-oxoproline	CN1[C@H](C(O)=O)CC(=O)C1	D-NMe-4-oxoproline	CN1[C@@H](C(O)=O)CC(=O)C1
+4R-E-butenyl-4R-methylthreonine	C/C=C/C[C@@H](C)[C@H]([C@@H](C(=O)O)N)O	D-allo-4R-E-butenyl-4R-methylthreonine	C/C=C/C[C@H]([C@@H](O)[C@@H](N)C(O)=O)C	NMe-4R-E-butenyl-4R-methylthreonine	CN[C@H](C(O)=O)[C@H](O)[C@H](C)C\C=C\C	D-allo-NMe-4R-E-butenyl-4R-methylthreonine	CN[C@@H](C(O)=O)[C@H](O)[C@H](C)C\C=C\C
+4R-hydroxyproline	C1[C@H](NC[C@@H]1O)C(=O)O	D-4R-hydroxyproline	O=C(O)[C@H]1C[C@@H](O)CN1	NMe-4R-hydroxyproline	CN1[C@H](C(O)=O)C[C@@H](O)C1	D-NMe-4R-hydroxyproline	CN1[C@@H](C(O)=O)C[C@@H](O)C1
+4R-methylproline	C[C@@H]1C[C@H](NC1)C(=O)O	D-4R-methylproline	C[C@@H]1C[C@H](C(O)=O)NC1	NMe-4R-methylproline	CN(C1)[C@H](C(O)=O)C[C@H]1C	D-NMe-4R-methylproline	CN(C1)[C@@H](C(O)=O)C[C@H]1C
+4R-propylproline	CCC[C@@H]1C[C@H](NC1)C(=O)O	D-4R-propylproline	CCC[C@@H]1C[C@H](C(O)=O)NC1	NMe-4R-propylproline	CN(C1)[C@H](C(O)=O)C[C@H]1CCC	D-NMe-4R-propylproline	CN(C1)[C@@H](C(O)=O)C[C@H]1CCC
+4S,5-dihydroxy-2S-aminopentanoic acid	O[C@@H](C[C@@H](C(=O)O)N)CO	4S,5-dihydroxy-2R-aminopentanoic acid	O[C@H](CO)C[C@@H](N)C(O)=O	NMe-4S,5-dihydroxy-2S-aminopentanoic acid	CN[C@H](C(O)=O)C[C@@H](CO)O	NMe-4S,5-dihydroxy-2R-aminopentanoic acid	CN[C@@H](C(O)=O)C[C@@H](CO)O
+4S-acetyl-5S-methylproline	CC(=O)O[C@H]1C[C@H](N[C@H](C)1)C(=O)O	D-4S-acetyl-5S-methylproline	CC(O[C@H]1C[C@H](C(O)=O)N[C@@H]1C)=O	NMe-4S-acetyl-5S-methylproline	CN([C@@H]1C)[C@H](C(O)=O)C[C@@H]1OC(=O)C	D-NMe-4S-acetyl-5S-methylproline	CN([C@@H]1C)[C@@H](C(O)=O)C[C@@H]1OC(=O)C
+4S-hydroxylysine	NCC[C@H](O)C[C@@H](C(=O)O)N	D-4S-hydroxylysine	NCC[C@@H](C[C@@H](N)C(O)=O)O	NMe-4S-hydroxylysine	CN[C@H](C(O)=O)C[C@@H](O)CCN	D-NMe-4S-hydroxylysine	CN[C@@H](C(O)=O)C[C@@H](O)CCN
+4S-methylazetidine-2S-carboxylic acid	C[C@H]1C[C@H](N1)C(=O)O	4S-methylazetidine-2R-carboxylic acid	C[C@H]1C[C@H](C(O)=O)N1	NMe-4S-methylazetidine-2S-carboxylic acid	CN([C@H](C(O)=O)C1)[C@H]1C	NMe-4S-methylazetidine-2R-carboxylic acid	CN([C@@H](C(O)=O)C1)[C@H]1C
+4S-methylproline	C[C@H]1C[C@H](NC1)C(=O)O	D-4S-methylproline	C[C@H]1C[C@H](C(O)=O)NC1	NMe-4S-methylproline	CN(C1)[C@H](C(O)=O)C[C@@H]1C	D-NMe-4S-methylproline	CN(C1)[C@@H](C(O)=O)C[C@@H]1C
+4S-propenylproline	C/C=C\[C@H]1C[C@H](NC1)C(=O)O	D-4S-propenylproline	C/C=C\[C@H]1C[C@H](C(O)=O)NC1	NMe-4S-propenylproline	CN(C1)[C@H](C(O)=O)C[C@@H]1/C=C\C	D-NMe-4S-propenylproline	CN(C1)[C@@H](C(O)=O)C[C@@H]1/C=C\C
+5,5-dimethylpipecolic acid	C1C(C)(C)CN[C@@H](C1)C(=O)O	D-5,5-dimethylpipecolic acid	O=C(O)[C@@H]1NCC(C)(C)CC1	NMe-5,5-dimethylpipecolic acid	CN1CC(C)(C)CC[C@H]1C(O)=O	D-NMe-5,5-dimethylpipecolic acid	CN1CC(C)(C)CC[C@@H]1C(O)=O
+5-aminolevulinic acid	C(CC(=O)O)C(=O)CN						
+5-chloroanthranilic acid	C1=CC(=C(C=C1Cl)C(=O)O)N						
+5-chlorotryptophan	C1=CC2=C(C=C1Cl)C(=CN2)C[C@@H](C(=O)O)N	D-5-chlorotryptophan	N[C@@H](C(O)=O)Cc2c1c([nH]c2)ccc(Cl)c1	NMe-5-chlorotryptophan	CN[C@H](C(O)=O)Cc(c[nH]2)c1c2ccc(Cl)c1	D-NMe-5-chlorotryptophan	CN[C@@H](C(O)=O)Cc(c[nH]2)c1c2ccc(Cl)c1
+5-methoxytyrosine	C1=C(OC)C(=CC=C1C[C@@H](C(=O)O)N)O	D-5-methoxytyrosine	COc1cc(C[C@@H](N)C(O)=O)ccc1O	NMe-5-methoxytyrosine	CN[C@H](C(O)=O)Cc(ccc1O)cc1OC	D-NMe-5-methoxytyrosine	CN[C@@H](C(O)=O)Cc(ccc1O)cc1OC
+5-methylorsellinic acid	C=1(C=C(C(=C(C1C)C)C(=O)O)O)O						
+5S-methylproline	C1C[C@H](N[C@@H](C)1)C(=O)O	D-5S-methylproline	O=C(O)[C@H]1CC[C@H](C)N1	NMe-5S-methylproline	CN1[C@H](C(O)=O)CC[C@@H]1C	D-NMe-5S-methylproline	CN1[C@@H](C(O)=O)CC[C@@H]1C
+6,7-dichlorotryptophan	C1=C(Cl)C(Cl)=C2C(=C1)C(=CN2)C[C@@H](C(=O)O)N	D-6,7-dichlorotryptophan	Clc1ccc2c([nH]cc2C[C@@H](N)C(O)=O)c1Cl	NMe-6,7-dichlorotryptophan	CN[C@H](C(O)=O)Cc(c[nH]2)c1c2c(Cl)c(Cl)cc1	D-NMe-6,7-dichlorotryptophan	CN[C@@H](C(O)=O)Cc(c[nH]2)c1c2c(Cl)c(Cl)cc1
+6-chloro-4-hydroxy-1-methyl-indole-3-carboxylic acid	C(O)1=C(Cl)C=C2C(=C1)C(=CN(C)2)C(=O)O						
+6-chloro-4-hydroxyindole-3-carboxylic acid	c(Cl)1cc2c(c(c1)O)c(c[nH]2)C(=O)O						
+6-chlorotryptophan	C1=C(Cl)C=C2C(=C1)C(=CN2)C[C@@H](C(=O)O)N	D-6-chlorotryptophan	N[C@@H](C(O)=O)Cc2c1c([nH]c2)cc(Cl)cc1	NMe-6-chlorotryptophan	CN[C@H](C(O)=O)Cc(c[nH]2)c1c2cc(Cl)cc1	D-NMe-6-chlorotryptophan	CN[C@@H](C(O)=O)Cc(c[nH]2)c1c2cc(Cl)cc1
+6-hydroxy-tetrahydro-isoquinoline-3-carboxylic acid	C1C(NCC2=C1C=C(C=C2)O)C(=O)O			NMe-6-hydroxy-tetrahydro-isoquinoline-3-carboxylic acid	CN1C(C(O)=O)Cc(cc(O)cc2)c2C1		
+6-methylsalicylic acid	CC1=C(C(=CC=C1)O)C(=O)O						
+6S-methyl-pipecolic acid	C1C[C@H](C)N[C@@H](C1)C(=O)O	D-6S-methyl-pipecolic acid	O=C(O)[C@@H]1N[C@@H](C)CCC1	NMe-6S-methyl-pipecolic acid	CN1[C@@H](C)CCC[C@H]1C(O)=O	D-NMe-6S-methyl-pipecolic acid	CN1[C@@H](C)CCC[C@@H]1C(O)=O
+An acid hydrazine polyene (intermediate 14)	OC(=O)CCC(=O)NNCC(=O)O			NMe-An acid hydrazine polyene (intermediate 14)	CN(CC(O)=O)NC(=O)CCC(=O)O		
+D-aspartic acid branched	C([C@H](C(=O)O)N)C(=O)O			NMe-D-aspartic acid branched	CN[C@@H](C(O)=O)CC(O)=O		
+D-glutamic acid branched	C(CC(=O)O)[C@H](C(=O)O)N			NMe-D-glutamic acid branched	CN[C@@H](C(O)=O)CCC(O)=O		
+D-lysergic acid	CN1C[C@@H](C=C2C1CC3=CNC4=CC=CC2=C34)C(=O)O						
+D-phenyllactic acid	C1=CC=C(C=C1)C[C@H](C(=O)O)O						
+N-(1-methyl)-tryptophan	C1=CC=C2C(=C1)C(=CN(C)2)C[C@@H](C(=O)O)N	D-N-(1-methyl)-tryptophan	N[C@@H](C(O)=O)Cc2c1c(n(C)c2)cccc1	NMe-N-(1-methyl)-tryptophan	CN[C@H](C(O)=O)Cc(cn2C)c1c2cccc1	D-NMe-N-(1-methyl)-tryptophan	CN[C@@H](C(O)=O)Cc(cn2C)c1c2cccc1
+N-(1-propargyl)-tryptophan	C1=CC=C2C(=C1)C(=CN(CC#C)2)C[C@@H](C(=O)O)N	D-N-(1-propargyl)-tryptophan	O=C(O)[C@H](N)Cc2c1c(n(CC#C)c2)cccc1	NMe-N-(1-propargyl)-tryptophan	CN[C@H](C(O)=O)Cc(cn2CC#C)c1c2cccc1	D-NMe-N-(1-propargyl)-tryptophan	CN[C@@H](C(O)=O)Cc(cn2CC#C)c1c2cccc1
+N-formylglycine	C(C(=O)O)NC=O			NMe-N-formylglycine	CN(C=O)CC(O)=O		
+N-hydroxyvaline	CC(C)[C@@H](C(=O)O)NO	D-N-hydroxyvaline	CC([C@@H](NO)C(O)=O)C	NMe-N-hydroxyvaline	CN(O)[C@H](C(O)=O)C(C)C	D-NMe-N-hydroxyvaline	CN(O)[C@@H](C(O)=O)C(C)C
+N-methylphenylalanine	CN[C@@H](CC1=CC=CC=C1)C(=O)O	D-N-methylphenylalanine	CN[C@@H](C(O)=O)Cc1ccccc1	NMe-N-methylphenylalanine	CN([C@H](C(O)=O)Cc1ccccc1)C	D-NMe-N-methylphenylalanine	CN([C@@H](C(O)=O)Cc1ccccc1)C
+N-methyltyrosine	C1=CC(=CC=C1C[C@@H](C(=O)O)NC)O	D-N-methyltyrosine	O=C(O)[C@H](NC)Cc1ccc(O)cc1	NMe-N-methyltyrosine	CN(C)[C@H](C(O)=O)Cc1ccc(O)cc1	D-NMe-N-methyltyrosine	CN(C)[C@@H](C(O)=O)Cc1ccc(O)cc1
+N1-methoxytryptophan	C1=CC=C2C(=C1)C(=CN(OC)2)C[C@@H](C(=O)O)N	D-N1-methoxytryptophan	OC(=O)[C@H](N)Cc2c1c(n(OC)c2)cccc1	NMe-N1-methoxytryptophan	CN[C@H](C(O)=O)Cc(cn2OC)c1c2cccc1	D-NMe-N1-methoxytryptophan	CN[C@@H](C(O)=O)Cc(cn2OC)c1c2cccc1
+N5-acetyl-N5-hydroxyornithine	CC(=O)N(CCC[C@@H](C(=O)O)N)O	D-N5-acetyl-N5-hydroxyornithine	CC(N(O)CCC[C@@H](N)C(O)=O)=O	NMe-N5-acetyl-N5-hydroxyornithine	CN[C@H](C(O)=O)CCCN(O)C(=O)C	D-NMe-N5-acetyl-N5-hydroxyornithine	CN[C@@H](C(O)=O)CCCN(O)C(=O)C
+N5-cis-anhydromevalonyl-N5-hydroxyornithine	C(N(C(=O)\C=C(/CCO)\C)O)CC[C@@H](C(O)=O)N	D-N5-cis-anhydromevalonyl-N5-hydroxyornithine	O=C(/C=C(/C)\CCO)N(O)CCC[C@@H](N)C(=O)O	NMe-N5-cis-anhydromevalonyl-N5-hydroxyornithine	CN[C@H](C(=O)O)CCCN(O)C(/C=C(/C)\CCO)=O	D-NMe-N5-cis-anhydromevalonyl-N5-hydroxyornithine	CN[C@@H](C(=O)O)CCCN(O)C(/C=C(/C)\CCO)=O
+N5-formyl-N5-hydroxyornithine	C(C[C@@H](C(=O)O)N)CN(C=O)O	D-N5-formyl-N5-hydroxyornithine	O=C(O)[C@H](N)CCCN(O)C=O	NMe-N5-formyl-N5-hydroxyornithine	CN[C@H](C(O)=O)CCCN(O)C=O	D-NMe-N5-formyl-N5-hydroxyornithine	CN[C@@H](C(O)=O)CCCN(O)C=O
+N5-hydroxyarginine	C(C[C@@H](C(=O)O)N)CN(O)C(=N)N	D-N5-hydroxyarginine	O=C(O)[C@H](N)CCCN(C(N)=N)O	NMe-N5-hydroxyarginine	CN[C@H](C(O)=O)CCCN(C(N)=N)O	D-NMe-N5-hydroxyarginine	CN[C@@H](C(O)=O)CCCN(C(N)=N)O
+N5-hydroxyornithine	C(C[C@@H](C(=O)O)N)CNO	D-N5-hydroxyornithine	ONCCC[C@@H](N)C(O)=O	NMe-N5-hydroxyornithine	CN[C@H](C(O)=O)CCCNO	D-NMe-N5-hydroxyornithine	CN[C@@H](C(O)=O)CCCNO
+N5-trans-anhydromevalonyl-N5-hydroxyornithine	C(C[C@@H](C(=O)O)N)CN(O)C(=O)/C=C(C)/CCO	D-N5-trans-anhydromevalonyl-N5-hydroxyornithine	O=C(O)[C@H](N)CCCN(C(/C=C(/CCO)\C)=O)O	NMe-N5-trans-anhydromevalonyl-N5-hydroxyornithine	CN[C@H](C(O)=O)CCCN(C(/C=C(/CCO)\C)=O)O	D-NMe-N5-trans-anhydromevalonyl-N5-hydroxyornithine	CN[C@@H](C(O)=O)CCCN(C(/C=C(/CCO)\C)=O)O
+N6-hydroxylysine	C(CCNO)C[C@@H](C(=O)O)N	D-N6-hydroxylysine	O=C(O)[C@H](N)CCCCNO	NMe-N6-hydroxylysine	CN[C@H](C(O)=O)CCCCNO	D-NMe-N6-hydroxylysine	CN[C@@H](C(O)=O)CCCCNO
+O-dimethylallyl-L-tyrosine	CC(=CCOC1=CC=C(C=C1)C[C@@H](C(=O)O)N)C	O-dimethylallyl-D-tyrosine	CC(C)=CCOc1ccc(C[C@@H](N)C(O)=O)cc1	NMe-O-dimethylallyl-L-tyrosine	CN[C@H](C(O)=O)Cc(cc1)ccc1OCC=C(C)C	NMe-O-dimethylallyl-D-tyrosine	CN[C@@H](C(O)=O)Cc(cc1)ccc1OCC=C(C)C
+O-methyltyrosine	COC1=CC=C(C=C1)C[C@@H](C(=O)O)N	D-O-methyltyrosine	COc1ccc(C[C@@H](N)C(O)=O)cc1	NMe-O-methyltyrosine	CN[C@H](C(O)=O)Cc(cc1)ccc1OC	D-NMe-O-methyltyrosine	CN[C@@H](C(O)=O)Cc(cc1)ccc1OC
+R-3-hydroxy-3-methylproline	O[C@](C)1[C@H](NCC1)C(=O)O	D-R-3-hydroxy-3-methylproline	O[C@]1([C@H](C(O)=O)NCC1)C	NMe-R-3-hydroxy-3-methylproline	CN(CC1)[C@H](C(O)=O)[C@]1(C)O	D-NMe-R-3-hydroxy-3-methylproline	CN(CC1)[C@@H](C(O)=O)[C@]1(C)O
+R-aza-beta-tyrosine	C1=CC(=NC=C1O)[C@@H](CC(=O)O)N			NMe-R-aza-beta-tyrosine	CN[C@H](CC(O)=O)c1ccc(O)cn1		
+R-beta-hydroxyphenylalanine	O[C@H](C1=CC=CC=C1)[C@@H](C(=O)O)N	D-R-beta-hydroxyphenylalanine	O[C@@H]([C@@H](N)C(O)=O)c1ccccc1	NMe-R-beta-hydroxyphenylalanine	CN[C@H](C(O)=O)[C@@H](c1ccccc1)O	D-NMe-R-beta-hydroxyphenylalanine	CN[C@@H](C(O)=O)[C@@H](c1ccccc1)O
+R-beta-hydroxytyrosine	C1=CC(=CC=C1[C@H]([C@@H](C(=O)O)N)O)O	D-R-beta-hydroxytyrosine	O=C(O)[C@H](N)[C@H](O)c1ccc(O)cc1	NMe-R-beta-hydroxytyrosine	CN[C@H](C(O)=O)[C@H](O)c1ccc(O)cc1	D-NMe-R-beta-hydroxytyrosine	CN[C@@H](C(O)=O)[C@H](O)c1ccc(O)cc1
+R-beta-methylphenylalanine	C[C@H](C1=CC=CC=C1)[C@@H](C(=O)O)N	D-R-beta-methylphenylalanine	C[C@@H]([C@@H](N)C(O)=O)c1ccccc1	NMe-R-beta-methylphenylalanine	CN[C@H](C(O)=O)[C@@H](c1ccccc1)C	D-NMe-R-beta-methylphenylalanine	CN[C@@H](C(O)=O)[C@@H](c1ccccc1)C
+R-beta-methyltryptophan	C[C@H](C1=CNC2=CC=CC=C21)[C@@H](C(=O)O)N	D-R-beta-methyltryptophan	C[C@@H]([C@@H](N)C(O)=O)c1c[nH]c2ccccc12	NMe-R-beta-methyltryptophan	CN[C@H](C(O)=O)[C@@H](c1c[nH]c2ccccc12)C	D-NMe-R-beta-methyltryptophan	CN[C@@H](C(O)=O)[C@@H](c1c[nH]c2ccccc12)C
+R-beta-phenylalanine	C1=CC=C(C=C1)[C@@H](CC(=O)O)N			NMe-R-beta-phenylalanine	CN[C@H](CC(O)=O)c1ccccc1		
+R-beta-tyrosine	C1=CC(=CC=C1[C@@H](CC(=O)O)N)O			NMe-R-beta-tyrosine	CN[C@H](CC(O)=O)c1ccc(O)cc1		
+S-adenosylmethionine	C[S+](CC[C@@H](C(=O)[O-])N)C[C@@H]1[C@H]([C@H]([C@@H](O1)N2C=NC3=C(N=CN=C32)N)O)O	D-S-adenosylmethionine	C[S+](C[C@@H]1[C@@H](O)[C@@H](O)[C@H](n2cnc3c(N)ncnc23)O1)CC[C@@H](N)C([O-])=O	NMe-S-adenosylmethionine	CN[C@H](C([O-])=O)CC[S+](C[C@@H]1[C@@H](O)[C@@H](O)[C@H](n2cnc3c(N)ncnc23)O1)C	D-NMe-S-adenosylmethionine	CN[C@@H](C([O-])=O)CC[S+](C[C@@H]1[C@@H](O)[C@@H](O)[C@H](n2cnc3c(N)ncnc23)O1)C
+S-beta-hydroxycyclohex-2S-enylalanine	C1C=C[C@H](CC1)[C@H](O)[C@@H](C(=O)O)N	S-beta-hydroxycyclohex-2R-enylalanine	O[C@H]([C@@H](N)C(O)=O)[C@@H]1C=CCCC1	NMe-S-beta-hydroxycyclohex-2S-enylalanine	CN[C@H](C(O)=O)[C@@H](O)[C@@H]1C=CCCC1	NMe-S-beta-hydroxycyclohex-2R-enylalanine	CN[C@@H](C(O)=O)[C@@H](O)[C@@H]1C=CCCC1
+S-beta-hydroxyenduracididine	C1[C@H](NC(=N1)N)[C@H](O)[C@@H](C(=O)O)N	D-S-beta-hydroxyenduracididine	NC=1N[C@H]([C@@H]([C@@H](N)C(O)=O)O)CN=1	NMe-S-beta-hydroxyenduracididine	CN[C@H](C(O)=O)[C@@H](O)[C@@H]1CN=C(N)N1	D-NMe-S-beta-hydroxyenduracididine	CN[C@@H](C(O)=O)[C@@H](O)[C@@H]1CN=C(N)N1
+S-beta-hydroxyphenylalanine	O[C@@H](C1=CC=CC=C1)[C@@H](C(=O)O)N	D-S-beta-hydroxyphenylalanine	O[C@H]([C@@H](N)C(O)=O)c1ccccc1	NMe-S-beta-hydroxyphenylalanine	CN[C@H](C(O)=O)[C@H](c1ccccc1)O	D-NMe-S-beta-hydroxyphenylalanine	CN[C@@H](C(O)=O)[C@H](c1ccccc1)O
+S-beta-methylphenylalanine	C[C@@H](C1=CC=CC=C1)[C@@H](C(=O)O)N	D-S-beta-methylphenylalanine	C[C@H]([C@@H](N)C(O)=O)c1ccccc1	NMe-S-beta-methylphenylalanine	CN[C@H](C(O)=O)[C@H](c1ccccc1)C	D-NMe-S-beta-methylphenylalanine	CN[C@@H](C(O)=O)[C@H](c1ccccc1)C
+S-beta-tyrosine	C1=CC(=CC=C1[C@H](CC(=O)O)N)O			NMe-S-beta-tyrosine	CN[C@@H](CC(O)=O)c1ccc(O)cc1		
+acetic acid	CC(O)=O						
+alanine	C[C@@H](C(=O)O)N	D-alanine	C[C@@H](N)C(O)=O	NMe-alanine	CN[C@H](C(O)=O)C	D-NMe-alanine	CN[C@@H](C(O)=O)C
+alaninol	C[C@@H](CO)N						
+allo-isoleucine	CC[C@@H](C)[C@@H](C(=O)O)N	D-isoleucine	CC[C@H]([C@@H](N)C(O)=O)C	NMe-allo-isoleucine	CN[C@H](C(O)=O)[C@H](C)CC	D-NMe-isoleucine	CN[C@@H](C(O)=O)[C@H](C)CC
+allo-threonine	C[C@@H]([C@@H](C(=O)O)N)O	D-threonine	C[C@H](O)[C@@H](N)C(O)=O	NMe-allo-threonine	CN[C@H](C(O)=O)[C@@H](O)C	D-NMe-threonine	CN[C@@H](C(O)=O)[C@@H](O)C
+anthranilic acid	C1=CC=C(C(=C1)C(=O)O)N						
+arginine	C(C[C@@H](C(=O)O)N)CNC(=N)N	D-arginine	O=C(O)[C@H](N)CCCNC(N)=N	NMe-arginine	CN[C@H](C(O)=O)CCCNC(N)=N	D-NMe-arginine	CN[C@@H](C(O)=O)CCCNC(N)=N
+argininol	N[C@H](CO)CCCN=C(N)N						
+asparagine	C([C@@H](C(=O)O)N)C(=O)N	D-asparagine	O=C(O)[C@H](N)CC(N)=O	NMe-asparagine	CN[C@H](C(O)=O)CC(N)=O	D-NMe-asparagine	CN[C@@H](C(O)=O)CC(N)=O
+aspartic acid	C([C@@H](C(=O)O)N)C(=O)O	D-aspartic acid	O=C(O)[C@H](N)CC(O)=O	NMe-aspartic acid	CN[C@H](C(O)=O)CC(O)=O	D-NMe-aspartic acid	CN[C@@H](C(O)=O)CC(O)=O
+aspartic acid branched	C([C@@H](C(=O)O)N)C(=O)O			NMe-aspartic acid branched	CN[C@H](C(O)=O)CC(O)=O		
+azetidine-2-carboxylic acid	O=C(O)[C@H]1NCC1	D-azetidine-2-carboxylic acid	O=C([C@@H]1NCC1)O	NMe-azetidine-2-carboxylic acid	CN(CC1)[C@@H]1C(O)=O	D-NMe-azetidine-2-carboxylic acid	CN(CC1)[C@H]1C(O)=O
+benzoic acid	C1=CC=C(C=C1)C(=O)O						
+benzoxazolinate	c1ccc2c(c1)nc(o2)C(=O)O						
+beta-alanine	NCCC(=O)O			NMe-beta-alanine	CNCCC(O)=O		
+beta-hydroxy-3-hydroxy-O-methyl-5-methyltyrosine	C1=C(C)C(=C(O)C=C1C(O)[C@@H](C(=O)O)N)OC	D-beta-hydroxy-3-hydroxy-O-methyl-5-methyltyrosine	Cc1cc(C([C@@H](N)C(O)=O)O)cc(O)c1OC	NMe-beta-hydroxy-3-hydroxy-O-methyl-5-methyltyrosine	CN[C@H](C(O)=O)C(O)c(cc(O)c1OC)cc1C	D-NMe-beta-hydroxy-3-hydroxy-O-methyl-5-methyltyrosine	CN[C@@H](C(O)=O)C(O)c(cc(O)c1OC)cc1C
+beta-hydroxy-gamma-methyl-hexadecanoic acid	CCCCCCCCCCCCC(C)C(O)CC(=O)O						
+beta-hydroxyarginine	C(C(O)[C@@H](C(=O)O)N)CNC(=N)N	D-beta-hydroxyarginine	OC([C@@H](N)C(O)=O)CCNC(N)=N	NMe-beta-hydroxyarginine	CN[C@H](C(O)=O)C(O)CCNC(N)=N	D-NMe-beta-hydroxyarginine	CN[C@@H](C(O)=O)C(O)CCNC(N)=N
+beta-hydroxyphenylalanine	OC(C1=CC=CC=C1)[C@@H](C(=O)O)N	D-beta-hydroxyphenylalanine	OC([C@@H](N)C(O)=O)c1ccccc1	NMe-beta-hydroxyphenylalanine	CN[C@H](C(O)=O)C(c1ccccc1)O	D-NMe-beta-hydroxyphenylalanine	CN[C@@H](C(O)=O)C(c1ccccc1)O
+beta-hydroxytyrosine	C1=CC(=CC=C1C([C@@H](C(=O)O)N)O)O	D-beta-hydroxytyrosine	O=C(O)[C@H](N)C(O)c1ccc(O)cc1	NMe-beta-hydroxytyrosine	CN[C@H](C(O)=O)C(O)c1ccc(O)cc1	D-NMe-beta-hydroxytyrosine	CN[C@@H](C(O)=O)C(O)c1ccc(O)cc1
+beta-lysine	C(C[C@@H](CC(=O)O)N)CN			NMe-beta-lysine	CN[C@H](CC(O)=O)CCCN		
+beta-methylphenylalanine	CC(C1=CC=CC=C1)C(C(=O)O)N			NMe-beta-methylphenylalanine	CNC(C(O)=O)C(c1ccccc1)C		
+betaine	C[N+](C)(C)CC(=O)O						
+butyric acid	CCCC(=O)O						
+caffeic acid	OC(=O)\C=C\c1ccc(O)c(O)c1						
+capreomycidine	C1CN=C(N[C@H]1[C@@H](C(=O)O)N)N	D-allo-capreomycidine	O=C(O)[C@H](N)[C@H]1CCN=C(N)N1	NMe-capreomycidine	CN[C@H](C(O)=O)[C@H]1CCN=C(N)N1	D-allo-NMe-capreomycidine	CN[C@@H](C(O)=O)[C@H]1CCN=C(N)N1
+cinnamic acid	C1=CC=C(C=C1)/C=C/C(=O)O						
+citrulline	C(C[C@@H](C(=O)O)N)CNC(=O)N	D-citrulline	O=C(O)[C@H](N)CCCNC(N)=O	NMe-citrulline	CN[C@H](C(O)=O)CCCNC(N)=O	D-NMe-citrulline	CN[C@@H](C(O)=O)CCCNC(N)=O
+colletorin D acid	CC1=CC(=C(C(=C1C(=O)O)O)CC=C(C)C)O						
+coumaric acid	C1=CC(=CC=C1/C=C/C(=O)O)O						
+cysteic acid	C([C@@H](C(=O)O)N)S(=O)(=O)O	D-cysteic acid	O=C(O)[C@H](N)CS(O)(=O)=O	NMe-cysteic acid	CN[C@H](C(O)=O)CS(O)(=O)=O	D-NMe-cysteic acid	CN[C@@H](C(O)=O)CS(O)(=O)=O
+cysteine	C([C@@H](C(=O)O)N)S	D-cysteine	O=C(O)[C@H](N)CS	NMe-cysteine	CN[C@H](C(O)=O)CS	D-NMe-cysteine	CN[C@@H](C(O)=O)CS
+cysteine branched	C([C@@H](C(=O)O)N)S			NMe-cysteine branched	CN[C@H](C(O)=O)CS		
+dehydroarginine	C(CNC(=N)N)/C=C(/C(=O)O)\N			NMe-dehydroarginine	CN/C(/C(O)=O)=C\CCNC(N)=N		
+dehydrophenylalanine	N/C(=C\C1=CC=CC=C1)/C(=O)O			NMe-dehydrophenylalanine	CN/C(/C(O)=O)=C\c1ccccc1		
+dehydrotryptophan	C1=CC=C2C(=C1)C(=CN2)/C=C(/C(=O)O)\N			NMe-dehydrotryptophan	CN/C(/C(O)=O)=C\c(c[nH]2)c1c2cccc1		
+dehydrovaline	CC(=C(C(=O)O)N)C			NMe-dehydrovaline	CNC(C(O)=O)=C(C)C		
+dihydrolysergic acid	CN1CC(CC2C1CC3=CNC4=CC=CC2=C34)C(=O)O						
+dimethylsulfoniopropionic acid	C[S+](C)CCC(=O)O						
+enduracididine	C1[C@H](NC(=N1)N)C[C@@H](C(=O)O)N	D-enduracididine	O=C(O)[C@H](N)C[C@@H]1CN=C(N)N1	NMe-enduracididine	CN[C@H](C(O)=O)C[C@@H]1CN=C(N)N1	D-NMe-enduracididine	CN[C@@H](C(O)=O)C[C@@H]1CN=C(N)N1
+fatty acid	O=C(O)C*						
+fumaric acid	C(=C/C(=O)O)\C(=O)O						
+glutamic acid	C(CC(=O)O)[C@@H](C(=O)O)N	D-glutamic acid	O=C(O)CC[C@@H](N)C(O)=O	NMe-glutamic acid	CN[C@H](C(O)=O)CCC(O)=O	D-NMe-glutamic acid	CN[C@@H](C(O)=O)CCC(O)=O
+glutamine	C(CC(=O)N)[C@@H](C(=O)O)N	D-glutamine	O=C(N)CC[C@@H](N)C(O)=O	NMe-glutamine	CN[C@H](C(O)=O)CCC(N)=O	D-NMe-glutamine	CN[C@@H](C(O)=O)CCC(N)=O
+glycine	NCC(=O)O			NMe-glycine	CNCC(O)=O		
+graminine	O=NN(O)CCC[C@H](N)(C(=O)O)	D-graminine	O=NN(CCC[C@H](C(O)=O)N)O	NMe-graminine	CN[C@H](C(O)=O)CCCN(O)N=O	D-NMe-graminine	CN[C@@H](C(O)=O)CCCN(O)N=O
+grifolic acid	CC(C)=CCC/C(C)=C/CC/C(C)=C/CC1=C(O)C=C(C)C(C(=O)O)=C(O)1						
+guanidinoacetic acid	C(C(=O)O)N=C(N)N						
+histidine	C1=C(NC=N1)C[C@@H](C(=O)O)N	D-histidine	O=C(O)[C@H](N)Cc1cnc[nH]1	NMe-histidine	CN[C@H](C(O)=O)Cc1cnc[nH]1	D-NMe-histidine	CN[C@@H](C(O)=O)Cc1cnc[nH]1
+homophenylalanine	C1=CC=C(C=C1)CC[C@@H](C(=O)O)N	D-homophenylalanine	O=C(O)[C@H](N)CCc1ccccc1	NMe-homophenylalanine	CN[C@H](C(O)=O)CCc1ccccc1	D-NMe-homophenylalanine	CN[C@@H](C(O)=O)CCc1ccccc1
+homoserine	C(CO)[C@@H](C(=O)O)N	D-homoserine	N[C@@H](C(O)=O)CCO	NMe-homoserine	CN[C@H](C(O)=O)CCO	D-NMe-homoserine	CN[C@@H](C(O)=O)CCO
+homotyrosine	C1=CC(=CC=C1CC[C@@H](C(=O)O)N)O	D-homotyrosine	O=C(O)[C@H](N)CCc1ccc(O)cc1	NMe-homotyrosine	CN[C@H](C(O)=O)CCc1ccc(O)cc1	D-NMe-homotyrosine	CN[C@@H](C(O)=O)CCc1ccc(O)cc1
+hydroxyproline	C(*)1C[C@H](NC(*)1)C(=O)O	D-hydroxyproline	[*]C1C[C@H](C(O)=O)NC1[*]	NMe-hydroxyproline	CN(C1[*])[C@H](C(O)=O)CC1[*]	D-NMe-hydroxyproline	CN(C1[*])[C@@H](C(O)=O)CC1[*]
+indole pyruvic acid	C1=CC=C2C(=C1)C(=CN2)CC(=O)C(=O)O						
+isoleucine	CC[C@H](C)[C@@H](C(=O)O)N	D-allo-isoleucine	CC[C@@H]([C@@H](N)C(O)=O)C	NMe-isoleucine	CN[C@H](C(O)=O)[C@@H](C)CC	D-allo-NMe-isoleucine	CN[C@@H](C(O)=O)[C@@H](C)CC
+isovaline	CC[C@@](C)(C(=O)O)N	D-isovaline	CC[C@@](N)(C(O)=O)C	NMe-isovaline	CN[C@@](C(O)=O)(C)CC	D-NMe-isovaline	CN[C@](C(O)=O)(C)CC
+kynurenine	C1=CC=C(C(=C1)C(=O)C[C@@H](C(=O)O)N)N	D-kynurenine	O=C(C[C@@H](N)C(O)=O)c1c(N)cccc1	NMe-kynurenine	CN[C@H](C(O)=O)CC(=O)c1c(N)cccc1	D-NMe-kynurenine	CN[C@@H](C(O)=O)CC(=O)c1c(N)cccc1
+lactic acid	CC(C(=O)O)O						
+leucine	CC(C)C[C@@H](C(=O)O)N	D-leucine	CC(C[C@@H](N)C(O)=O)C	NMe-leucine	CN[C@H](C(O)=O)CC(C)C	D-NMe-leucine	CN[C@@H](C(O)=O)CC(C)C
+leucinol	CC(C)C[C@@H](CO)N						
+linoleic acid	CCCCC/C=C\C/C=C\CCCCCCCC(=O)O						
+lysine	C(CCN)C[C@@H](C(=O)O)N	D-lysine	O=C(O)[C@H](N)CCCCN	NMe-lysine	CN[C@H](C(O)=O)CCCCN	D-NMe-lysine	CN[C@@H](C(O)=O)CCCCN
+malic acid	C(C(C(=O)O)O)C(=O)O						
+malonamate	NC(=O)CC(=O)O			NMe-malonamate	CNC(CC(O)=O)=O		
+meta-tyrosine	C1=CC(=CC(=C1)O)C[C@@H](C(=O)O)N	D-meta-tyrosine	O=C(O)[C@H](N)Cc1cccc(O)c1	NMe-meta-tyrosine	CN[C@H](C(O)=O)Cc1cccc(O)c1	D-NMe-meta-tyrosine	CN[C@@H](C(O)=O)Cc1cccc(O)c1
+methionine	CSCC[C@@H](C(=O)O)N	D-methionine	CSCC[C@@H](N)C(O)=O	NMe-methionine	CN[C@H](C(O)=O)CCSC	D-NMe-methionine	CN[C@@H](C(O)=O)CCSC
+methylglutaconyl hydroxyornithine	C/C(=C\C(=O)N(CCCC(C(=O)O)N)O)/CC(=O)O			NMe-methylglutaconyl hydroxyornithine	CNC(C(O)=O)CCCN(O)C(=O)/C=C(/CC(O)=O)\C		
+nicotinic acid	C1=CC(=CN=C1)C(=O)O						
+norcoronamic acid	C[C@H]1C[C@]1(C(=O)O)N			NMe-norcoronamic acid	CN[C@@](C(O)=O)(C1)[C@H]1C		
+ochratoxin beta	CC1CC2=C(C(=C(C=C2)C(=O)O)O)C(=O)O1						
+ornithine	C(C[C@@H](C(=O)O)N)CN	D-ornithine	NCCC[C@@H](N)C(O)=O	NMe-ornithine	CN[C@H](C(O)=O)CCCN	D-NMe-ornithine	CN[C@@H](C(O)=O)CCCN
+p-hydroxymandelate	C1=CC(=CC=C1C(C(=O)O)O)O						
+para-aminobenzoic acid	O=C(O)c1ccc(N)cc1						
+pentanoic acid	CCCCC(=O)O						
+phenylalanine	C1=CC=C(C=C1)C[C@@H](C(=O)O)N	D-phenylalanine	O=C(O)[C@H](N)Cc1ccccc1	NMe-phenylalanine	CN[C@H](C(O)=O)Cc1ccccc1	D-NMe-phenylalanine	CN[C@@H](C(O)=O)Cc1ccccc1
+phenylalaninol	C1=CC=C(C=C1)C[C@@H](CO)N						
+phenylglycine	C1=CC=C(C=C1)[C@@H](C(=O)O)N	D-phenylglycine	O=C(O)[C@H](N)c1ccccc1	NMe-phenylglycine	CN[C@H](C(O)=O)c1ccccc1	D-NMe-phenylglycine	CN[C@@H](C(O)=O)c1ccccc1
+phenyllactic acid	C1=CC=C(C=C1)C[C@@H](C(=O)O)O						
+phenylpyruvic acid	C1=CC=C(C=C1)CC(=O)C(=O)O						
+pipecolic acid	C1CCN[C@@H](C1)C(=O)O	D-pipecolic acid	O=C(O)[C@@H]1NCCCC1	NMe-pipecolic acid	CN1CCCC[C@H]1C(O)=O	D-NMe-pipecolic acid	CN1CCCC[C@@H]1C(O)=O
+piperazic acid	C1C[C@H](NNC1)C(=O)O	D-piperazic acid	O=C(O)[C@H]1CCCNN1	NMe-piperazic acid	CN1[C@H](C(O)=O)CCCN1	D-NMe-piperazic acid	CN1[C@@H](C(O)=O)CCCN1
+piperonylic acid	OC(=O)c1ccc2OCOc2c1						
+proline	C1C[C@H](NC1)C(=O)O	D-proline	OC(=O)[C@H]1CCCN1	NMe-proline	CN1[C@H](C(O)=O)CCC1	D-NMe-proline	CN1[C@@H](C(O)=O)CCC1
+pyrrole-2-carboxylic acid	C1=CNC(=C1)C(=O)O						
+pyruvic acid	CC(=O)C(=O)O						
+quinoxaline-2-carboxylic acid	C1=CC=C2C(=C1)N=CC(=N2)C(=O)O						
+salicylic acid	C1=CC=C(C(=C1)C(=O)O)O						
+serine	C([C@@H](C(=O)O)N)O	D-serine	O=C(O)[C@H](N)CO	NMe-serine	CN[C@H](C(O)=O)CO	D-NMe-serine	CN[C@@H](C(O)=O)CO
+succinic semialdehyde	C(CC(=O)O)C=O						
+succinyl-hydrazinoacetic acid	N/N=C/C=C/C=C/C=C/C=C/C=C/C(=O)O						
+threonine	C[C@H]([C@@H](C(=O)O)N)O	D-allo-threonine	C[C@@H](O)[C@@H](N)C(O)=O	NMe-threonine	CN[C@H](C(O)=O)[C@H](O)C	D-allo-NMe-threonine	CN[C@@H](C(O)=O)[C@H](O)C
+trans-2-crotylglycine	C/C=C/C[C@@H](C(=O)O)N	D-trans-2-crotylglycine	C/C=C/C[C@@H](N)C(O)=O	NMe-trans-2-crotylglycine	CN[C@H](C(O)=O)C\C=C\C	D-NMe-trans-2-crotylglycine	CN[C@@H](C(O)=O)C\C=C\C
+trans-2-hexenoic acid	CCC\C=C\C(O)=O						
+tricarballylic acid	C(C(CC(=O)O)C(=O)O)C(=O)O						
+tryptophan	C1=CC=C2C(=C1)C(=CN2)C[C@@H](C(=O)O)N	D-tryptophan	O=C(O)[C@H](N)Cc2c1c([nH]c2)cccc1	NMe-tryptophan	CN[C@H](C(O)=O)Cc(c[nH]2)c1c2cccc1	D-NMe-tryptophan	CN[C@@H](C(O)=O)Cc(c[nH]2)c1c2cccc1
+tyrosine	C1=CC(=CC=C1C[C@@H](C(=O)O)N)O	D-tyrosine	O=C(O)[C@H](N)Cc1ccc(O)cc1	NMe-tyrosine	CN[C@H](C(O)=O)Cc1ccc(O)cc1	D-NMe-tyrosine	CN[C@@H](C(O)=O)Cc1ccc(O)cc1
+ustethylinic acid	c1(C)c(O)c(C(=O)O)c(CC)cc(O)1						
+valine	CC(C)[C@@H](C(=O)O)N	D-valine	CC([C@@H](N)C(O)=O)C	NMe-valine	CN[C@H](C(O)=O)C(C)C	D-NMe-valine	CN[C@@H](C(O)=O)C(C)C
+valine isocyanide	CC(C)[C@H]([N+]#[C-])C(O)=O	D-valine isocyanide	CC([C@H](C(=O)O)[N+]#[C-])C				
+valinol	CC(C)[C@@H](CO)N						

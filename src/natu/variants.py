@@ -287,6 +287,12 @@ def get_variant_name(name: str,
     :param modifications: list of modifications of the variant compared to the base structure
     :return: name of the variant
     """
+
+    if Modification.n_methylation in modifications:
+        n_methylation_config = tailoring_config.get("n_methylation", {})
+        n_methylation_prefix = n_methylation_config["prefix"]
+        name = n_methylation_prefix + name
+
     if Modification.chirality in modifications:
         chirality_config = tailoring_config.get("chirality", {})
         chirality_prefixes = chirality_config["nomenclature"]
@@ -321,12 +327,6 @@ def get_variant_name(name: str,
             name = allo_prefix + name.replace(existing_chirality_prefix, chirality_prefixes[existing_chirality_prefix])
         else:
             name = chirality_prefixes[existing_chirality_prefix] + allo_prefix + name
-
-
-    if Modification.n_methylation in modifications:
-        n_methylation_config = tailoring_config.get("n_methylation", {})
-        n_methylation_prefix = n_methylation_config["prefix"]
-        name = n_methylation_prefix + name
 
     return name
 

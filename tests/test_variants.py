@@ -257,7 +257,7 @@ class TestComputeVariants:
         assert collection.base_structure.n_methylation == NMethylation.N
 
         by_name = {v.name: v for v in collection.variants}
-        assert set(by_name) == {"NMe-alanine", "D-alanine", "NMe-D-alanine"}
+        assert set(by_name) == {"NMe-alanine", "D-alanine", "D-NMe-alanine"}
         assert by_name["D-alanine"].smiles == "C[C@@H](N)C(O)=O"
         assert by_name["D-alanine"].chirality == Chirality.D
         assert by_name["NMe-alanine"].n_methylation == NMethylation.Y
@@ -327,7 +327,7 @@ class TestGetStructureVariants:
             "alanine": ALANINE,
             "NMe-alanine": "CN[C@H](C(O)=O)C",
             "D-alanine": "C[C@@H](N)C(O)=O",
-            "NMe-D-alanine": "CN[C@@H](C(O)=O)C",
+            "D-NMe-alanine": "CN[C@@H](C(O)=O)C",
             "glycine": GLYCINE,
             "NMe-glycine": "CNCC(O)=O",
         }
@@ -339,7 +339,7 @@ class TestGetStructureVariants:
             "alanine": ALANINE,
             "NMe-alanine": "CN[C@H](C(O)=O)C",
             "D-alanine": "C[C@@H](N)C(O)=O",
-            "NMe-D-alanine": "CN[C@@H](C(O)=O)C",
+            "D-NMe-alanine": "CN[C@@H](C(O)=O)C",
         }
 
     def test_raises_keyerror_for_an_unknown_requested_substrate(self, smiles_file, tailoring_config):
@@ -400,7 +400,7 @@ class TestStructureCollection:
             "alanine\tC[C@@H](C(=O)O)N\t"
             "D-alanine\tC[C@@H](N)C(O)=O\t"
             "NMe-alanine\tCN[C@H](C(O)=O)C\t"
-            "NMe-D-alanine\tCN[C@@H](C(O)=O)C\n"
+            "D-NMe-alanine\tCN[C@@H](C(O)=O)C\n"
         )
 
     def test_write_smiles_writes_base_then_every_variant(self, tmp_path: Path, tailoring_config):
@@ -414,5 +414,5 @@ class TestStructureCollection:
         assert set(lines[1:]) == {
             "NMe-alanine\tCN[C@H](C(O)=O)C",
             "D-alanine\tC[C@@H](N)C(O)=O",
-            "NMe-D-alanine\tCN[C@@H](C(O)=O)C",
+            "D-NMe-alanine\tCN[C@@H](C(O)=O)C",
         }

@@ -159,7 +159,7 @@ alaninol	C[C@@H](CO)N
 allo-isoleucine	CC[C@@H](C)[C@@H](C(=O)O)N
 allo-threonine	C[C@@H]([C@@H](C(=O)O)N)O
 anthranilic acid	C1=CC=C(C(=C1)C(=O)O)N
-arginine	C(C[C@@H](C(=O)O)N)CN=C(N)N
+arginine	C(C[C@@H](C(=O)O)N)CNC(=N)N
 argininol	N[C@H](CO)CCCN=C(N)N
 asparagine	C([C@@H](C(=O)O)N)C(=O)N
 aspartic acid	C([C@@H](C(=O)O)N)C(=O)O

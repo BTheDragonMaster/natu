@@ -166,26 +166,32 @@ def expand_substitution_matrix(df: pd.DataFrame, tailoring_config: dict[str, Any
             if variant.name not in base_alphabet_set:
                 variants_to_add.append(variant)
             if variant.name in added_variants:
-                print("Duplicate variant: ", variant.name)
+                logger.warning(f"Duplicate variant: {variant.name}")
 
         else:
             assert variant.name in base_alphabet_set
 
         added_variants.add(variant.name)
 
-    pair_scores: dict[tuple[str, str], float] = {}
     new_names = [v.name for v in variants_to_add]
+    all_names = base_alphabet + new_names  # existing alphabet + all new variants
 
-    all_col_names = base_alphabet + new_names  # existing alphabet + all new variants
+    def score_name(variant: Variant) -> str:
+        """Name of the entry in the original matrix that supplies this variant's base score:
+        the variant itself if it is already in the matrix, otherwise the substrate it derives from"""
+        if variant.name in base_alphabet_set:
+            return variant.name
+        assert variant.base is not None
+        return variant.base.name
 
-    for row_variant in variants_to_add:
-        for col_name in all_col_names:
+    # Score every pair, including pairs of entries that were already in the base matrix, so that
+    # chirality- and N-methylation-aware bonuses are applied consistently across the whole matrix.
+    scores = np.empty((len(all_names), len(all_names)), dtype=float)
+    for i, row_name in enumerate(all_names):
+        row_variant = variant_lookup[row_name]
+        for j, col_name in enumerate(all_names):
             col_variant = variant_lookup[col_name]
-            if col_variant.base is None:
-                base_name = col_variant.name
-            else:
-                base_name = col_variant.base.name
-            base_score = df.loc[row_variant.base.name, base_name]
+            base_score = df.loc[score_name(row_variant), score_name(col_variant)]
 
             chirality_score = 0.0
             methylation_score = 0.0
@@ -194,29 +200,9 @@ def expand_substitution_matrix(df: pd.DataFrame, tailoring_config: dict[str, Any
             if n_methylation_config["n_methylation_aware_scoring"]:
                 methylation_score = n_methylation_scores[row_variant.n_methylation][col_variant.n_methylation]
 
-            pair_scores[(row_variant.name, col_name)] = base_score + chirality_score + methylation_score
+            scores[i, j] = base_score + chirality_score + methylation_score
 
-    # --- assemble ---
-    def lookup(a: str, b: str) -> float:
-        if (a, b) in pair_scores:
-            return pair_scores[(a, b)]
-        return pair_scores[(b, a)]
-
-    new_cols_df = pd.DataFrame(
-        {name: [lookup(name, idx) for idx in df.index] for name in new_names},
-        index=df.index,
-    )
-
-    new_block = pd.DataFrame(
-        {col: [lookup(row, col) for row in new_names] for col in new_names},
-        index=new_names,
-    )
-
-    df = pd.concat([df, new_cols_df], axis=1)
-    new_rows = pd.concat([new_cols_df.T, new_block], axis=1)
-    df = pd.concat([df, new_rows.reindex(columns=df.columns)])
-
-    return df
+    return pd.DataFrame(scores, index=all_names, columns=all_names)
 
 
 def get_average_non_self_score_from_name(df: pd.DataFrame, name: str) -> float:

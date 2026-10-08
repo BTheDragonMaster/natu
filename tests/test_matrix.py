@@ -279,6 +279,36 @@ class TestExpandSubstitutionMatrix:
         expanded = expand_substitution_matrix(base_matrix, tailoring_config, smiles_file)
         assert expanded.loc["D-alanine", "D-alanine"] == pytest.approx(16.0)
 
+    def test_base_pairs_also_get_chirality_and_methylation_bonuses(
+        self, base_matrix, tailoring_config, smiles_file
+    ):
+        """Pairs among the original substrates must be scored with the same
+        bonus tables as the new variants, otherwise L-alanine vs L-alanine
+        would lack the l_l bonus that D-alanine vs D-alanine gets via d_d.
+
+        alanine/alanine: 10.0 + l_l (3.0) + n_n (1.0) = 14.0
+        glycine/glycine: 8.0 + x_x (0.5) + n_n (1.0) = 9.5
+        alanine/glycine: 2.0 + l_x (0.0) + n_n (1.0) = 3.0
+        """
+        expanded = expand_substitution_matrix(base_matrix, tailoring_config, smiles_file)
+
+        assert expanded.loc["alanine", "alanine"] == pytest.approx(14.0)
+        assert expanded.loc["glycine", "glycine"] == pytest.approx(9.5)
+        assert expanded.loc["alanine", "glycine"] == pytest.approx(3.0)
+        assert expanded.loc["glycine", "alanine"] == pytest.approx(3.0)
+
+    def test_expanded_matrix_is_symmetric(self, base_matrix, tailoring_config, smiles_file):
+        expanded = expand_substitution_matrix(base_matrix, tailoring_config, smiles_file)
+        pd.testing.assert_frame_equal(expanded, expanded.T)
+
+    def test_base_pairs_are_unchanged_when_both_scorings_are_disabled(self, base_matrix, smiles_file):
+        tailoring_config = {
+            "chirality": {"chirality_aware_scoring": False, "scoring": {"l_l": 3.0, "l_d": -5.0, "d_d": 5.0, "l_x": 0.0, "d_x": 0.0, "x_x": 0.5}, "exclude": []},
+            "n_methylation": {"n_methylation_aware_scoring": False, "scoring": {"y_y": 1.0, "y_n": -1.0, "n_n": 1.0, "y_x": 0.0, "n_x": 0.0, "x_x": 0.0}, "exclude": [], "prefix": "NMe-"},
+        }
+        expanded = expand_substitution_matrix(base_matrix, tailoring_config, smiles_file)
+        pd.testing.assert_frame_equal(expanded, base_matrix)
+
     def test_two_variants_of_different_substrates_combine_both_bonus_tables(
         self, base_matrix, tailoring_config, smiles_file
     ):

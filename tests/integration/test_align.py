@@ -149,7 +149,19 @@ class TestAlign:
         guide tree merges seq1/seq2 first and seq3 last -- confirmed by
         actually running this first: unlike center-star (which always puts
         the chosen center in row 0), progressive orders rows by tree-merge
-        order, here starting with the odd one out, seq3."""
+        order, here starting with the odd one out, seq3.
+
+        Note on the "GAP" assertions below: they are NOT evidence of any
+        gap-avoidance smarts specific to progressive (or star) MSA. Under
+        the real match_mismatch matrix every mismatch scores exactly 0.0,
+        while match_mismatch.yaml's gap scores are all negative (open
+        -0.5, extend -0.1) -- so for any pair of EQUAL-LENGTH sequences,
+        an all-mismatch alignment (score 0) always beats introducing any
+        gap, regardless of alignment mode or how dissimilar the sequences
+        are. seq1/seq2/seq3 are all length 3, so this is guaranteed by
+        the scoring scheme, not demonstrated algorithm behavior. See
+        test_msa_introduces_gaps_for_unequal_length_dissimilar_sequences
+        below for a case that actually exercises gap placement."""
         fasta = tmp_path / "in.fasta"
         write_fasta(fasta, [
             ("seq1", ["alanine", "glycine", "serine"]),
@@ -170,4 +182,44 @@ class TestAlign:
         for header in ("seq1", "seq2"):
             score, tokens = records[header]
             assert score == pytest.approx(0.0)  # no monomers shared with seq3
+            # Gap-free here is a consequence of match_mismatch's scoring
+            # scheme (mismatch=0.0 beats any gap) for equal-length inputs,
+            # not evidence of gap-avoidance logic -- see the docstring.
             assert "GAP" not in tokens
+
+    def test_msa_introduces_gaps_for_unequal_length_dissimilar_sequences(
+        self, tmp_path, run_natu, write_fasta
+    ):
+        """The equal-length case above can never show a gap under
+        match_mismatch (mismatch=0.0 always beats any gap -- see that
+        test's docstring). Unequal-length sequences are different: even
+        sharing zero monomers, the aligner still has to pad the shorter
+        one out to line up columns, and that padding costs strictly less
+        (-0.7 total here) than any alternative, so it's taken. Confirmed
+        by actually running this first, not assumed: center-star picks
+        seq_long as the center (row 0, self-alignment score 5.0 = 5
+        matches), and seq_short is padded with exactly 3 leading gaps to
+        reach seq_long's length, keeping its own 2 real monomers intact
+        and in order at the end.
+        """
+        fasta = tmp_path / "in.fasta"
+        write_fasta(fasta, [
+            ("seq_long", ["proline", "leucine", "proline", "proline", "leucine"]),
+            ("seq_short", ["alanine", "glycine"]),
+        ])
+        out = tmp_path / "out.fasta"
+
+        run_natu(["align", "-m", "match_mismatch", "-f", str(fasta), "-o", str(out)])
+
+        records = _parse_aligned_fasta(out.read_text())
+        assert list(records) == ["seq_long", "seq_short"]
+
+        score_long, tokens_long = records["seq_long"]
+        assert score_long == pytest.approx(5.0)  # self-alignment: 5 matches
+        assert tokens_long == ["proline", "leucine", "proline", "proline", "leucine"]
+        assert "GAP" not in tokens_long
+
+        score_short, tokens_short = records["seq_short"]
+        assert score_short == pytest.approx(-0.7)  # gap-open(-0.5) + gap-extend(-0.1)*2
+        assert tokens_short.count("GAP") == 3
+        assert tokens_short[-2:] == ["alanine", "glycine"]  # real monomers preserved, in order

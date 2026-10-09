@@ -118,6 +118,7 @@ substrate	smiles
 4-nitrotryptophan	C1=CC=C2C(=C1[N+](=O)[O-])C(=CN2)C[C@@H](C(=O)O)N
 4-oxoproline	C1[C@H](NCC1=O)C(=O)O
 4R-E-butenyl-4R-methylthreonine	C/C=C/C[C@@H](C)[C@H]([C@@H](C(=O)O)N)O
+4R-hydroxyglutamic acid	C([C@@H](O)C(=O)O)[C@@H](C(=O)O)N
 4R-hydroxyproline	C1[C@H](NC[C@@H]1O)C(=O)O
 4R-methylproline	C[C@@H]1C[C@H](NC1)C(=O)O
 4R-propylproline	CCC[C@@H]1C[C@H](NC1)C(=O)O

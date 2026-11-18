@@ -412,6 +412,12 @@ def cli() -> argparse.Namespace:
                               type=Path,
                               help="Path to output file with substitution matrix.")
 
+    build_parser.add_argument('-c', '--config',
+                              type=Path,
+                              required=False,
+                              help="Path to a configuration file overriding the packaged configuration of the "
+                                   "matrix type, e.g. its 'unknown_substrates' section (default: None).")
+
     return parser.parse_args()
 
 
@@ -873,7 +879,10 @@ def main() -> None:
             with open(args.output, "w", encoding="utf-8") as handle:
                 handle.write(svg_str)
     elif args.command == "build":
-        build_substitution_matrix(args.smiles, args.matrix_type, args.output)
+        if args.config is not None and not args.config.is_file():
+            raise FileNotFoundError(f"{args.config} does not exist")
+        config = load_config(args.config, args.matrix_type)
+        build_substitution_matrix(args.smiles, args.matrix_type, args.output, config)
     else:
         raise ValueError(f"unknown command {args.command}")
 

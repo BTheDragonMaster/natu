@@ -4,13 +4,16 @@ from pathlib import Path
 from importlib.resources import as_file
 from collections import defaultdict
 import logging
+import re
 from typing import Any, Optional
 
 import pandas as pd
 import numpy as np
+import yaml
 from pikachu.general import read_smiles
 from pikachu.chem.structure import Structure
-from pikachu.fingerprinting.similarity import get_jaccard_matrix
+from pikachu.fingerprinting.ecfp_4 import ECFP
+from pikachu.fingerprinting.similarity import get_jaccard_matrix, get_jaccard_from_ecfp
 from rdkit import Chem
 from rdkit.Chem import rdFingerprintGenerator, DataStructs
 from rdkit.Chem.rdchem import Mol
@@ -293,10 +296,161 @@ def check_structures(name_to_structure: dict[str, Structure]) -> None:
                     f"Monomers {name_1} and {name_2} in SMILES list are structurally identical. If you do not want to keep both, please remove one of these from your SMILES file")
 
 
+SIMILARITY_METHODS = ("ecfp", "featmorgan")
+
+UNKNOWN_SUBSTRATE_DEFAULTS: dict[str, Any] = {
+    "use_closest_structure": False,
+    "similarity": "ecfp",
+    "min_similarity": 0.3,
+    "base_penalty": 0.2,
+    "penalty_scale": 5.0,
+    "ignore_chirality": False,
+}
+
+
+def strip_stereochemistry(smiles: str) -> str:
+    """
+    Remove stereochemistry from a SMILES string (tetrahedral '@' and double-bond '/' '\\' markers)
+
+    :param smiles: SMILES string
+    :return: SMILES string without stereochemistry
+    """
+    return re.sub(r"[@/\\]", "", smiles)
+
+
+def get_featmorgan_generator(include_chirality: bool = True) -> Any:
+    """
+    Return the RDKit Morgan feature fingerprint generator used for FEATMORGAN similarities
+
+    :param include_chirality: if True, chirality is part of the fingerprint
+    :return: RDKit fingerprint generator (radius 2, 2048 bits, feature invariants)
+    """
+    return rdFingerprintGenerator.GetMorganGenerator(
+        radius=2,
+        fpSize=2048,
+        includeChirality=include_chirality,
+        atomInvariantsGenerator=rdFingerprintGenerator.GetMorganFeatureAtomInvGen()
+    )
+
+
+def get_unknown_substrate_settings(config: Optional[dict[str, Any]]) -> dict[str, Any]:
+    """
+    Return the settings for substrates without an equivalent in the PARAS dataset
+
+    :param config: NATU configuration; the 'unknown_substrates' section is read, missing keys take defaults
+    :return: dictionary with use_closest_structure, similarity, min_similarity, base_penalty, penalty_scale
+    """
+    settings = dict(UNKNOWN_SUBSTRATE_DEFAULTS)
+    settings.update((config or {}).get("unknown_substrates") or {})
+
+    if settings["similarity"] not in SIMILARITY_METHODS:
+        raise ValueError(f"unknown_substrates.similarity must be one of {SIMILARITY_METHODS}, "
+                         f"got {settings['similarity']!r}")
+    if not 0.0 <= float(settings["min_similarity"]) <= 1.0:
+        raise ValueError("unknown_substrates.min_similarity must be between 0 and 1")
+    if float(settings["base_penalty"]) < 0 or float(settings["penalty_scale"]) < 0:
+        raise ValueError("unknown_substrates.base_penalty and penalty_scale must not be negative")
+
+    return settings
+
+
+def closest_structure_penalty(similarity_1: float, similarity_2: float,
+                              base_penalty: float, penalty_scale: float) -> float:
+    """
+    Penalty for two different substrates that are represented by the same PARAS substrate
+
+    A substrate with an equivalent PARAS substrate has similarity 1.0; a substrate that borrows the scores of its
+    closest PARAS substrate has the similarity to that substrate. The less similar, the larger the penalty.
+
+    :param similarity_1: similarity of substrate 1 to the shared PARAS substrate (0-1)
+    :param similarity_2: similarity of substrate 2 to the shared PARAS substrate (0-1)
+    :param base_penalty: fixed part of the penalty
+    :param penalty_scale: penalty per unit of dissimilarity
+    :return: penalty to subtract from the shared PARAS substrate's self score
+    """
+    return base_penalty + penalty_scale * ((1.0 - similarity_1) + (1.0 - similarity_2))
+
+
+def find_closest_substrates(query_names: list[str],
+                            name_to_smiles: dict[str, str],
+                            name_to_structure: dict[str, Structure],
+                            reference_name_to_smiles: dict[str, str],
+                            reference_name_to_structure: dict[str, Structure],
+                            method: str = "ecfp",
+                            ignore_chirality: bool = False) -> dict[str, tuple[str, float]]:
+    """
+    For each query substrate, find the structurally most similar reference substrate
+
+    :param query_names: names of the substrates to look up
+    :param name_to_smiles: query name -> SMILES (used by 'featmorgan')
+    :param name_to_structure: query name -> PIKAChU structure (used by 'ecfp')
+    :param reference_name_to_smiles: reference name -> SMILES (used by 'featmorgan')
+    :param reference_name_to_structure: reference name -> PIKAChU structure (used by 'ecfp')
+    :param method: 'ecfp' (PIKAChU ECFP4, Jaccard index, as for the ECFP matrix) or
+        'featmorgan' (RDKit Morgan feature fingerprints, Tanimoto, as for the FEATMORGAN matrix)
+    :param ignore_chirality: if True, stereochemistry is ignored, e.g. a D-amino acid is identical to its L-form
+    :return: query name -> (closest reference name, similarity between 0 and 1); ties are broken alphabetically
+    """
+    if ignore_chirality:
+        name_to_smiles = {n: strip_stereochemistry(s) for n, s in name_to_smiles.items()}
+        reference_name_to_smiles = {n: strip_stereochemistry(s) for n, s in reference_name_to_smiles.items()}
+
+    if method == "ecfp":
+        if ignore_chirality:
+            reference_name_to_structure = {n: read_smiles(s) for n, s in reference_name_to_smiles.items()}
+        reference = {n: ECFP(s, iterations=2) for n, s in reference_name_to_structure.items()}
+
+        def similarities(name: str) -> dict[str, float]:
+            structure = read_smiles(name_to_smiles[name]) if ignore_chirality else name_to_structure[name]
+            query = ECFP(structure, iterations=2)
+            return {n: 1.0 - get_jaccard_from_ecfp(query, e) for n, e in reference.items()}
+
+    elif method == "featmorgan":
+        generator = get_featmorgan_generator(include_chirality=not ignore_chirality)
+        reference_fps = {}
+        for n, smiles in reference_name_to_smiles.items():
+            mol = Chem.MolFromSmiles(smiles)
+            if mol is not None:
+                reference_fps[n] = generator.GetFingerprint(mol)
+        reference_names = list(reference_fps)
+        fps = [reference_fps[n] for n in reference_names]
+
+        def similarities(name: str) -> dict[str, float]:
+            mol = Chem.MolFromSmiles(name_to_smiles[name])
+            if mol is None:
+                logger.warning(f"RDKit cannot read the SMILES of {name}; no closest substrate assigned")
+                return {}
+            return dict(zip(reference_names, DataStructs.BulkTanimotoSimilarity(generator.GetFingerprint(mol), fps)))
+
+    else:
+        raise ValueError(f"Unknown similarity method {method!r}; choose from {SIMILARITY_METHODS}")
+
+    closest: dict[str, tuple[str, float]] = {}
+    for name in query_names:
+        name_to_similarity = similarities(name)
+        if not name_to_similarity:
+            continue
+        best = max(name_to_similarity.values())
+        best_name = min(n for n, s in name_to_similarity.items() if s >= best - 1e-9)
+        closest[name] = (best_name, float(best))
+
+    return closest
+
+
 def build_substitution_matrix(smiles_file: Path,
                               matrix_type: SubstitutionMatrix,
-                              out_file: Path) -> None:
+                              out_file: Path,
+                              config: Optional[dict[str, Any]] = None) -> None:
+    """
+    Build a substitution matrix for the substrates in a SMILES file and write it to a tab-separated file
 
+    :param smiles_file: tab-separated file with header; substrate name in column 1, SMILES in column 2
+    :param matrix_type: type of substitution matrix to build
+    :param out_file: output file. For PARAS_BASED matrices, a second file <out_file stem>_paras_mapping.tsv
+        records which PARAS substrate each substrate was matched to
+    :param config: NATU configuration; if None, the packaged configuration of matrix_type is used.
+        Only the 'unknown_substrates' section is used here (PARAS_BASED only)
+    """
     name_to_smiles = parse_smiles(smiles_file)
     structure_lookup: dict[str, Structure] = {n: read_smiles(name_to_smiles[n]) for n in name_to_smiles.keys()}
 
@@ -332,8 +486,41 @@ def build_substitution_matrix(smiles_file: Path,
                 else:
                     logger.debug(
                         f"Substrate {name} not found in default dataset. Unable to generate "
-                        f"PARAS-based substitution scores for this substrate. Scores will default "
-                        f"to average scores.")
+                        f"PARAS-based substitution scores for this substrate directly.")
+
+        # Substrates without an equivalent can borrow the scores of their structurally closest PARAS substrate
+        if config is None:
+            config = yaml.safe_load(matrix_type.get_config().read_text()) or {}
+        settings = get_unknown_substrate_settings(config)
+        name_to_similarity: dict[str, float] = {name: 1.0 for name in name_to_natu_name}
+        name_to_status: dict[str, str] = {name: "equivalent" for name in name_to_natu_name}
+        closest_names: set[str] = set()
+        unknown_names = [name for name in name_to_smiles if name not in name_to_natu_name]
+
+        if settings["use_closest_structure"] and unknown_names:
+            closest = find_closest_substrates(unknown_names, name_to_smiles, structure_lookup,
+                                              natu_name_to_smiles, natu_structure_lookup,
+                                              method=settings["similarity"],
+                                              ignore_chirality=bool(settings["ignore_chirality"]))
+            for name in unknown_names:
+                if name not in closest:
+                    continue
+                natu_name, similarity = closest[name]
+                name_to_similarity[name] = similarity
+                if similarity >= settings["min_similarity"]:
+                    name_to_natu_name[name] = natu_name
+                    name_to_status[name] = "closest"
+                    closest_names.add(name)
+                    logger.debug(f"Substrate {name}: using scores of closest PARAS substrate {natu_name} "
+                                 f"({settings['similarity']} similarity {similarity:.3f})")
+                else:
+                    logger.debug(f"Substrate {name}: closest PARAS substrate {natu_name} is below the similarity "
+                                 f"threshold ({similarity:.3f} < {settings['min_similarity']}); using average scores")
+
+        for name in unknown_names:
+            if name not in name_to_natu_name:
+                name_to_status[name] = "average"
+                logger.debug(f"Substrate {name}: scores default to average scores.")
 
         with matrix_type.open() as handle:
             df = pd.read_csv(handle, sep="\t", index_col=0)
@@ -364,9 +551,30 @@ def build_substitution_matrix(smiles_file: Path,
 
                         matrix[name_1][name_2] = score
                     else:
-                        matrix[name_1][name_2] = float(df.loc[natu_name_1, natu_name_2])
+                        score = float(df.loc[natu_name_1, natu_name_2])
+                        # two different substrates standing for the same PARAS substrate, at least one of them
+                        # only by structural similarity: not identical, so lower the shared self score
+                        if (name_1 != name_2 and natu_name_1 == natu_name_2
+                                and (name_1 in closest_names or name_2 in closest_names)):
+                            score -= closest_structure_penalty(name_to_similarity[name_1],
+                                                               name_to_similarity[name_2],
+                                                               float(settings["base_penalty"]),
+                                                               float(settings["penalty_scale"]))
+                        matrix[name_1][name_2] = score
 
         matrix_df = pd.DataFrame.from_dict(matrix)
+
+        mapping_file = Path(out_file).with_name(f"{Path(out_file).stem}_paras_mapping.tsv")
+        with open(mapping_file, "w", encoding="utf-8") as mapping_out:
+            mapping_out.write("substrate\tparas_substrate\tstatus\tsimilarity\tsimilarity_method\n")
+            for name in names:
+                similarity = name_to_similarity.get(name)
+                mapping_out.write(f"{name}\t{name_to_natu_name.get(name, '')}\t{name_to_status[name]}\t"
+                                  f"{'' if similarity is None else f'{similarity:.4f}'}\t"
+                                  f"{settings['similarity'] if name_to_status[name] != 'equivalent' and similarity is not None else ''}\n")
+        logger.info(f"PARAS-based matrix: {sum(s == 'equivalent' for s in name_to_status.values())} equivalent, "
+                    f"{len(closest_names)} closest structure, "
+                    f"{sum(s == 'average' for s in name_to_status.values())} average scores; see {mapping_file}")
 
     elif matrix_type == SubstitutionMatrix.ECFP:
         structure_lookup: dict[str, Structure] = {n: read_smiles(name_to_smiles[n]) for n in name_to_smiles.keys()}
@@ -380,15 +588,7 @@ def build_substitution_matrix(smiles_file: Path,
         structure_lookup: dict[str, Mol] = {n: Chem.MolFromSmiles(name_to_smiles[n]) for n in name_to_smiles.keys()}
         name_to_name_to_feat: dict[str, dict[str, float]] = {}
 
-        radius = 2
-        n_bits = 2048
-
-        generator = rdFingerprintGenerator.GetMorganGenerator(
-            radius=radius,
-            fpSize=n_bits,
-            includeChirality=True,
-            atomInvariantsGenerator=rdFingerprintGenerator.GetMorganFeatureAtomInvGen()
-        )
+        generator = get_featmorgan_generator()
 
         for name_1, mol_1 in structure_lookup.items():
             fp1 = generator.GetFingerprint(mol_1)

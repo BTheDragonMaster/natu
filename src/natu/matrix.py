@@ -298,10 +298,14 @@ def check_structures(name_to_structure: dict[str, Structure]) -> None:
 
 SIMILARITY_METHODS = ("ecfp", "featmorgan")
 
+PENALTY_MODES = ("interpolate", "subtract")
+
 UNKNOWN_SUBSTRATE_DEFAULTS: dict[str, Any] = {
     "use_closest_structure": False,
     "similarity": "ecfp",
-    "min_similarity": 0.3,
+    "min_similarity": "auto",
+    "auto_percentile": 95.0,
+    "penalty_mode": "interpolate",
     "base_penalty": 0.2,
     "penalty_scale": 5.0,
     "ignore_chirality": False,
@@ -338,7 +342,7 @@ def get_unknown_substrate_settings(config: Optional[dict[str, Any]]) -> dict[str
     Return the settings for substrates without an equivalent in the PARAS dataset
 
     :param config: NATU configuration; the 'unknown_substrates' section is read, missing keys take defaults
-    :return: dictionary with use_closest_structure, similarity, min_similarity, base_penalty, penalty_scale
+    :return: dictionary with the keys of UNKNOWN_SUBSTRATE_DEFAULTS
     """
     settings = dict(UNKNOWN_SUBSTRATE_DEFAULTS)
     settings.update((config or {}).get("unknown_substrates") or {})
@@ -346,12 +350,38 @@ def get_unknown_substrate_settings(config: Optional[dict[str, Any]]) -> dict[str
     if settings["similarity"] not in SIMILARITY_METHODS:
         raise ValueError(f"unknown_substrates.similarity must be one of {SIMILARITY_METHODS}, "
                          f"got {settings['similarity']!r}")
-    if not 0.0 <= float(settings["min_similarity"]) <= 1.0:
-        raise ValueError("unknown_substrates.min_similarity must be between 0 and 1")
+    if settings["penalty_mode"] not in PENALTY_MODES:
+        raise ValueError(f"unknown_substrates.penalty_mode must be one of {PENALTY_MODES}, "
+                         f"got {settings['penalty_mode']!r}")
+    if settings["min_similarity"] != "auto":
+        try:
+            threshold = float(settings["min_similarity"])
+        except (TypeError, ValueError):
+            raise ValueError("unknown_substrates.min_similarity must be 'auto' or a number between 0 and 1")
+        if not 0.0 <= threshold <= 1.0:
+            raise ValueError("unknown_substrates.min_similarity must be 'auto' or a number between 0 and 1")
+    if not 0.0 <= float(settings["auto_percentile"]) <= 100.0:
+        raise ValueError("unknown_substrates.auto_percentile must be between 0 and 100")
     if float(settings["base_penalty"]) < 0 or float(settings["penalty_scale"]) < 0:
         raise ValueError("unknown_substrates.base_penalty and penalty_scale must not be negative")
 
     return settings
+
+
+def interpolation_weight(similarity: float, threshold: float) -> float:
+    """
+    How much a substrate may rely on the scores of its closest PARAS substrate
+
+    0 at or below the similarity threshold (scores stay NATU's average scores), 1 for an identical structure
+    (scores are those of the closest PARAS substrate), linear in between.
+
+    :param similarity: similarity to the closest PARAS substrate (0-1)
+    :param threshold: similarity threshold (0-1)
+    :return: weight between 0 and 1
+    """
+    if threshold >= 1.0:
+        return 1.0 if similarity >= 1.0 else 0.0
+    return float(min(1.0, max(0.0, (similarity - threshold) / (1.0 - threshold))))
 
 
 def closest_structure_penalty(similarity_1: float, similarity_2: float,
@@ -371,67 +401,120 @@ def closest_structure_penalty(similarity_1: float, similarity_2: float,
     return base_penalty + penalty_scale * ((1.0 - similarity_1) + (1.0 - similarity_2))
 
 
+def make_fingerprints(name_to_smiles: dict[str, str],
+                      name_to_structure: dict[str, Structure],
+                      method: str = "ecfp",
+                      ignore_chirality: bool = False,
+                      names: Optional[list[str]] = None) -> dict[str, Any]:
+    """
+    Make fingerprints for structural similarity
+
+    :param name_to_smiles: name -> SMILES (used by 'featmorgan', and by 'ecfp' if chirality is ignored)
+    :param name_to_structure: name -> PIKAChU structure (used by 'ecfp')
+    :param method: 'ecfp' (PIKAChU ECFP4, as for the ECFP matrix) or
+        'featmorgan' (RDKit Morgan feature fingerprints, as for the FEATMORGAN matrix)
+    :param ignore_chirality: if True, stereochemistry is ignored, e.g. a D-amino acid is identical to its L-form
+    :param names: names to fingerprint (default: all names in name_to_smiles)
+    :return: name -> fingerprint; names whose SMILES cannot be read are left out
+    """
+    names = list(name_to_smiles) if names is None else names
+    fingerprints: dict[str, Any] = {}
+
+    if method == "ecfp":
+        for name in names:
+            structure = read_smiles(strip_stereochemistry(name_to_smiles[name])) if ignore_chirality \
+                else name_to_structure[name]
+            fingerprints[name] = ECFP(structure, iterations=2)
+    elif method == "featmorgan":
+        generator = get_featmorgan_generator(include_chirality=not ignore_chirality)
+        for name in names:
+            smiles = strip_stereochemistry(name_to_smiles[name]) if ignore_chirality else name_to_smiles[name]
+            mol = Chem.MolFromSmiles(smiles)
+            if mol is None:
+                logger.warning(f"RDKit cannot read the SMILES of {name}; it is left out of the similarity search")
+                continue
+            fingerprints[name] = generator.GetFingerprint(mol)
+    else:
+        raise ValueError(f"Unknown similarity method {method!r}; choose from {SIMILARITY_METHODS}")
+
+    return fingerprints
+
+
+def bulk_similarity(query: Any, fingerprints: list[Any], method: str = "ecfp") -> list[float]:
+    """
+    Similarity (0-1) of one fingerprint to a list of fingerprints
+
+    :param query: fingerprint made by make_fingerprints
+    :param fingerprints: fingerprints made by make_fingerprints with the same method
+    :param method: 'ecfp' (Jaccard index) or 'featmorgan' (Tanimoto coefficient)
+    :return: similarities, in the order of fingerprints
+    """
+    if method == "ecfp":
+        return [1.0 - get_jaccard_from_ecfp(query, fingerprint) for fingerprint in fingerprints]
+    if method == "featmorgan":
+        return list(DataStructs.BulkTanimotoSimilarity(query, fingerprints))
+    raise ValueError(f"Unknown similarity method {method!r}; choose from {SIMILARITY_METHODS}")
+
+
+def get_similarity_threshold(reference_fingerprints: dict[str, Any], method: str = "ecfp",
+                             percentile: float = 95.0) -> float:
+    """
+    Data-driven similarity threshold: a percentile of the similarities between all pairs of reference substrates
+
+    E.g. percentile 95: a substrate counts as 'close' to a reference substrate only if the two are more similar
+    than 95% of all pairs of reference substrates.
+
+    :param reference_fingerprints: reference name -> fingerprint (made by make_fingerprints)
+    :param method: 'ecfp' or 'featmorgan'
+    :param percentile: percentile (0-100)
+    :return: similarity threshold (0-1)
+    """
+    fingerprints = list(reference_fingerprints.values())
+    similarities: list[float] = []
+    for i, fingerprint in enumerate(fingerprints[:-1]):
+        similarities.extend(bulk_similarity(fingerprint, fingerprints[i + 1:], method))
+    if not similarities:
+        raise ValueError("At least two reference substrates are needed to compute a similarity threshold")
+    return float(np.percentile(similarities, percentile))
+
+
 def find_closest_substrates(query_names: list[str],
                             name_to_smiles: dict[str, str],
                             name_to_structure: dict[str, Structure],
                             reference_name_to_smiles: dict[str, str],
                             reference_name_to_structure: dict[str, Structure],
                             method: str = "ecfp",
-                            ignore_chirality: bool = False) -> dict[str, tuple[str, float]]:
+                            ignore_chirality: bool = False,
+                            reference_fingerprints: Optional[dict[str, Any]] = None) -> dict[str, tuple[str, float]]:
     """
     For each query substrate, find the structurally most similar reference substrate
 
     :param query_names: names of the substrates to look up
-    :param name_to_smiles: query name -> SMILES (used by 'featmorgan')
-    :param name_to_structure: query name -> PIKAChU structure (used by 'ecfp')
-    :param reference_name_to_smiles: reference name -> SMILES (used by 'featmorgan')
-    :param reference_name_to_structure: reference name -> PIKAChU structure (used by 'ecfp')
+    :param name_to_smiles: query name -> SMILES
+    :param name_to_structure: query name -> PIKAChU structure
+    :param reference_name_to_smiles: reference name -> SMILES
+    :param reference_name_to_structure: reference name -> PIKAChU structure
     :param method: 'ecfp' (PIKAChU ECFP4, Jaccard index, as for the ECFP matrix) or
         'featmorgan' (RDKit Morgan feature fingerprints, Tanimoto, as for the FEATMORGAN matrix)
     :param ignore_chirality: if True, stereochemistry is ignored, e.g. a D-amino acid is identical to its L-form
+    :param reference_fingerprints: precomputed reference fingerprints (same method and chirality setting)
     :return: query name -> (closest reference name, similarity between 0 and 1); ties are broken alphabetically
     """
-    if ignore_chirality:
-        name_to_smiles = {n: strip_stereochemistry(s) for n, s in name_to_smiles.items()}
-        reference_name_to_smiles = {n: strip_stereochemistry(s) for n, s in reference_name_to_smiles.items()}
-
-    if method == "ecfp":
-        if ignore_chirality:
-            reference_name_to_structure = {n: read_smiles(s) for n, s in reference_name_to_smiles.items()}
-        reference = {n: ECFP(s, iterations=2) for n, s in reference_name_to_structure.items()}
-
-        def similarities(name: str) -> dict[str, float]:
-            structure = read_smiles(name_to_smiles[name]) if ignore_chirality else name_to_structure[name]
-            query = ECFP(structure, iterations=2)
-            return {n: 1.0 - get_jaccard_from_ecfp(query, e) for n, e in reference.items()}
-
-    elif method == "featmorgan":
-        generator = get_featmorgan_generator(include_chirality=not ignore_chirality)
-        reference_fps = {}
-        for n, smiles in reference_name_to_smiles.items():
-            mol = Chem.MolFromSmiles(smiles)
-            if mol is not None:
-                reference_fps[n] = generator.GetFingerprint(mol)
-        reference_names = list(reference_fps)
-        fps = [reference_fps[n] for n in reference_names]
-
-        def similarities(name: str) -> dict[str, float]:
-            mol = Chem.MolFromSmiles(name_to_smiles[name])
-            if mol is None:
-                logger.warning(f"RDKit cannot read the SMILES of {name}; no closest substrate assigned")
-                return {}
-            return dict(zip(reference_names, DataStructs.BulkTanimotoSimilarity(generator.GetFingerprint(mol), fps)))
-
-    else:
-        raise ValueError(f"Unknown similarity method {method!r}; choose from {SIMILARITY_METHODS}")
+    if reference_fingerprints is None:
+        reference_fingerprints = make_fingerprints(reference_name_to_smiles, reference_name_to_structure,
+                                                   method, ignore_chirality)
+    reference_names = list(reference_fingerprints)
+    fingerprints = [reference_fingerprints[n] for n in reference_names]
+    query_fingerprints = make_fingerprints(name_to_smiles, name_to_structure, method, ignore_chirality,
+                                           names=list(query_names))
 
     closest: dict[str, tuple[str, float]] = {}
     for name in query_names:
-        name_to_similarity = similarities(name)
-        if not name_to_similarity:
+        if name not in query_fingerprints or not fingerprints:
             continue
+        name_to_similarity = dict(zip(reference_names, bulk_similarity(query_fingerprints[name], fingerprints, method)))
         best = max(name_to_similarity.values())
-        best_name = min(n for n, s in name_to_similarity.items() if s >= best - 1e-9)
+        best_name = min(n for n, sim in name_to_similarity.items() if sim >= best - 1e-9)
         closest[name] = (best_name, float(best))
 
     return closest
@@ -493,29 +576,47 @@ def build_substitution_matrix(smiles_file: Path,
             config = yaml.safe_load(matrix_type.get_config().read_text()) or {}
         settings = get_unknown_substrate_settings(config)
         name_to_similarity: dict[str, float] = {name: 1.0 for name in name_to_natu_name}
+        name_to_weight: dict[str, float] = {name: 1.0 for name in name_to_natu_name}
         name_to_status: dict[str, str] = {name: "equivalent" for name in name_to_natu_name}
         closest_names: set[str] = set()
         unknown_names = [name for name in name_to_smiles if name not in name_to_natu_name]
+        threshold: Optional[float] = None
+        interpolate = settings["penalty_mode"] == "interpolate"
 
         if settings["use_closest_structure"] and unknown_names:
+            method = settings["similarity"]
+            ignore_chirality = bool(settings["ignore_chirality"])
+            reference_fingerprints = make_fingerprints(natu_name_to_smiles, natu_structure_lookup,
+                                                       method, ignore_chirality)
+            if settings["min_similarity"] == "auto":
+                threshold = get_similarity_threshold(reference_fingerprints, method,
+                                                     float(settings["auto_percentile"]))
+                logger.info(f"Similarity threshold: {threshold:.3f} ({float(settings['auto_percentile']):g}th "
+                            f"percentile of {method} similarities between PARAS substrates)")
+            else:
+                threshold = float(settings["min_similarity"])
+
             closest = find_closest_substrates(unknown_names, name_to_smiles, structure_lookup,
                                               natu_name_to_smiles, natu_structure_lookup,
-                                              method=settings["similarity"],
-                                              ignore_chirality=bool(settings["ignore_chirality"]))
+                                              method=method, ignore_chirality=ignore_chirality,
+                                              reference_fingerprints=reference_fingerprints)
             for name in unknown_names:
                 if name not in closest:
                     continue
                 natu_name, similarity = closest[name]
                 name_to_similarity[name] = similarity
-                if similarity >= settings["min_similarity"]:
+                weight = interpolation_weight(similarity, threshold) if interpolate else 1.0
+                above = similarity > threshold if interpolate else similarity >= threshold
+                if above and weight > 0.0:
                     name_to_natu_name[name] = natu_name
+                    name_to_weight[name] = weight
                     name_to_status[name] = "closest"
                     closest_names.add(name)
                     logger.debug(f"Substrate {name}: using scores of closest PARAS substrate {natu_name} "
-                                 f"({settings['similarity']} similarity {similarity:.3f})")
+                                 f"({method} similarity {similarity:.3f}, weight {weight:.3f})")
                 else:
-                    logger.debug(f"Substrate {name}: closest PARAS substrate {natu_name} is below the similarity "
-                                 f"threshold ({similarity:.3f} < {settings['min_similarity']}); using average scores")
+                    logger.debug(f"Substrate {name}: closest PARAS substrate {natu_name} is not above the similarity "
+                                 f"threshold ({similarity:.3f} vs {threshold:.3f}); using average scores")
 
         for name in unknown_names:
             if name not in name_to_natu_name:
@@ -552,26 +653,49 @@ def build_substitution_matrix(smiles_file: Path,
                         matrix[name_1][name_2] = score
                     else:
                         score = float(df.loc[natu_name_1, natu_name_2])
+                        borrowed = name_1 in closest_names or name_2 in closest_names
                         # two different substrates standing for the same PARAS substrate, at least one of them
                         # only by structural similarity: not identical, so lower the shared self score
-                        if (name_1 != name_2 and natu_name_1 == natu_name_2
-                                and (name_1 in closest_names or name_2 in closest_names)):
-                            score -= closest_structure_penalty(name_to_similarity[name_1],
-                                                               name_to_similarity[name_2],
-                                                               float(settings["base_penalty"]),
-                                                               float(settings["penalty_scale"]))
+                        if name_1 != name_2 and natu_name_1 == natu_name_2 and borrowed:
+                            if interpolate:
+                                score -= float(settings["base_penalty"])
+                            else:
+                                score -= closest_structure_penalty(name_to_similarity[name_1],
+                                                                   name_to_similarity[name_2],
+                                                                   float(settings["base_penalty"]),
+                                                                   float(settings["penalty_scale"]))
+                        if interpolate and borrowed:
+                            # move from NATU's average score (weight 0) to the borrowed score (weight 1)
+                            known_1 = name_1 not in closest_names
+                            known_2 = name_2 not in closest_names
+                            if name_1 == name_2:
+                                fallback = avg_self_score
+                                weight = name_to_weight[name_1]
+                            else:
+                                if known_1:
+                                    fallback = get_average_non_self_score_from_name(df, natu_name_1)
+                                elif known_2:
+                                    fallback = get_average_non_self_score_from_name(df, natu_name_2)
+                                else:
+                                    fallback = avg_non_self_score
+                                weight = name_to_weight[name_1] * name_to_weight[name_2]
+                            score = fallback + (score - fallback) * weight
                         matrix[name_1][name_2] = score
 
         matrix_df = pd.DataFrame.from_dict(matrix)
 
         mapping_file = Path(out_file).with_name(f"{Path(out_file).stem}_paras_mapping.tsv")
         with open(mapping_file, "w", encoding="utf-8") as mapping_out:
-            mapping_out.write("substrate\tparas_substrate\tstatus\tsimilarity\tsimilarity_method\n")
+            mapping_out.write("substrate\tparas_substrate\tstatus\tsimilarity\tweight\tsimilarity_method\t"
+                              "threshold\n")
             for name in names:
                 similarity = name_to_similarity.get(name)
+                searched = name_to_status[name] != "equivalent" and similarity is not None
+                weight = name_to_weight.get(name, 0.0)
                 mapping_out.write(f"{name}\t{name_to_natu_name.get(name, '')}\t{name_to_status[name]}\t"
-                                  f"{'' if similarity is None else f'{similarity:.4f}'}\t"
-                                  f"{settings['similarity'] if name_to_status[name] != 'equivalent' and similarity is not None else ''}\n")
+                                  f"{'' if similarity is None else f'{similarity:.4f}'}\t{weight:.4f}\t"
+                                  f"{settings['similarity'] if searched else ''}\t"
+                                  f"{f'{threshold:.4f}' if searched and threshold is not None else ''}\n")
         logger.info(f"PARAS-based matrix: {sum(s == 'equivalent' for s in name_to_status.values())} equivalent, "
                     f"{len(closest_names)} closest structure, "
                     f"{sum(s == 'average' for s in name_to_status.values())} average scores; see {mapping_file}")

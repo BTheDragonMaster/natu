@@ -10,11 +10,13 @@ wildcard:
   wildcard_for_unknowns: false
   wildcard_character: "X"
 unknown_substrates: # Used by 'natu build -m paras_based' for substrates without an equivalent in the PARAS dataset
-  use_closest_structure: false # If true, borrow the scores of the structurally closest PARAS substrate; if false (default), use average scores
+  use_closest_structure: false # If true, use the scores of the structurally closest PARAS substrate; if false (default), use average scores
   similarity: "ecfp" # "ecfp": PIKAChU ECFP4 + Jaccard index (as the ECFP matrix); "featmorgan": RDKit Morgan feature fingerprints + Tanimoto (as the FEATMORGAN matrix)
-  min_similarity: 0.3 # If the closest PARAS substrate is less similar than this, fall back to average scores
-  base_penalty: 0.2 # Substrate vs. the PARAS substrate it borrows from: self score - (base_penalty + penalty_scale * (1 - similarity))
-  penalty_scale: 5.0 # e.g. similarity 0.8 -> penalty 0.2 + 5.0 * 0.2 = 1.2
+  min_similarity: "auto" # "auto": threshold = auto_percentile of the similarities between all pairs of PARAS substrates (computed per similarity method); or a number between 0 and 1
+  auto_percentile: 95 # e.g. 95: a substrate is 'close' only if it is more similar than 95% of random pairs of PARAS substrates
+  penalty_mode: "interpolate" # "interpolate": weight = (similarity - threshold) / (1 - threshold); score = average score + weight * (closest substrate's score - average score). "subtract": copy the closest substrate's scores, minus base_penalty + penalty_scale * (1 - similarity) against that substrate
+  base_penalty: 0.2 # Subtracted from the closest substrate's self score when the substrate is compared with it (both modes)
+  penalty_scale: 5.0 # "subtract" mode only
   ignore_chirality: false # If true, stereochemistry is ignored when looking for the closest substrate (e.g. D-valine -> valine)
 tailoring:
   chirality: # Bonuses/penalties for chirality matches and mismatches

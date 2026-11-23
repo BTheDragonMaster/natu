@@ -61,6 +61,7 @@ from natu.variants import (
 
 ALANINE = "C[C@@H](C(=O)O)N"  # L-alanine: chiral alpha-carbon, no beta-carbon
 GLYCINE = "NCC(=O)O"  # achiral: no chiral alpha-carbon at all
+D_ALANINE = "C[C@@H](N)C(O)=O"  # D-alanine: what compute_variants generates from ALANINE
 THREONINE = "C[C@H]([C@@H](C(=O)O)N)O"  # chiral alpha- AND beta-carbon
 PROLINE = "C1C[C@H](NC1)C(=O)O"  # secondary ring amine (still has one N-H)
 ASPARTIC_ACID = "C([C@@H](C(=O)O)N)C(=O)O"
@@ -311,6 +312,28 @@ class TestRemoveEquivalents:
             "aspartic acid",
             "aspartic acid branched",
         ]
+
+
+    @pytest.mark.parametrize("parent_first", [True, False])
+    def test_removes_a_self_declared_variant_in_either_order(self, tailoring_config, parent_first):
+        """A substrate listed under its own auto-generated variant name is redundant and is dropped,
+        no matter whether it is listed before or after the substrate it is a variant of."""
+        parent = compute_variants("alanine", ALANINE, tailoring_config)
+        d_form = compute_variants("D-alanine", D_ALANINE, tailoring_config)
+        collections = [parent, d_form] if parent_first else [d_form, parent]
+
+        filtered = remove_equivalents(collections)
+
+        assert [c.base_structure.name for c in filtered] == ["alanine"]
+        assert "D-alanine" in {v.name for v in filtered[0].variants}
+
+    def test_keeps_both_when_neither_is_a_variant_of_the_other(self, tailoring_config):
+        parent = compute_variants("alanine", ALANINE, tailoring_config)
+        other = compute_variants("glycine", GLYCINE, tailoring_config)
+
+        filtered = remove_equivalents([parent, other])
+
+        assert [c.base_structure.name for c in filtered] == ["alanine", "glycine"]
 
 
 class TestGetStructureVariants:

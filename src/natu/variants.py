@@ -422,12 +422,15 @@ def compute_variants(name: str, smiles: str, tailoring_config: dict[str, Any]) -
 def remove_equivalents(structure_collections: list[StructureCollection]) -> list[StructureCollection]:
     """Remove substrate entries that duplicate a variant already generated for another substrate
 
-    For each pair of collections, checks whether one collection's computed
+    For each pair of collections, checks in both directions whether one collection's computed
     variant structures (D-/N-methylated forms) are structurally equivalent
     to the other collection's base structure. When such a variant's name
     also matches that base structure's name exactly (e.g. someone listed
     "D-alanine" as its own substrate, even though it is already produced as
     a variant of "alanine"), the redundant "D-alanine" entry is dropped.
+    Both directions are checked so that the result does not depend on the
+    order of the SMILES file: "D-alanine" is dropped whether it is listed
+    before or after "alanine".
 
     This check is name-based, not purely structure-based: two *base*
     structures that are structurally identical but carry different names
@@ -444,7 +447,7 @@ def remove_equivalents(structure_collections: list[StructureCollection]) -> list
     structures_to_remove: list[str] = []
     for i, collection_1 in enumerate(structure_collections):
         base_structure_1 = collection_1.base_structure.structure
-        for j, collection_2 in enumerate(structure_collections[i + 1:]):
+        for collection_2 in structure_collections[i + 1:]:
             base_structure_2 = collection_2.base_structure.structure
             if is_equivalent(base_structure_1, base_structure_2):
                 logger.debug(
@@ -452,14 +455,18 @@ def remove_equivalents(structure_collections: list[StructureCollection]) -> list
             if collection_1.base_structure.name == collection_2.base_structure.name:
                 raise ValueError(f"Duplicate substrates found in SMILES input file: {collection_1.base_structure.name}. Please remove all duplicates.")
 
-            for variant in collection_2.variants:
-                if is_equivalent(base_structure_1, variant.structure):
-                    if collection_1.base_structure.name == variant.name:
-                        logger.debug(
-                            f"WARNING: Structure variant of {variant.base.name} found in SMILES input file: {variant.name}. Substrate {variant.name} is treated as variant of {variant.base.name}.")
-                        structures_to_remove.append(variant.name)
-                    else:
-                        logger.debug(f"WARNING: Structure variant of {variant.base.name}, {collection_1.base_structure.name} found in SMILES input file with mismatching name: {variant.name}. If you do not want to keep both, please remove one of these from your SMILES file")
+            # Compare each collection's base structure with the other's variants, so that a redundant entry is
+            # found whichever of the two comes first in the SMILES file
+            for base_structure, variants in ((collection_1.base_structure, collection_2.variants),
+                                             (collection_2.base_structure, collection_1.variants)):
+                for variant in variants:
+                    if is_equivalent(base_structure.structure, variant.structure):
+                        if base_structure.name == variant.name:
+                            logger.debug(
+                                f"WARNING: Structure variant of {variant.base.name} found in SMILES input file: {variant.name}. Substrate {variant.name} is treated as variant of {variant.base.name}.")
+                            structures_to_remove.append(variant.name)
+                        else:
+                            logger.debug(f"WARNING: Structure variant of {variant.base.name}, {base_structure.name} found in SMILES input file with mismatching name: {variant.name}. If you do not want to keep both, please remove one of these from your SMILES file")
 
     filtered_structures: list[StructureCollection] = []
 
